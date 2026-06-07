@@ -2,13 +2,14 @@
 
 ## Content
 
+- [Key Takeaways](#key-takeaways)
 - [What we do wrong and how we can improve](#what-we-do-wrong-and-how-we-can-improve)
 - [But … what do we need architectural diagrams for?](#but-what-do-we-need-architectural-diagrams-for)
 - [My practical example](#my-practical-example)
 
-> According to the licensing policy#### *, I would like to mention this article was originally published on [InfoQ](https://www.infoq.com/articles/why-architectural-diagrams).
+> According to the licensing policy, I would like to mention this article was originally published on [InfoQ](https://www.infoq.com/articles/why-architectural-diagrams).
 
-### Key Takeaways
+## Key Takeaways
 
 - Creating and maintaining architectural diagrams to provide accurate and valuable content is not easy. Most of the time we create either too much, too little or irrelevant documentation because we fail to identify the proper beneficiaries and their real needs.
 - One of the biggest mistakes is to create detailed architectural diagrams for parts of the system with high volatility. It is a burden to manually maintain them unless they are automatically generated.

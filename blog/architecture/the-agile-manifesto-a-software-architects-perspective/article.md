@@ -1,15 +1,16 @@
-# The Agile Manifesto: A Software Architect’s Perspective
+# The Agile Manifesto: A Software Architect's Perspective
 
 ## Content
 
-- [Agile value: working software over comprehensive documentation](#agile-value-working-software-over-comprehensive-documentation)
-- [Agile value: individuals and interactions over processes and tools](#agile-value-individuals-and-interactions-over-processes-and-tools)
-- [Agile value: responding to change over following a plan](#agile-value-responding-to-change-over-following-a-plan)
-- [Agile value: customer collaboration over contract negotiation](#agile-value-customer-collaboration-over-contract-negotiation)
+- [Key Takeaways](#key-takeaways)
+- [Working software over comprehensive documentation](#working-software-over-comprehensive-documentation)
+- [Individuals and interactions over processes and tools](#individuals-and-interactions-over-processes-and-tools)
+- [Responding to change over following a plan](#responding-to-change-over-following-a-plan)
+- [Customer collaboration over contract negotiation](#customer-collaboration-over-contract-negotiation)
 
 > According to the licensing policy, I would like to mention this article was originally published on [InfoQ](https://www.infoq.com/articles/architect-agile-manifesto).
 
-#### Key Takeaways
+## Key Takeaways
 
 - While the role and responsibilities of a software architect can be seen as contradictory to the values of the Manifesto for Agile Software Development, a good architect finds techniques that support an agile development team.
 - Working software over comprehensive documentation – An architect’s goal must be to support working software. Therefore, the diagrams he creates are beneficial only if they help focus the conversation, provide vision and guidance, and enable development.
@@ -21,7 +22,7 @@ Most software development teams understand the “WHAT” part described by the 
 
 Although some agile frameworks try to create a paper definition for the role of a software architect, this can lead to some people following the guidance, but not being as agile and pragmatic as they should. A good architect must continuously adapt their behavior, not be biased toward one particular framework or methodology, stay relevant to the process, and provide the necessary guidance and vision for the team. When the right mental model is acquired, it implicitly leads towards a natural adoption of Agile Manifesto values, which are the pillars for all agile software development methodologies.
 
-## Agile value: working software over comprehensive documentation
+## Working software over comprehensive documentation
 
 In the past, especially in the waterfall era, terms like “astronaut architect” and “ivory tower architect” were coined to define a person who lives too far from the team on the ground. They added no real value to the software itself, being more focused on creating comprehensive documentation, in the form of diagrams and specs, but never creating working software. Unfortunately, this misconception still persists today, even though the way we develop software has changed massively.
 
@@ -57,7 +58,7 @@ There are a few specific cases when documentation plays an important role and th
 
 I have [previously discussed](https://ionutbalosin.com/2019/02/why-do-we-need-architectural-diagrams) many additional concerns regarding architectural documentation, including why and how much documentation is really needed, how to identify the real beneficiaries, how to properly structure it, how to maintain it, etc.
 
-## Agile value: individuals and interactions over processes and tools
+## Individuals and interactions over processes and tools
 
 The irony of agile frameworks (e.g. Scrum, SAFe) is that they were developed to define a process, but then people started to use tools to codify the process (i.e. Agile software management tools which follow the Scrum/SAFe process: product planning, release planning, sprint planning, sprint tracking, sprint review, etc.). This might sound in direct contradiction to the agile manifesto principles, however, in reality there is always a mix which depends on the organization, product, teams, etc. What is important is to remember how to “be agile” rather than just “do agile”; valuing communication, continuous collaboration, getting to know each other better, developing trust and bonds, and listening to the other’s opinions. Bureaucratic processes along with inappropriate tools add more friction, slowing down a team’s velocity.
 
@@ -111,7 +112,7 @@ A complementary approach is to regularly offer people access to top-notch techni
 
 Presentations on different topics, including internal communities of practice, where interested people are regularly meeting and discussing technical subjects, is a good way of spreading the knowledge and best practices, emphasizing human interactions and good collaboration.
 
-## Agile value: responding to change over following a plan
+## Responding to change over following a plan
 
 Sometimes people on the team might prefer to “Make it work now. Make it prettier later,” at the risk of degrading internal quality and increasing the technical debt. Similar guidance may sound like, “*Do not allocate time for finding a proper solution at the moment”*or “e*xclude known future use cases and focus only on current sprint requirements*.” All of these make sense in the light of agile, however, they can contradict a good architectural standpoint. Underestimated, neglected, and wrong design decisions could become harder or even impossible to be rolled back afterwards, for either technological or economic reasons. Building software without an efficient plan, without a proper vision and realistic expectations is prone to failures. Writing code is costly, developers are not cheap, and throwing away pieces of code and constantly rewriting it causes more troubles and delays. A good architect should not make compromises which deliberately degrade the internal quality, unless the consequences are understood and approved by the business.
 
@@ -121,7 +122,7 @@ For example, I work on reviewing upfront business specifications that will be ta
 
 Nevertheless, responding to change does not mean not having a plan at all, or always being in a position to redesign or re-architect the system. At some point, most aspects of the architecture become largely immutable, especially with older products. The architect should always have a plan, and provide guidance and vision to the team. However, the architectural plan must be flexible enough (i.e. ready to embrace changes) and able to promote future business requirements.
 
-## Agile value: customer collaboration over contract negotiation
+## Customer collaboration over contract negotiation
 
 In agile environments, it is more important to understand the customer’s needs than what was negotiated in the contract. Developing software that meets customer needs requires regular collaboration all along the development lifecycle. In practice, this becomes possible at the end of every sprint when feedback is received and priorities might get shuffled, giving the opportunity to ensure maximum developed value very early on in the process.
 

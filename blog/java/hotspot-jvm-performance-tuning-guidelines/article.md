@@ -1,32 +1,32 @@
-# HotSpot JVM Performance Tuning Guidelines
+# HotSpot JVM Performance Tuning Guidelines (OpenJDK 13)
 
-## **Content**
+## Content
 
 - [Intro](#intro)
 - [Memory](#memory)
-  - [Heap](#memory_heap)
-  - Off-Heap
-    - [Metaspace](#memory_metaspace)
-    - [CodeCache](#memory_code_cache)
-    - [Direct Buffers](#memory_direct_buffers)
+  - [Heap](#heap)
+  - [Off-Heap](#off-heap)
+    - [Metaspace](#metaspace)
+    - [CodeCache](#codecache)
+    - [Direct Buffers](#direct-buffers)
 - [ClassLoader](#classloader)
-  - [Dynamic Class-Data Sharing](#classloader_dynamic_cds)
-- [Just-In-Time Compiler](#jit_compiler)
-  - [Tiered Mode: C1+C2](#jit_tiered_mode)
-  - [Graal JIT](#jit_graal)
+  - [Dynamic Class-Data Sharing](#dynamic-class-data-sharing)
+- [Just-In-Time Compiler](#just-in-time-jit-compiler)
+  - [Tiered Mode: C1+C2](#c1c2-compiler)
+  - [Graal JIT](#graal-compiler)
 - [Threads](#threads)
-- [Garbage Collectors](#garbage_collectors)
-  - [Serial Garbage Collector](#gc_serial)
-  - [Parallel Garbage Collector](#gc_parallel)
-  - [Concurrent Mark Sweep Garbage Collector](#gc_cms)
-  - [G1 Garbage Collector](#gc_g1)
-  - [Z Garbage Collector](#gc_z)
-  - [Shenandoah Garbage Collector](#gc_shenandoah)
-  - [Epsilon Garbage Collector](#gc_epsilon)
+- [Garbage Collectors](#garbage-collectors-gc)
+  - [Serial Garbage Collector](#serial-gc)
+  - [Parallel Garbage Collector](#parallel-gc)
+  - [Concurrent Mark Sweep Garbage Collector](#concurrent-mark-sweep-gc)
+  - [G1 Garbage Collector](#g1-gc)
+  - [Z Garbage Collector](#z-gc)
+  - [Shenandoah Garbage Collector](#shenandoah-gc)
+  - [Epsilon Garbage Collector](#epsilon-gc)
 - [Container](#container)
 - [References](#references)
 
-## **Intro**
+## Intro
 
 Tuning the HotSpot Java Virtual Machine (HotSpot JVM) to achieve optimal application performance is one of the most critical aspects, especially in the case of latency-sensitive applications. A poorly-tuned JVM can result in longer latencies, slower transactions, system freezes, system crashes, etc.
 
@@ -51,7 +51,7 @@ Since Graal JIT is written in Java, all the structures it needs are allocated in
 
 ## Memory
 
-### **General tuning guidelines**
+### General tuning guidelines
 
 ```shell
 -XX:+UseCompressedOops (default true)
@@ -97,7 +97,7 @@ Changing the default “malloc” allocator will overcome the possible native me
 
 **Note**: consider changing LD\_PRELOAD when the process resident set size (RSS) grows significantly (for example it becomes much bigger than **-Xmx** plus **-XX:MaxMetaspaceSize** plus **-XX:MaxDirectMemorySize**), eventually getting killed by the OOM killer.
 
-## **Memory::Heap**
+### Heap
 
 ```
 set -Xms equals to -Xmx
@@ -111,7 +111,11 @@ Setting the initial heap size equal to the max heap size avoids resizing hiccups
 
 Trigger pre-zeroed memory-mapped pages at startup, during JVM initialization, to avoid commit hiccups.
 
-## **Memory::Metaspace**
+### Off-Heap
+
+The Off-Heap memory groups the JVM regions that live outside the Java Heap: Metaspace (class metadata), CodeCache (JIT-generated code, Interpreter and stubs) and Direct Buffers (NIO direct-buffer allocations).
+
+#### Metaspace
 
 ```shell
 -XX:MetaspaceSize (default 21,807,104)
@@ -147,7 +151,7 @@ Consider slightly increasing the default value to make Metaspaces growing more a
 
 Consider slightly increasing the default value to reduce the chances of Metaspaces shrinking.
 
-## **Memory::CodeCache**
+#### CodeCache
 
 It is rather unusual to change the default CodeCache values. If based on the profiling data it turns out that the CodeCache is not big enough to accommodate the JIT-compiled code, you might consider increasing the initial and reserved CodeCache size. Nevertheless, make sure the flushing policy and segmented CodeCache are enabled.
 
@@ -175,7 +179,7 @@ Attempt to sweep the CodeCache before shutting off the Compiler. Please make sur
 
 Divide the CodeCache into distinct segments (e.g. non-method, profiled, and non-profiled code) to improve the code locality (i.e. better iTLB and iCache behavior), to decrease fragmentation of highly-optimized code and to better control JVM memory footprint. Please make sure this option is enabled.
 
-### **Use with caution**
+##### Use with caution
 
 ```shell
 -XX:-TieredCompilation
@@ -185,7 +189,7 @@ It disables the intermediate compilation tiers (Tier 1, Tier 2, and Tier 3) so t
 
 **Note**: disabling **TieredCompilation** will (i) minimize the number of Compiler threads, (ii) simplify the compilation policy (i.e. based on method invocation and backedge counters but without detailed profiled information), and (iii) reduce the amount of JIT-compiled code, hence minimizing CodeCache usage.
 
-## **Memory::DirectBuffers**
+#### Direct Buffers
 
 ```shell
 -XX:MaxDirectMemorySize (default 0)
@@ -199,7 +203,7 @@ The maximum total size (in bytes) for direct-buffer allocations, using the *java
 
 Under the hood, the HeapByteBuffer allocates a temporary direct-buffer (e.g. direct ByteBuffer) and copies data to it. The JDK caches one temporary buffer per thread, without any memory limits. As a result, if there are multiple I/O method calls with large heap ByteBuffers, from multiple threads, the process can use a huge amount of native memory. For a long-lived thread, this memory usage will only increase, never shrink. This looks similar to a native memory leak, causing long-lived applications to continue using more and more native memory until they eventually get killed. Consider limiting **maxCachedBufferSize** to avoid these kinds of problems.
 
-## **ClassLoader**
+## ClassLoader
 
 ```shell
 -XX:ClassUnloadingWithConcurrentMark (default true)
@@ -207,7 +211,7 @@ Under the hood, the HeapByteBuffer allocates a temporary direct-buffer (e.g. dir
 
 Enable class unloading after completing a concurrent mark cycle.
 
-## **ClassLoader::Dynamic Class-Data Sharing**
+### Dynamic Class-Data Sharing
 
 The Class Data Sharing (CDS) feature helps reduce the startup time and memory footprint between multiple Java Virtual Machines (JVM). CDS works only for system classes loaded by the Bootstrap ClassLoader.
 
@@ -227,9 +231,9 @@ Dynamically creates the application shared archive when the application exits.
 
 Specify the name of the dynamic archive file.
 
-## **Just-in-Time(JIT) Compiler**
+## Just-in-Time (JIT) Compiler
 
-### **General tuning guidelines**
+### General tuning guidelines
 
 ```
 -Xbatch
@@ -237,7 +241,7 @@ Specify the name of the dynamic archive file.
 
 Enabling this will switch from a background to a foreground compilation process across JIT threads which leads to a more deterministic JIT behavior. By default, the JVM compiles the method as a background task, running the method in Interpreter mode until the background compilation is finished.
 
-### **Not recommended / use with caution**
+### Not recommended / use with caution
 
 ```
 -Xverify:none / -noverify
@@ -251,7 +255,7 @@ It disables bytecode verification, potentially leading to a faster JVM startup. 
 
 It basically stops the compilation at C1. Nevertheless, it limits the optimizations of the JIT Compiler, since neither C2 JIT nor Graal JIT will be kicked in anymore.
 
-## **JIT::C1+C2 Compiler**
+### C1+C2 Compiler
 
 HotSpot features a Java byte code Interpreter in addition to two different Just In Time (JIT) Compilers, the client (also known as C1) and the sever (also known as C2). HotSpot JVM defaults to interpreting Java byte code. It compiles (JIT compilation) methods that are executed for a predetermined number of times. JIT compliers are either client or server:
 
@@ -266,7 +270,7 @@ Tiered Compilation starts with the Interpreter, it uses C1 JIT Compiler to gener
 
 This enables tiered compilation (e.g. Interpreter -> C1 JIT -> C2 JIT).
 
-### **Tuning options**
+### Tuning options
 
 Slightly tuning (i.e. increasing) of inlining parameters could make a difference. Theoretically, better inlining brings the benefit of enabling more inlining-based optimizations, however, too much inlining fills the CodeCache more quickly but also reduces the instruction cache hit rate, thus reducing the speed of instruction fetch, negatively impacting the performance. Pragmatic advice is to find that sweet spot for your particular application.
 
@@ -302,7 +306,7 @@ The maximum number of nested calls that gets inlined.
 
 Maximum bytecode size of a frequently executed method to be inlined.
 
-## **JIT::Graal Compiler**
+### Graal Compiler
 
 Graal is a high-performance, optimizing, Just-In-Time compiler written in Java that integrates with HotSpot via JVMCI. It is supposed to be a replacement for C2 JIT Compiler targeting (i) flexible speculative optimizations, (ii) better inlining heuristics and (iii) partial escape analysis.
 
@@ -318,9 +322,9 @@ Graal JIT might be suitable for applications that produce a lot of objects when 
 
 To enable the Graal JIT Compiler (e.g. Interpreter -> C1 JIT -> Graal JIT).
 
-## **Threads**
+## Threads
 
-## **Threads::Stack**
+### Threads Stack
 
 In most of cases the default thread stack sizes do not need to be tuned since the default values should be enough. However, some JVM options might improve the performance in the case of applications with a significant number of thrown exceptions.
 
@@ -336,9 +340,9 @@ For performance reasons, consider throwing pre-allocated exceptions that do not 
 
 For performance reasons, consider removing stack traces from thrown exceptions.
 
-## **Garbage Collectors (GC)**
+## Garbage Collectors (GC)
 
-### **General tuning guidelines**
+### General tuning guidelines
 
 ```shell
 -XX:+ExplicitGCInvokesConcurrent (default false)
@@ -352,7 +356,7 @@ Avoid a lengthy pause in response to a System.gc() or Runtime.getRuntime().gc() 
 
 If more than 98% of the total time is spent in Garbage Collection and less than 2% of the heap is recovered an OOME is thrown. It is designed to prevent applications from running for an extended period of time while making little or no progress because the heap is too small. If necessary, this feature might be disabled.
 
-### **Not recommended / use with caution**
+### Not recommended / use with caution
 
 ```shell
 -XX:-DisableExplicitGC (default false)
@@ -364,7 +368,7 @@ There are also some applications that programmatically trigger System.gc() durin
 
 Nevertheless, be very careful and avoid writing code that abuses of invoking System.gc(), since it might trigger additional GC cycles, impacting low latency applications.
 
-## **GC::Serial GC**
+### Serial GC
 
 It collects Young and Tenured Generations using a single thread, in a Stop-the-World fashion. It was introduced in Java 1.3 and was the default Collector in versions [1.3; 6).
 
@@ -376,7 +380,7 @@ It might be suitable for applications that have a small data set (e.g. a few hun
 
 To enable Serial GC.
 
-## **GC::Parallel GC**
+### Parallel GC
 
 Known as Throughput Collector, it collects Young and Tenured Generations in parallel threads, in a Stop-the-World fashion. It was introduced in Java 1.4.2 and was the default Collector in Java versions [6; 9).
 
@@ -432,7 +436,7 @@ Sets the number of threads used for Parallel GC in the Young and Tenured generat
 
 Increasing the number of parallel threads used for GC might improve the throughput at the cost of monopolizing CPU threads (potentially impacting other apps running on the same host).
 
-## **GC::Concurrent Mark Sweep Garbage GC**
+### Concurrent Mark Sweep GC
 
 It is mostly a concurrent collector, it performs some expensive work concurrently to the application. It was introduced in Java 1.4.2, made deprecated in Java 9 (JEP 291) and is going to be removed in Java 14 (JEP 363).
 
@@ -444,7 +448,7 @@ It might be suitable for applications that prefer shorter Garbage Collection pau
 
 To enable CMS GC.
 
-### **Tuning guidelines**
+#### Tuning guidelines
 
 In general CMS GC needs a proper (manual) tuning of the Young Generation size (e.g. survivor spaces) and the Tenuring threshold – same recommendation as in the case of Parallel Garbage Collector.
 
@@ -502,7 +506,7 @@ Trigger a Young Generation GC prior to CMS remark.
 
 To allow class unloading after a concurrent cycle, instead of relying on Full GCs to reclaim the metadata memory.
 
-## **GC::G1 GC**
+### G1 GC
 
 It is mostly a concurrent collector, it performs some expensive work concurrently to the application. G1 GC tries to maintain a balance between throughput and latency. It was introduced in Java 7 u4 and made default in Java versions [9; 13].
 
@@ -514,7 +518,7 @@ It might be suitable for applications that run on multiprocessor machines with a
 
 To enable G1 GC.
 
-### **Tuning for latency**
+#### Tuning for latency
 
 ```shell
 -XX:-UseTransparentHugePages (default false)
@@ -564,7 +568,7 @@ If the amount of objects surviving a Collection suddenly changes it might cause 
 
 Understand the **G1HeapRegionSize**, it directly affects the number of cross-region references and as well as the size of the remembered set. Handling the remembered sets for regions may be a significant part of Garbage Collection work, so this has a direct effect on the achievable maximum pause time. Larger regions tend to have fewer cross-region references, so the relative amount of work spent in processing them decreases, although, at the same time, larger regions may mean more live objects to evacuate per region, increasing the time for other phases.
 
-### **A Mixed Collection takes too long?**
+#### A Mixed Collection takes too long?
 
 ```shell
 -XX:G1MixedGCCountTarget (default 8)
@@ -596,7 +600,7 @@ It starts the concurrent marking phase when the occupancy of the entire Java hea
 
 The number of Tenured regions to be collected during a mixed Garbage Collection cycle. If a Mixed Collection takes too long, consider decreasing **G1OldCSetRegionThresholdPercent**.
 
-### **Tuning for throughput**
+#### Tuning for throughput
 
 ```
 set -Xms equals to -Xmx
@@ -646,7 +650,7 @@ In addition to the **-XX:MaxGCPauseMillis** you can specify the length of the ti
 
 Try to decrease the amount of concurrent work, in particular, concurrent remembered set updates, which requires a lot of CPU resources. By decreasing **G1RSetUpdatingPauseTimePercent** it will move the work from the concurrent operation into the Garbage Collection pause, potentially increasing the throughput.
 
-## **GC::Z GC**
+### Z GC
 
 It is a scalable low latency garbage collector designed to meet the following goals: (i) pause times do not exceed 10ms; (ii) pause times do not increase with the heap or live-set size; (iii) handle heaps ranging from a few hundred megabytes to multi terabytes in size. Introduced in Java 11, still experimental.
 
@@ -658,7 +662,7 @@ It might be suitable for applications where response time is a high priority and
 
 To enable Z GC.
 
-### **Tuning options**
+### Tuning options
 
 ```shell
 -Xmx
@@ -692,7 +696,7 @@ Use large pages will generally yield better performance (in terms of throughput,
 
 An alternative to using explicit large pages (as described above) is to use transparent huge pages. The use of transparent huge pages is usually not recommended for latency-sensitive applications because it tends to cause unwanted latency spikes. However, it might be worth experimenting with to see if/how the workload is affected by it.
 
-## **GC::Shenandoah GC**
+### Shenandoah GC
 
 It has a similar target as ZGC: (i) pause times do not exceed 10ms; (ii) pause times do not increase with the heap or live-set size; (iii) handle heaps ranging from a few hundred megabytes to multi terabytes in size. Introduced in Java 12, still experimental.
 
@@ -702,7 +706,7 @@ It has a similar target as ZGC: (i) pause times do not exceed 10ms; (ii) pause t
 
 To enable Shenandoah GC.
 
-### **Tuning options**
+### Tuning options
 
 ```
 set -Xms equals to -Xmx
@@ -746,7 +750,7 @@ When coupled with **-XX:+AlwaysPreTouch**, then init/shutdown would be faster, b
 
 For latency-oriented workloads, it makes sense to turn biased locking off. Nevertheless, this is a tradeoff between uncontended (biased) locking throughput, and the safepoints JVM does to enable and disable them as needed.
 
-## **GC::Epsilon GC**
+### Epsilon GC
 
 A completely passive GC implementation with a bounded allocation limit and the lowest latency overhead possible, at the expense of memory footprint and memory throughput. It does not clean up any memory, hence once the Java heap is exhausted, no memory reclamation is possible, and therefore it fails and throws an OutOfMemoryError. Introduced in Java 11, still experimental.
 
@@ -758,7 +762,7 @@ It might be suitable for (i) performance testing, (ii) memory pressure testing, 
 
 To enable Epsilon GC.
 
-### **Tuning options**
+### Tuning options
 
 ```shell
 -XX:+AlwaysPreTouch
@@ -766,7 +770,7 @@ To enable Epsilon GC.
 
 Pre-touch and set to zero all virtual memory pages during VM startup time otherwise there will be allocations hiccups due to OS peculiarities: usually, OS does not actually wired up the memory when it is “reserved” or “committed” but when it is allocated. Since in Epsilon case the allocations always reach for new memory, it needs to be first wired up, hence adding delays.
 
-## **Container**
+## Container
 
 ```shell
 -XX:+UseContainerSupport (default true)

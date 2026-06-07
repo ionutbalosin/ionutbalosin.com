@@ -1,5 +1,7 @@
 # IT Designation Definitions
 
+> **Disclaimer:** This article is a satirical pamphlet. It is meant as light-hearted humor about common stereotypes in the IT industry and should not be taken literally or as a serious commentary on any role or person.
+
 **Software Architect** is a person who draws the initial baby sketches, proves the prototype is working and then considers his job done.
 
 **Developer** can never estimate how much time it takes in practice to deliver the baby.

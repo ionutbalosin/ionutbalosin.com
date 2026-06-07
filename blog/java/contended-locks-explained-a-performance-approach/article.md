@@ -1,4 +1,4 @@
-# Contended locks explained – a performance approach
+# Contended locks explained - a performance approach
 
 ## Content
 
