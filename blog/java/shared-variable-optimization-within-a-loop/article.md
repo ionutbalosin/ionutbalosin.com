@@ -1,8 +1,21 @@
 # Shared Variable Optimization Within A Loop
 
-Recently I attended [GeeCon Krakow](https://geecon.org/) conference and during one of the talks the famous **Venkat Subramaniam** shared an interesting small application which captured my attention and got stuck in my mind. Going home, I have decided to zoom into the problem and to better understand what happens under the hood in such case.
+## Content
 
-Below is the initial code inspired from **Venkat** (slightly modified, but the idea is the same):
+- [The Problem](#the-problem)
+- [Why It Hangs](#why-it-hangs)
+- [Possible Solutions](#possible-solutions)
+  - [Solution 1: Disable the JIT Compiler](#solution-1-disable-the-jit-compiler)
+  - [Solution 2: Make canRun Volatile](#solution-2-make-canrun-volatile)
+  - [Solution 3: Insert Thread.sleep(0) in the Loop](#solution-3-insert-threadsleep0-in-the-loop)
+  - [Solution 4: Remove the Outer Sleep](#solution-4-remove-the-outer-sleep)
+- [Further Reading](#further-reading)
+
+## The Problem
+
+Recently I attended [GeeCon Krakow](https://geecon.org/) conference and during one of the talks the famous **Dr. Venkat Subramaniam** shared an interesting small application which captured my attention and got stuck in my mind. Going home, I have decided to zoom into the problem and to better understand what happens under the hood in such case.
+
+Below is the initial code inspired from **Dr. Venkat Subramaniam** (slightly modified, but the idea is the same):
 
 ```java
 public class BusyWaitingLoopTrick {
@@ -49,8 +62,8 @@ Thread exiting
 
 and the program hangs.
 
-This case was presented by **Venkat** and I have decided to dig into in order to better understand the cause and to share it with you 🙂
-
+This case was presented by **Dr. Venkat Subramaniam** and I have decided to dig into in order to better understand the cause and to share it with you 🙂
+## Why It Hangs
 Since I am very keen on performance optimizations triggered at runtime in the HotSpot JVM, I have run the same program by looking at the generated assembly. Below is a very simplified shape of it (after removing few sections):
 
 ```
@@ -75,9 +88,11 @@ So basically the code between **START LOOP** and **END LOOP** (i.e. correspondi
 
 So the run() method becomes hot and gets compiled (i.e. On Stack Replacement compilation due to while loop), in the meantime the main thread sleeps for 5 sec (e.g. **Thread.sleep(5000)**). Even if variable **canRun** is set afterwards to false (e.g. **canRun = false**), it has no any impact on asynchronous run() method which completely removed the test check.
 
+## Possible Solutions
+
 Now, having a better understanding about what happens and why the program hangs, we might ask: “but … how can we make the code working without the program to hang?”. In the following sections I will present 4 possible solutions (and of course they are not exclusive).
 
-#### Solution 1
+### Solution 1: Disable the JIT Compiler
 
 The simplest one, without even touching the code, is to start the program by disabling Just In Time Compiler (i.e. bypassing the Compiler optimization in regards to conditional test within the loop).
 
@@ -91,7 +106,7 @@ Thread exiting
 
 and the program successfully stops. However, this solution might not be feasible because disabling the Just In Time Compiler really slows down the performance.
 
-#### Solution 2
+### Solution 2: Make canRun Volatile
 
 Another approach is to simply make the **canRun**variable volatile, as follows:
 
@@ -112,9 +127,9 @@ jne L0000 // END LOOP
 
 As you can see the explicit boolean check is now kept within the loop. This is related to the volatile field which is not optimized by Just In Time Compiler, hence the check condition is preserved.
 
-#### Solution 3
+### Solution 3: Insert Thread.sleep(0) in the Loop
 
-This is actually the **Venkat**‘s solution that was presented during the talk. Basically it inserts a **Thread.sleep(0)** in the busy waiting loop, as follows:
+This is actually the **Dr. Venkat Subramaniam**‘s solution that was presented during the talk. Basically it inserts a **Thread.sleep(0)** in the busy waiting loop, as follows:
 
 ```
 while (canRun) {
@@ -143,11 +158,11 @@ jne L0000 // END LOOP
 
 As we might notice the boolean check is kept within while loop together with **Thread.sleep()**call, leading the program to successfully finish after **canRun** is set to false by main thread.
 
-#### Solution 4
+### Solution 4: Remove the Outer Sleep
 
 Another approach is to simply remove the **Thread.sleep(5000)** call. Since the asynchronous run() method does not get yet compiled, it still runs in Interpreter and checks for **canRun** on each iteration. After the main thread sets **canRun** to false, the instruction gets eventually drained hence CPU caching coherency mechanisms will propagate the updated **canRun** value to the other thread, leading the program to immediately finish.
 
-##### Further references:
+## Further Reading
 
 - [On Stack Replacement](https://mechanical-sympathy.blogspot.ro/2011/11/biased-locking-osr-and-benchmarking-fun.html)
 - [JVM Safepoints](http://psy-lob-saw.blogspot.ro/2015/12/safepoints.html)

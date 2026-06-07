@@ -1,6 +1,6 @@
 # A Technical Leader Interview
 
-### Articolul curent este in interviu acordat publicatiei online [CRTL-D](https://ctrl-d.ro/interviuri/interviu-ionut-balosin-technical-leader-luxoft/).
+> Articolul curent este in interviu acordat publicatiei online [CRTL-D](https://ctrl-d.ro/interviuri/interviu-ionut-balosin-technical-leader-luxoft/).
 
 ##### [CTRL-D] **Profilul tău de Linkedin ne spune că în prezent eşti Tech Leader. Ce implică partea de “tech” iar apoi ce presupune partea de “leader” în cadrul Luxoft?**
 
