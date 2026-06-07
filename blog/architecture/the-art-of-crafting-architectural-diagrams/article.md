@@ -9,7 +9,7 @@
 - [How can diagrams be kept up-to-date as the system is developed, and changes to the architecture materialize](#how-can-diagrams-be-kept-up-to-date-as-the-system-is-developed-and-changes-to-the-architecture-materialize)
 - [What complications (or simplifications) emerge for architectural diagrams when dealing with modern architectures (e.g. microservices)?](#what-complications-or-simplifications-emerge-for-architectural-diagrams-when-dealing-with-modern-architectures-eg-microservices)
 
-*According to the licensing policy, I would like to mention this article was originally published on [InfoQ](https://www.infoq.com/articles/crafting-architectural-diagrams).*
+> According to the licensing policy, I would like to mention this article was originally published on [InfoQ](https://www.infoq.com/articles/crafting-architectural-diagrams).
 
 ## Key Takeaways
 

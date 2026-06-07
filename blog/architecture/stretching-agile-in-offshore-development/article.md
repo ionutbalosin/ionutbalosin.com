@@ -10,7 +10,7 @@
 - [InfoQ: How has stretching agile practices worked out for you? What did you learn?](#infoq-how-has-stretching-agile-practices-worked-out-for-you-what-did-you-learn)
 - [InfoQ: What advice can you give to make collaboration work between companies with different cultures?](#infoq-what-advice-can-you-give-to-make-collaboration-work-between-companies-with-different-cultures)
 
-> *According to the licensing policy, I would like to mention this article was originally published on [InfoQ](https://www.infoq.com/news/2016/11/stretching-agile-offshore).*
+> According to the licensing policy, I would like to mention this article was originally published on [InfoQ](https://www.infoq.com/news/2016/11/stretching-agile-offshore).
 
 ## *Xavier Rene-Corail and myself were interviewed by InfoQ online publication. Below is our interview.*
 

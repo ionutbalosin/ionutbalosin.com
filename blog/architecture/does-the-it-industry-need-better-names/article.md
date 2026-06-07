@@ -16,7 +16,7 @@
 - [Terminology across distributed teams](#terminology-across-distributed-teams)
 - [Final conclusions](#final-conclusions)
 
-#### *According to the licensing policy, I would like to mention this article was originally published on [InfoQ](https://www.infoq.com/articles/IT-industry-better-namings).*
+> According to the licensing policy, I would like to mention this article was originally published on [InfoQ](https://www.infoq.com/articles/IT-industry-better-namings).
 
 ## **Takeaways**
 

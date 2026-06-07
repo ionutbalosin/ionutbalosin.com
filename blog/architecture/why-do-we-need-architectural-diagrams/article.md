@@ -6,7 +6,7 @@
 - [But … what do we need architectural diagrams for?](#but-what-do-we-need-architectural-diagrams-for)
 - [My practical example](#my-practical-example)
 
-#### *According to the licensing policy, I would like to mention this article was originally published on [InfoQ](https://www.infoq.com/articles/why-architectural-diagrams).*
+> According to the licensing policy#### *, I would like to mention this article was originally published on [InfoQ](https://www.infoq.com/articles/why-architectural-diagrams).
 
 ### Key Takeaways
 

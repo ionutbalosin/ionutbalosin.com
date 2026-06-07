@@ -7,7 +7,7 @@
 - [Agile value: responding to change over following a plan](#agile-value-responding-to-change-over-following-a-plan)
 - [Agile value: customer collaboration over contract negotiation](#agile-value-customer-collaboration-over-contract-negotiation)
 
-##### *According to the licensing policy, I would like to mention this article was originally published on [InfoQ](https://www.infoq.com/articles/architect-agile-manifesto).*
+> According to the licensing policy, I would like to mention this article was originally published on [InfoQ](https://www.infoq.com/articles/architect-agile-manifesto).
 
 #### Key Takeaways
 
