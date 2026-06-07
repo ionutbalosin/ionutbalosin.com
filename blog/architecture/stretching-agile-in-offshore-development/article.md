@@ -57,3 +57,7 @@ InfoQ spoke with Xavier Rene-Corail and Ionuț Baloșin about why they decided t
 > **Balosin**: First I would say it is primordial to understand the culture and how other people behave, react and talk. Second, it is important to have frequent face to face meetings and trips between sites. After getting to know people we tend to work together in a more collaborative way, that’s how humans behave. Time zones and the cultural similarities might bring other challenges, but nevertheless they can be managed if the first two are well tackled.
 
 > **Rene-Corail**: I would use the metaphor of a dancing couple. First, you have to practice, and accept that you’ll hurt each other’s feet at the beginning because you don’t know each other; you will discover the other as you practice, and adapt. Second, you have to be obsessed by synchronization; have the same understanding of the situation, real-time. Visual management is key for this. Finally, you have to give the other some room for improvisation. If one of the teams (e.g. company) imposes everything, the collaboration cannot benefit from the creativity of the others, but if the leader gives the partner enough room for improvisation, then you’ll be able together to invent some new dancing steps and put on a great show.
+
+---
+
+**Tags**: Agile, Offshore Development, Distributed Teams, Scrum, Software Engineering, Team Collaboration, Software Development, Agile Practices, InfoQ Interview, Software Process

@@ -176,3 +176,7 @@ As spotted by assembly code above, before calling the variable parameters method
 To summarize, a variable parameters method has an extra cost associated to a new array allocation and additional stack parameter manipulation which does not happen in case of calling a method with fixed number of parameters, which might explain the difference in response time between these two versions.
 
 As a performance optimization advice, you can rely on this trick by declaring methods with explicit parameters for intensively or widely used APIs. A very good example is the Collection Factory Methods added in JDK 9 (e.g. see [List.of()](https://docs.oracle.com/javase/9/docs/api/java/util/List.html) or [Set.of()](https://docs.oracle.com/javase/9/docs/api/java/util/Set.html) or [Map.of()](https://docs.oracle.com/javase/9/docs/api/java/util/Map.html) ) which have dedicated implementations for a number of less or equal than 10 parameters and starting with the 11-th parameter there is a varargs method.
+
+---
+
+**Tags**: Java, Varargs, Method Calls, Performance, JIT Compiler, HotSpot, JMH, Microbenchmark, Java Performance, Method Invocation

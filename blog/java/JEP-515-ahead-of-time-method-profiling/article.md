@@ -471,5 +471,3 @@ For teams running microservices, serverless functions, or any workload where sta
 ---
 
 **Tags**: Java, JDK 25, AOT Compilation, Ahead-of-Time, Method Profiling, JIT Compiler, Performance, Startup Time, Code Generation, HotSpot, PGO, Profile-Guided Optimization, Java Performance
-
-<!-- WordPress Categories: Java, Performance, JVM Internals -->

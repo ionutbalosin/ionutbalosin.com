@@ -379,6 +379,6 @@ The rest is engineering as usual: clear requirements, small changes, good tests,
 
 1. Janakiram MSV, [Uber Burns Its 2026 AI Budget In Four Months On Claude Code](https://www.forbes.com/sites/janakirammsv/2026/05/17/uber-burns-its-2026-ai-budget-in-four-months-on-claude-code/), Forbes, May 2026.
 
-## Tags
+---
 
-ai, ai-assistants, github-copilot, claude, claude-code, gpt-5, llm, generative-ai, ai-coding, ai-engineering, prompt-engineering, context-engineering, mcp, model-context-protocol, adr, architectural-decision-records, skills, guardrails, spec-driven-development, test-driven-development, tdd, red-green, software-engineering, software-architecture, code-quality, code-review, ci-cd, pre-commit-hooks, devops, security, ai-security, prompt-injection, threat-model, sandboxing, containers, token-economics, ai-cost, ai-governance, ai-adoption, developer-productivity, best-practices, anti-patterns, practical-advice
+**Tags**: AI, LLM, AI Assistants, GitHub Copilot, Claude, AI Coding, AI Engineering, Prompt Engineering, Context Engineering, MCP, Spec-Driven Development, AI Security, Prompt Injection, Developer Productivity, Best Practices

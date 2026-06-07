@@ -1,6 +1,6 @@
 # A Technical Leader Interview
 
-## Articolul curent este in interviu acordat publicatiei online [CRTL-D](https://ctrl-d.ro/interviuri/interviu-ionut-balosin-technical-leader-luxoft/).
+### Articolul curent este in interviu acordat publicatiei online [CRTL-D](https://ctrl-d.ro/interviuri/interviu-ionut-balosin-technical-leader-luxoft/).
 
 ##### [CTRL-D] **Profilul tău de Linkedin ne spune că în prezent eşti Tech Leader. Ce implică partea de “tech” iar apoi ce presupune partea de “leader” în cadrul Luxoft?**
 
@@ -52,3 +52,7 @@ Pentru a rămâne up to date în domeniu trebuie un studiu constant și progresi
 ##### [CTRL-D] **Ce competenţe noi vrei să îţi dezvolţi anul acesta / Ce competenţe curente vrei să îţi îmbunătăţeşti?**
 
 În momentul de față, am început să studiez și să practic destul de mult în domeniul software architecture, atât în cadrul jobului actual, prin natura task-urilor zilnice, cât și prin intermediul departamentului de training Luxoft, unde voi preda un curs de software architecture. Anul acesta mi-am propus să obțin și o certificare în acest sens. În afară de software architecture, îmi doresc să aprofundez și să dedic mai mult timp studiului în domeniul performance (e.g. Java performance) întrucât este un domeniu care mă captivează și tot timpul găsesc lucruri interesante de studiat, care mă motivează.
+
+---
+
+**Tags**: Software Architecture, Technical Leadership, Career, Interview, IT Industry, Architect Role, Software Engineering

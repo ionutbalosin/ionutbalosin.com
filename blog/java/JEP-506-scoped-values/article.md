@@ -702,5 +702,3 @@ The ecosystem is catching up. Spring, Quarkus, and Jakarta EE are integrating sc
 ---
 
 **Tags**: Java, JDK 25, Scoped Values, Virtual Threads, Concurrency, Thread-Local Variables, Structured Concurrency, Project Loom, Performance, Immutability, Context Propagation, Modern Java, Java Concurrency
-
-<!-- WordPress Categories: Java, Concurrency, Virtual Threads -->

@@ -827,5 +827,3 @@ Java streams just got infinitely more powerful.
 ---
 
 **Tags**: Java, JDK 24, Stream API, Gatherers, Functional Programming, Custom Intermediate Operations, Java Streams, Collections, Stream Processing, Advanced Java, Java 8+, Stream Gatherers, Windowing, Parallel Streams
-
-<!-- WordPress Categories: Java, Stream API, Advanced Features -->

@@ -67,3 +67,7 @@ What we aim to emphasize in this blogpost is not intended to finger point or dis
 ## **About co-author**
 
 - [David Leitner](https://twitter.com/duffleit) is Co-Founder of [SQUER Solutions](https://www.squer.at/), a Viennese Software Company, which is working with different stacks and environments, but always an overarching mission: connect ideas and provide impact — with technology. He spends much of his time on the front-lines tackling the challenges of scaling software and complex domains. David enjoys sharing his knowledge as a speaker at conferences and as a lecturer for his post-diploma courses at the University of Applied Sciences Technikum Vienna.
+
+---
+
+**Tags**: Technical Conferences, Public Speaking, Conference Talks, Software Engineering, Conference Selection, Speakers, Technical Community, Conference Feedback

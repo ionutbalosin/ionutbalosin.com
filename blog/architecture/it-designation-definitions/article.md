@@ -29,3 +29,7 @@
 **Documentation Team** does not care whether the baby is going to be delivered or not, they will just keep on writing documentation.
 
 **Quality Auditor** is the person who thinks the baby delivery process does not meet the required standards.
+
+---
+
+**Tags**: IT Industry, Software Engineering, Job Titles, Architect Role, Tester Role, Manager Role, Humor, IT Roles, Career

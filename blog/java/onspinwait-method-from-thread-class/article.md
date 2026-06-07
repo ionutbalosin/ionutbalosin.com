@@ -173,3 +173,7 @@ Few conclusions:
 
 - [Notify… oh, wait! I have a signal.](http://jpbempel.blogspot.com/2015/07/notify-oh-wait-i-have-signal.html)
 - [Benefitting Power and Performance Sleep Loops](https://software.intel.com/en-us/articles/benefitting-power-and-performance-sleep-loops)
+
+---
+
+**Tags**: Java, JDK 9, Concurrency, Thread, onSpinWait, Spin Loop, Performance, CPU, JMH, Microbenchmark, Hardware Hints, Synchronization

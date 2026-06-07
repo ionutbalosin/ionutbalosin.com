@@ -1000,3 +1000,7 @@ To establish the final “winner”, I sum up each intermediate benchmark result
 Please do not take this report too religiously, my main driver behind this study was curiosity (i.e. the pleasure of finding new things out) and the passion for compilers. Besides that, the report is far away to cover all possible use cases (it is, anyway, a huge effort to achieve it) and it might need additional effort in case of some benchmarks to deep-dive and understand the real cause behind the figures (which was not in the initial scope). However, in my opinion, it gives a broader understanding and proves that neither compiler is perfect. There are pros and cons on each side, each has its own strengths and weaknesses.
 
 I hope you really enjoy reading it, despite the length. If you might find this useful or interesting, I would be very glad to get your feedback (in terms of missing use cases, unclear explanations, etc.) or, if you want to contribute with different benchmark patterns please do not hesitate to [get in touch](https://ionutbalosin.com/contact/).
+
+---
+
+**Tags**: Java, JDK 12, JVM, JIT Compiler, GraalVM, C1, C2, OpenJDK, Performance, JMH, Compiler Benchmarks, JIT Optimizations

@@ -116,3 +116,7 @@ getStackTrace      avgt 15 10,512.959 ± 212.659 ns/op
 If throwing an exception is costly (i.e. creating the Exception instance and filling in the stack trace), collecting the exception stack trace is even heavier!
 
 For normal applications, if these two operations can be split and asynchronously triggered (i.e. throwing the exception first and then, separately, collecting the stack trace within another thread) there might be an overall performance improvement for the normal execution flow!
+
+---
+
+**Tags**: Java, Exceptions, Stack Trace, Thread, JVM, Performance, JMH, Microbenchmark, Exception Handling, Java Internals, JVM Internals

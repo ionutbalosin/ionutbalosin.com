@@ -20,3 +20,7 @@ Below I am going to describe aspects that are a bit different from an architectu
 To summarize, an Architect should be a visionary person, always up to date in terms of latest technologies and frameworks, an open minded guy able to bring and discuss new ideas in the project, having excellent communication skills and keen on technology and innovation.
 
 I hope all the things mentioned gave you a really useful way to spot the differences between an Architect and a Software Developer, what is needed and what is different when we face this transition.
+
+---
+
+**Tags**: Software Architecture, Career, Software Developer, Architect Role, Career Transition, Software Engineering, Professional Growth, IT Career

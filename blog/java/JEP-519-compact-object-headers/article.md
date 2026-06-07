@@ -335,5 +335,3 @@ Enable compact object headers in JDK 25+ for production workloads, especially fo
 ---
 
 **Tags**: Java, JDK 25, JVM, Performance, Memory Optimization, Object Headers, Compact Headers, Project Lilliput, HotSpot, Memory Footprint, Garbage Collection, JVM Internals, Java Performance Tuning, Memory Management
-
-<!-- WordPress Categories: Java, JVM Internals, Performance -->

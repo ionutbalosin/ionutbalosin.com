@@ -134,3 +134,7 @@ Microservices or any other modern architectural style (e.g. serverless, event dr
 Taking all of these into account, views capturing system decomposition, development, deployment and operability should be considered by default. Imagine a system with an impressive number of micro-services, for example; in such a case the number of diagrams might significantly increase because each microservice might end up in having its own set of diagrams. Issues regarding consistency (e.g. changing the API of one service impacts other X services, therefore all impacted diagrams needs to be updated), fragmentation (e.g. highly availability or performance between distributed services is not consolidated in one diagram) or cross-cutting concerns (e.g. who is in charge to illustrate, in a consolidated manner, aspects like monitoring or security across entire system elements) might not be easily handled. On top of this there might be challenges related to teams’ coexistence and collaboration during project development, and even afterwards, in order to maintain it.
 
 To summarize, moderns systems with complex architectures might bring additional concerns which could lead to complications even at the diagrams level.
+
+---
+
+**Tags**: Software Architecture, Architectural Diagrams, UML, ArchiMate, C4 Model, Documentation, Software Design, Microservices, Diagram Best Practices, System Design

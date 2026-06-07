@@ -106,3 +106,7 @@ It might be a reasonable explanation for our test case as well, where JDK source
 ##### Further references:
 
 - [From concurrent to parallel – Brian Goetz](https://www.youtube.com/watch?v=NsDE7E8sIdQ)
+
+---
+
+**Tags**: Java, JDK 8, Streams API, Parallel Streams, Performance, Concurrency, Fork/Join, JMH, Microbenchmark, Java Streams, Functional Programming

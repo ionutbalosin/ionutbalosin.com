@@ -1074,3 +1074,7 @@ Neglecting dependency updates should be avoided, except in rare cases (e.g., leg
 - [Personally Identifiable Information (PII)](https://www.investopedia.com/terms/p/personally-identifiable-information-pii.asp)
 - [General Data Protection Regulation](https://gdpr-info.eu)
 - [Mapped Diagnostic Context (MDC)](https://logback.qos.ch/manual/mdc.html)
+
+---
+
+**Tags**: Java, Security, Application Security, Input Validation, Input Sanitization, Java Deserialization, XXE, Zip Bomb, Encryption, Cryptography, Secure Logging, Secure Coding, OWASP, UUID, YAML

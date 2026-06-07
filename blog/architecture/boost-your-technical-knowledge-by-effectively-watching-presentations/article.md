@@ -36,3 +36,7 @@ So, let’s share my approach step by step.
 - do not forget to revisit the topics and the presentation ideas from time to time to not forget them. For example, it happened to me to revisit few presentations multiple times until I fully got the entire picture and made stronger connections between the topics
 
 Hopefully, with all these guidelines you might be able to watch in a more efficient way technical presentations and also to get maximum out of them.
+
+---
+
+**Tags**: Continuous Learning, Software Engineering, Technical Knowledge, Conference Talks, Presentations, Career Development, Self-Improvement, Learning Techniques

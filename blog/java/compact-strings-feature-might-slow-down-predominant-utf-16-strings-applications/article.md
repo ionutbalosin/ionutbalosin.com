@@ -113,3 +113,7 @@ Benchmark                                             Mode Cnt Score Error Units
 - in both cases the allocation rate is the same (e.g. 168 B/op), hence almost the same throughput of producing Strings
 
 This leads to an interesting sum-up: **for applications that extensively use UTF-16 characters, it might be worth it to consider disabling Compact Strings feature for a better performance!** However, you should not exclusively rely on this, instead, my advice is just to keep this in mind and test if it better fits or not in your application.
+
+---
+
+**Tags**: Java, JDK 9, Compact Strings, Strings, Performance, UTF-16, JVM, JMH, Microbenchmark, Java Strings, JEP 254

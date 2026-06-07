@@ -281,6 +281,6 @@ The remainder is engineering as usual, with the feedback loops running faster an
 6. Hans Moravec, *Mind Children: The Future of Robot and Human Intelligence*, Harvard University Press, 1988 — origin of Moravec's paradox.
 7. Ionut Balosin, [Taming AI Assistants: Practical Advice for Software Teams](https://ionutbalosin.com/2026/05/taming-ai-assistants-practical-advice-for-software-teams), May 2026.
 
-## Tags
+---
 
-software-architecture, ai, llm, generative-ai, ai-engineering, ai-assistants, system-design, distributed-systems, microservices, agentic-ai, agents, agentic-mesh, data-mesh, sidecar-pattern, rag, guardrails, evals, hallucinations, non-determinism, reproducibility, prompt-engineering, context-engineering, architectural-decision-records, adr, fitness-functions, evolutionary-architecture, capabilities-vs-behaviour, vibe-coding, poc-to-production, observability, ai-governance, ai-security, prompt-injection, threat-model, token-economics, ai-cost, ai-adoption, software-engineering, best-practices, anti-patterns, practical-advice
+**Tags**: Software Architecture, AI, LLM, AI Era, Agentic AI, Agentic Mesh, AI Architecture, System Design, Architectural Patterns, AI Engineering, PoC to Production, Architect Role, Guardrails, RAG

@@ -603,5 +603,3 @@ Future G1 work will build on this foundation. With write barriers simplified and
 ---
 
 **Tags**: Java, JDK 26, G1 GC, Garbage Collection, Performance, Write Barriers, Throughput, JVM Internals, Memory Management, HotSpot, Card Tables, GC Optimization, Java Performance Tuning
-
-<!-- WordPress Categories: Java, Garbage Collection, Performance -->

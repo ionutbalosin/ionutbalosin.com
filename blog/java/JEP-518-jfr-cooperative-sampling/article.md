@@ -532,5 +532,3 @@ For JVM engineers, JEP 518 demonstrates how to leverage safepoint infrastructure
 ---
 
 **Tags**: Java, JDK 25, JFR, Java Flight Recorder, Profiling, Cooperative Sampling, Safepoint Bias, Performance Monitoring, Performance Analysis, JVM Profiling, Observability
-
-<!-- WordPress Categories: Java, Performance, Profiling -->

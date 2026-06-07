@@ -204,3 +204,7 @@ As we can easily spot, in JDK10 the more “interesting” fact is that method c
 - [Runtime vs. compile time (JIT vs. AOT) optimizations in Java and C++](https://www.youtube.com/watch?v=O87PaWkXlZ0)
 
 UPDATE: As per comment from *Jean-Philippe Bempel*, this optimization is more linked to **Dead Code Elimination** rather than **Loop Invariant Code Motion**!
+
+---
+
+**Tags**: Java, JDK 10, JVM, JIT Compiler, HotSpot, Loop Optimization, Loop Invariant Code Motion, Performance, Compiler Optimizations, JMH, Microbenchmark

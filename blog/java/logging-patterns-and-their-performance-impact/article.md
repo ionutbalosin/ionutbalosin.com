@@ -228,3 +228,7 @@ In this scenario, everything is logged, which means the final String is always c
 - [Support the lambda expression in the Logger](https://jira.qos.ch/browse/SLF4J-371)
 
 UPDATE: The initial post was updated based on the feedback received from **Francesco Nigro** and **dmitry\_vk**.
+
+---
+
+**Tags**: Java, Logging, SLF4J, Logback, Log4j, Performance, JMH, Microbenchmark, Java Logging, Performance Patterns, Java Performance

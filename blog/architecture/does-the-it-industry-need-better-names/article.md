@@ -112,3 +112,7 @@ Under technical circumstances, try to capture and specify everything as being qu
 ## **Final conclusions**
 
    Names reflect education and influence the way we perceive things and develop ourselves. Having proper names leads to an organic industry evolution; people will stop using leaky terms and the quality and level of standardization inside IT will increase.
+
+---
+
+**Tags**: Software Architecture, IT Industry, Naming, Software Engineering, Microservices, Components, Quality Assurance, Software Terminology, Industry Terms

@@ -424,3 +424,7 @@ If you are interested in Just In Time (JIT) Compiler benchmarks, in addition to 
 - [Understanding Low Latency JVM GCs](https://www.youtube.com/watch?v=MU8NapbG1IQ) – Jean-Philippe Bempel
 - [Write Barriers in G1 GC](https://www.jfokus.se/jfokus17/preso/Write-Barriers-in-Garbage-First-Garbage-Collector.pdf) – by Monica Beckwith
 - [Intergenerational Barriers](https://shipilev.net/jvm/anatomy-quarks/13-intergenerational-barriers/) – by Aleksey Shipilëv
+
+---
+
+**Tags**: Java, JDK 13, JVM, Garbage Collection, GC Benchmarks, Performance, OpenJDK, ZGC, G1, Shenandoah, Parallel GC, JMH, Memory Management

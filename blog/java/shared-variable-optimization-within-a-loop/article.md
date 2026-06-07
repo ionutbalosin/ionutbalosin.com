@@ -151,3 +151,7 @@ Another approach is to simply remove the **Thread.sleep(5000)** call. Since th
 
 - [On Stack Replacement](https://mechanical-sympathy.blogspot.ro/2011/11/biased-locking-osr-and-benchmarking-fun.html)
 - [JVM Safepoints](http://psy-lob-saw.blogspot.ro/2015/12/safepoints.html)
+
+---
+
+**Tags**: Java, JVM, JIT Compiler, Loop Optimization, HotSpot, Performance, JMH, Microbenchmark, Compiler Optimizations, Bytecode

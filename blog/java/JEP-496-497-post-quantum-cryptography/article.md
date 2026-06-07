@@ -659,5 +659,3 @@ The quantum era is coming. Java is ready.
 ---
 
 **Tags**: Java, JDK 24, Cryptography, Post-Quantum Cryptography, Security, ML-KEM, ML-DSA, Quantum-Resistant, NIST, Encryption, Digital Signatures, Key Encapsulation, Lattice-Based Cryptography, Java Security
-
-<!-- WordPress Categories: Java, Security, Cryptography -->

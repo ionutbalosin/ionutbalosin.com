@@ -650,3 +650,7 @@ I am very thankful to [Jiří Holuša](https://linkedin.com/in/jiří-holuša-16
 3. Ko Turk: [Your frontend is ☠️ ⚠️ Let's measure its impact with CO2.js](https://www.adesso.nl/en/news/blog/your-frontend-is-let-s-measure-its-impact-with-co2-js.jsp)
 
 4. Ko Turk: [Green Software Engineering: Best Practices](https://www.adesso.nl/en/news/blog/green-software-engineering-best-practices.jsp)
+
+---
+
+**Tags**: Java, JDK 21, JVM, Energy Consumption, Power Consumption, Sustainability, Green Computing, Performance, Empirical Study, Benchmarks, Carbon Footprint, JVM Energy, JMH

@@ -138,3 +138,7 @@ Working collaboratively together is far more important than defining rules of in
 The architect should not religiously trust or follow any methodology (e.g. SCRUM, SAFe, etc), as they all have pros and cons, strengths and weaknesses, and are sometimes poorly applied in practice. All methodologies are leaky to some extent. The agile architect is one who does not stick to any schema or dogmatic role. The agile architect must be pragmatic, flexible, and intensively involved in the software development lifecycle process. They must possess good communication but also negotiation skills, continuously search for improvements, and offer guidance and vision to the team.
 
 The Agile Manifesto values are not binaries. It is not only “working software”, “individuals and interactions”, “responding to change” or “customer collaboration”, but rather a scale that an architect, in collaboration with other roles within the team, needs to properly adjust, whether more to the left or right, depending on stakeholders concerns, the development organization, the technical environment, and their expertise.
+
+---
+
+**Tags**: Agile, Agile Manifesto, Software Architecture, Software Engineering, Architect Role, Agile Values, Software Development, Documentation, Customer Collaboration

@@ -139,3 +139,7 @@ Threads   Benchmark        Mode Cnt Score Error Units
 - [Synchronization and Object Locking](https://wiki.openjdk.java.net/display/HotSpot/Synchronization)
 
 UPDATE: As per comment from [Alexandru Nedel](https://ro.linkedin.com/in/anedel), I have updated “**PI Calculus**” with “**computing digits of** PI”!
+
+---
+
+**Tags**: Java, Concurrency, Locks, Synchronized, Lock Contention, JVM, HotSpot, Performance, JMH, Microbenchmark, Lock Optimization, Synchronization, Java Concurrency

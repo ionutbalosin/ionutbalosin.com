@@ -272,3 +272,7 @@ Without explicit inlining, there are three virtual calls towards **execute**()�
 - [How Much Inlining Can We Do?](http://psy-lob-saw.blogspot.com/2018/07/how-inlined-code-confusing-profiles.html) by Nitsan Wakart
 - [Virtual Calls](https://wiki.openjdk.java.net/display/HotSpot/VirtualCalls) by John Rose
 - [The Black Magic of (Java) Method Dispatch](https://shipilev.net/blog/2015/black-magic-method-dispatch/) by Aleksey Shipilёv
+
+---
+
+**Tags**: Kotlin, JVM, Inlining, Megamorphic Call Sites, Performance, JIT Compiler, HotSpot, JMH, Microbenchmark, Compiler Optimizations, Java Interop

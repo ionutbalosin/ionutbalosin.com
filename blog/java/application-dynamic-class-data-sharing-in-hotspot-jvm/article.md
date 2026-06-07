@@ -337,3 +337,7 @@ The more recent JDK version to use the better. Latest JDK versions include notic
 In my opinion, AppCDS or dynamic CDS is a feature you should try out on your own. It is a mechanism that could bring benefits almost for free, you do not have to change the application code. How big are these improvements, I cannot tell you, it depends, as always, from case to case.
 
 Similar topics (e.g., CDS, AppCDS, and dynamic CDS) I recently presented at a Java conference. You can download [the slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/application-dynamic-class-data-sharing-in-hotspot-jvm/Techniques-for-a-faster-JVM-start-up.pdf) and additionally there is a [short tutorial](https://github.com/ionutbalosin/faster-jvm-start-up-techniques/blob/main/app-dynamic-cds-hotspot/README.md) on GitHub (including some command-line options and an application I used).
+
+---
+
+**Tags**: Java, JVM, HotSpot, CDS, AppCDS, Dynamic CDS, Class Data Sharing, Startup Performance, jcmd, Performance, JVM Internals, Class Loading

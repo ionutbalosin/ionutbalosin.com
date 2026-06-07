@@ -39,3 +39,7 @@ There are also situations where the architect role might not be fundamentally ne
 - projects, where there are no new integrations and the team, has less or minimal dependencies on other systems.
 
 These two categories are nor black or white neither binary values. This does not mean that if your project is more similar to one category or the other there should be a YES or NO decision, but rather carefully identify the need for an architect based on the project complexity, technical challenges, external dependencies, etc. Understanding the project context, the scope or its mission will help us in making a rational decision about hiring an architect or not in the team.
+
+---
+
+**Tags**: Software Architecture, Architect Role, Software Development, Project Management, Architectural Decisions, Software Engineering, Career, IT Industry, Project Types

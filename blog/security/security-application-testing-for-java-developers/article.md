@@ -120,3 +120,7 @@ Of course, you can use other similar tools besides those I have presented here, 
 
 - [Application Security for Java Developers Course](https://ionutbalosin.com/training/application-security-for-java-developers-course) – Level up your Java security skills! 🎓 🚀
 - [Java Application Security Practices](https://github.com/ionutbalosin/java-application-security-practices) - GitHub source code
+
+---
+
+**Tags**: Java, Security, Application Security, Security Testing, SCA, SAST, DAST, Penetration Testing, OWASP, Vulnerability Scanning, DevSecOps, CI/CD, Software Composition Analysis

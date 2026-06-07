@@ -811,3 +811,7 @@ Consider increasing the number of maximum heap size as a percentage of available
 - [Memory footprint of a Java process by Andrei Pangin](https://drive.google.com/file/d/1xoa2xZz3sa4FWeMLTVthNL09AniVxHy_/view)
 
 UPDATE: The initial post was slightly updated based on the feedback received from **Alex Blewitt** and **Aleksey Shipilëv** on [Twitter](https://twitter.com/ionutbalosin/status/1214479770005753857).
+
+---
+
+**Tags**: Java, JVM, HotSpot, Performance Tuning, Heap, Metaspace, Code Cache, Class Loading, JIT Compiler, Garbage Collection, Java Performance, Tuning Guidelines

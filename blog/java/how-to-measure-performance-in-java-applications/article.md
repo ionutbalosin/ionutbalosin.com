@@ -78,3 +78,7 @@ When focusing on a macrobenchmarking level do to forget to understand what it is
 
 - [Gatling](https://gatling.io/)
 - [wrt2](https://github.com/giltene/wrk2)
+
+---
+
+**Tags**: Java, Performance, JMH, Microbenchmark, Macrobenchmark, Performance Testing, Benchmarks, Warmup Iterations, Java Performance, Performance Engineering, Profiling

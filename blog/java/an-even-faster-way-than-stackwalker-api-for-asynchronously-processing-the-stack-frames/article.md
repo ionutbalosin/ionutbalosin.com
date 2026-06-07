@@ -221,3 +221,7 @@ As you might notice, this mechanism intentionally avoids the cost of generating 
 
 - when there is a strong need to synchronously process stack frames within the caller thread (i.e. business logic depends on it, hence it cannot be decoupled), **StackWalker** API offers better performance in comparison to **Throwable::getStackTrace** or **Thread::getStackTrace** APIs
 - if the stack frames can be asynchronously processed and it does not influence the normal control flow of the application, **StackWalker API** might not be the best fit! In such case, it looks more optimal, from a performance standpoint, to just create the Throwable frames and to process them on a different thread.
+
+---
+
+**Tags**: Java, StackWalker, Stack Trace, JVM, Performance, JNI, Async Profiling, JMH, Microbenchmark, JVM Internals, Asynchronous Processing

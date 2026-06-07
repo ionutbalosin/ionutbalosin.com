@@ -111,3 +111,7 @@ Complementary to this post I highly recommend reading these two complementary ar
 
 - [Why Do We Need Architectural Diagrams?](https://ionutbalosin.com/2019/02/why-do-we-need-architectural-diagrams)
 - [The Art Of Crafting Architectural Diagrams](https://ionutbalosin.com/2017/09/the-art-of-crafting-architectural-diagrams)
+
+---
+
+**Tags**: Software Architecture, Architectural Documentation, ADR, C4 Model, Documentation, Software Engineering, Architectural Diagrams, Architectural Models, Documentation Quality

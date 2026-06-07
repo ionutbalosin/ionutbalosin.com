@@ -561,5 +561,3 @@ The architecture is instructive: build on proven foundations (CDS), extend incre
 ---
 
 **Tags**: Java, JDK 24, AOT Compilation, Ahead-of-Time, Class Loading, Startup Performance, CDS, Class Data Sharing, Project Leyden, JVM Optimization, Performance, Java Performance Tuning
-
-<!-- WordPress Categories: Java, Performance, JVM Internals -->

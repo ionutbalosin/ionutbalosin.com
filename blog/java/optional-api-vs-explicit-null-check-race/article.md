@@ -150,3 +150,7 @@ mov eax,DWORD PTR [r12+rbp*8+0xc] //*getfield value
 In comparison to the previous **ifComparison** version, in this case the Optional API code does an explicit null check and a cast for each indirection call (e.g. Outer -> Nested -> Inner) which might be a reasonable explanation for the difference in performance between these two.
 
 I might admit probably it is not quite significant, since it is less than 1 ns/op as spotted by this test case. However, I would encourage you to favor clean code over performance optimization tricks which might add complexity. If the case, then you can keep this in mind and if the application bottleneck comes out of this, which I doubt, then you can rely on these refined optimizations.
+
+---
+
+**Tags**: Java, JDK 8, Optional API, Null Check, Performance, JIT Compiler, JMH, Microbenchmark, Functional Programming, Java Performance

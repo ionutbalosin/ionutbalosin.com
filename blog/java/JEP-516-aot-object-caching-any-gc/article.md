@@ -561,5 +561,3 @@ The broader Project Leyden roadmap - AOT class loading (JEP 483), method profili
 ---
 
 **Tags**: Java, JDK 26, AOT Compilation, Ahead-of-Time, Object Caching, Garbage Collection, ZGC, Generational ZGC, Startup Performance, Memory Management, CDS, Class Data Sharing, Java Performance
-
-<!-- WordPress Categories: Java, Performance, Garbage Collection -->

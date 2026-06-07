@@ -1167,3 +1167,7 @@ Please do not take this report too religiously, it is far away to cover all poss
 On top of that, it is very difficult to predict which Compiler performs better in a real-world application. My advice is to try it on your own. Micro-benchmarks are nice, but what it really matters is the difference in performance on production code. However, if you want some general application guidelines, please check my presentation “**A race of two compilers: Graal JIT vs. C2 JIT. Which one offers better runtime performance?**” . It also includes the Garbage Collectors compatibility in OpenJDK (i.e. Graal JIT cannot be enabled with every Garbage Collector).
 
 I hope you have enjoyed reading it, despite the length. If you find this useful or interesting, I would be very glad to get your feedback (in terms of missing use cases, unclear explanations, etc.) or, if you want to contribute with different benchmark patterns please do not hesitate to [get in touch](https://ionutbalosin.com/contact/).
+
+---
+
+**Tags**: Java, JDK 13, JVM, JIT Compiler, GraalVM, C1, C2, OpenJDK, Performance, JMH, Compiler Benchmarks, JIT Optimizations

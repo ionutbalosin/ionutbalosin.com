@@ -70,3 +70,7 @@ I also painted the software architecture diagram (including all application comp
 I advise you to do the same for your team. Keep on increasing collaboration, communication, vision, and guidance by using just enough architectural diagrams, and stop creating them for any other reasons, especially if the team does not use them. Manually creating and maintaining diagrams to reflect the code behavior is, in most of the cases, a waste of time. In doing so, you might be tempted to add more and more such diagrams as source code evolves, which is a dangerous trap. Rather than creating an exhausting number of diagrams, stick to two or three which describe the system from different levels of abstractions and are really necessary for the team. Always keep them updated; this task is made easier when it does not contain too many details and it is part of the team culture.
 
 Also, keep in mind the team should be the main beneficiary of architectural diagrams. If they do not manifest any interest, then you should probably stop creating them; it might be waste of time. We should not create architectural diagrams just “for the sake of having them,” to follow some comprehensive methodologies, or to justify our role as Architects.
+
+---
+
+**Tags**: Software Architecture, Architectural Diagrams, Documentation, Software Design, System Design, Communication, Software Engineering, Diagrams

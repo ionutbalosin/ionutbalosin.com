@@ -702,3 +702,6 @@ In closing, all of these security HTTP headers help mitigate surface attacks on 
 - [HTTP headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers)
 - [clickjacking](https://en.wikipedia.org/wiki/Clickjacking)
 
+---
+
+**Tags**: Java, Security, Application Security, Web Security, API Security, Authentication, Authorization, OAuth2, OpenID Connect, JWT, JWKS, Token Introspection, CORS, CSP, HTTP Security Headers, OWASP

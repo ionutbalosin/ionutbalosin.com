@@ -68,3 +68,7 @@ Starting directly with an ORM and neglecting the first three approaches (in that
 Not at all, in my opinion. There might be other forces towards using an ORM (e.g. company strategies, architects or developers bias) but not the architectural style itself.
 
 Nevertheless, for an architectural style where the services are smaller, modular, and independently deployable (i.e. microservices) using an ORM adds unnecessary complexity to the service since in general such services have a relatively limited object data model, much easier to manage otherwise.
+
+---
+
+**Tags**: Software Architecture, ORM, Hibernate, JPA, Database, Persistence, SQL, Java Persistence, Architectural Patterns, Software Design, Database Access

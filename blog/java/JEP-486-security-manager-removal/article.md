@@ -687,5 +687,3 @@ The Security Manager era is over. Java's security posture is stronger for it.
 ---
 
 **Tags**: Java, JDK 24, Security Manager, Java Security, Deprecation, Migration, Containerization, Docker, Security, Java Evolution, Legacy Code, Application Security
-
-<!-- WordPress Categories: Java, Security, Migration -->

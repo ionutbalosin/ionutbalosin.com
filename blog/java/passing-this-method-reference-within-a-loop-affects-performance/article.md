@@ -211,3 +211,7 @@ As opposed to the previous flame graphs, in this case, there is no captured **L
   - a variable outside of the loop (inside the method)
   - a field variable belonging to the class (outside of the method)
   - create a class which implements the functional interface and to pass **this** as an argument
+
+---
+
+**Tags**: Java, Method References, Lambda, Performance, JIT Compiler, HotSpot, JMH, Microbenchmark, Inlining, Loop Performance, Functional Interfaces

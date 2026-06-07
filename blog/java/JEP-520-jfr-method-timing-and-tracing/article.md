@@ -608,5 +608,3 @@ Expect this feature to be most useful during troubleshooting sessions rather tha
 ---
 
 **Tags**: Java, JDK 25, JFR, Java Flight Recorder, Profiling, Method Timing, Performance Monitoring, Observability, Tracing, Production Profiling, Performance Analysis, Diagnostics, JVM Monitoring
-
-<!-- WordPress Categories: Java, Performance, Profiling -->

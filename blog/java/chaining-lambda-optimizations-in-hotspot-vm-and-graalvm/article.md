@@ -435,3 +435,7 @@ The other calls (e.g. depth1, depth3, depth5, and depth10) are optimized in a s
 **Graal JIT**
 
 - Using Graal JIT there is not much to worry about, since the Compiler optimizes the code in a more efficient way (i.e. inlining chained lambdas), offering a better response time.
+
+---
+
+**Tags**: Java, Lambda, JVM, HotSpot, GraalVM, JIT Compiler, Inlining, Performance, JMH, Microbenchmark, Compiler Optimizations, Functional Programming
