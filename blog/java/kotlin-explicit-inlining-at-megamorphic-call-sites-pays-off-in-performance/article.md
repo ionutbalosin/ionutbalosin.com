@@ -27,7 +27,7 @@ fun execute(cmath: CMath): Int {
 
 Now, imagine we have a polymorphic hierarchy of classes, as per below:
 
-![](./PolimorphicClassHierarchy.png)
+![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/kotlin-explicit-inlining-at-megamorphic-call-sites-pays-off-in-performance/PolimorphicClassHierarchy.png)
 
 where every child extends the base **CMath** class and overrides the method **compute**(Int).
 

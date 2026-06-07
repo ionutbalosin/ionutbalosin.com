@@ -217,7 +217,7 @@ The result is three overlaid architectures:
 - The **analytical** architecture (data products, warehouses, BI).
 - The **AI** architecture (sidecars, guardrails, evals, models).
 
-![Agentic Mesh.svg](Agentic_Mesh.svg)
+![Agentic Mesh.svg](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/architecture/software-architecture-in-the-ai-era-what-doesnt-change-what-does/Agentic_Mesh.svg)
 
 *Agentic Mesh, minimal view: the trio (service, data product, AI sidecar) is owned and repeated per domain; the analytical fabric and the AI control plane are shared across domains.*
 

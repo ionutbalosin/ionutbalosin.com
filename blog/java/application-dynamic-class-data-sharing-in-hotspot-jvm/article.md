@@ -49,7 +49,7 @@ $JAVA_HOME\\bin\\classlist
 
 CDS archive is divided into 7 regions, as per the below diagram:
 
-![](./CDSStructure.svg)
+![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/application-dynamic-class-data-sharing-in-hotspot-jvm/CDSStructure.svg)
 
 **Details:**
 
@@ -194,7 +194,7 @@ $ java -Xlog:cds -XX:SharedArchiveFile=dynamic-cds.jsa -cp <app jar> MyApp
 
 The layering dependency between the dynamic CDS archive and the static archive could be illustrated as follows:
 
-![](./TopBaseCDSLayers-1.svg)
+![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/application-dynamic-class-data-sharing-in-hotspot-jvm/TopBaseCDSLayers-1.svg)
 
 In this dependency chain, the static archive could be the default CDS archive (i.e., `classes.jsa`) or a custom AppCDS archive (i.e., a static archive). AppCDS used as a base layer archive overrides the default CDS archive. The dynamic archive just provides additional classes that can be loaded on top of those from the AppCDS archive.
 
@@ -336,4 +336,4 @@ The more recent JDK version to use the better. Latest JDK versions include notic
 
 In my opinion, AppCDS or dynamic CDS is a feature you should try out on your own. It is a mechanism that could bring benefits almost for free, you do not have to change the application code. How big are these improvements, I cannot tell you, it depends, as always, from case to case.
 
-Similar topics (e.g., CDS, AppCDS, and dynamic CDS) I recently presented at a Java conference. You can download [the slides](Techniques-for-a-faster-JVM-start-up.pdf) and additionally there is a [short tutorial](https://github.com/ionutbalosin/faster-jvm-start-up-techniques/blob/main/app-dynamic-cds-hotspot/README.md) on GitHub (including some command-line options and an application I used).
+Similar topics (e.g., CDS, AppCDS, and dynamic CDS) I recently presented at a Java conference. You can download [the slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/application-dynamic-class-data-sharing-in-hotspot-jvm/Techniques-for-a-faster-JVM-start-up.pdf) and additionally there is a [short tutorial](https://github.com/ionutbalosin/faster-jvm-start-up-techniques/blob/main/app-dynamic-cds-hotspot/README.md) on GitHub (including some command-line options and an application I used).

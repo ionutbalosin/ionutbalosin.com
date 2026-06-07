@@ -170,7 +170,7 @@ Probably an easy way to profile these methods is by using [IDEA v2018.3 Ultimat
 
 ##### **lambdaReference** test case:
 
-[![](./lambdaReference.png)](./lambdaReference.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/passing-this-method-reference-within-a-loop-affects-performance/lambdaReference.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/passing-this-method-reference-within-a-loop-affects-performance/lambdaReference.png)
 
 As pointed out, the issue here is the call to **Lambda$51**.**get$Lambda** which generates a new instance every time. Below is the VM anonymous class generated during startup which reveals this:
 
@@ -200,7 +200,7 @@ final class LinkToTargetMethodVsLambdaReferenceBenchmark$$Lambda$51 implements C
 
 ##### **linkToTargetMethod** test case:
 
-[![](./linkToTargetMethod.png)](./linkToTargetMethod.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/passing-this-method-reference-within-a-loop-affects-performance/linkToTargetMethod.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/passing-this-method-reference-within-a-loop-affects-performance/linkToTargetMethod.png)
 
 As opposed to the previous flame graphs, in this case, there is no captured **Lambda$51.get$Lambda** call by the graph, hence there substantially fewer heap allocations.
 

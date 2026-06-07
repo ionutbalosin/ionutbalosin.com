@@ -55,11 +55,11 @@ In my project I use mainly two types of diagrams:
 
 - **context diagrams**
 
-![](./1why-architectural-diagrams-1-1547639072090.jpg)
+![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/architecture/why-do-we-need-architectural-diagrams/1why-architectural-diagrams-1-1547639072090.jpg)
 
 - **application or software component diagrams**
 
-![](./1why-architectural-diagrams-2-1547639071547.jpg)
+![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/architecture/why-do-we-need-architectural-diagrams/1why-architectural-diagrams-2-1547639071547.jpg)
 
 Please treat these diagrams as simple examples, showing some guidance about a reasonable level of information each diagram should provide. **Information on one diagram should be relevant to the corresponding abstraction level, but also must fulfill stakeholders needs.** In practice, it might be tempting to add more and more details to a diagram, but if they are not really useful to the beneficiaries, it leads to extra noise, increased maintenance and the risk of being out of date. Specific to these diagrams, including details like protocols and data format might be very handy for technical stakeholders, since they are a necessary implementation detail. However, as also stated in the article, there is no precise methodology to explicitly describe the appropriate amount of details a diagram should include. It really depends from project to project, nevertheless, the architect must identify what is really useful for the stakeholders and create and maintain the diagrams to properly reflect that.
 

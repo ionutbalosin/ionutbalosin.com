@@ -33,7 +33,7 @@ In this context, the current article aims to test the performance between **Thre
 
 Let’s first try to write a small benchmark which measures the performance of getting the current thread stack frame out of a recursive call when it reaches a specific stack depth. Roughly, it looks like this:
 
-![](./StackWalker-1024x648.png)
+![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/an-even-faster-way-than-stackwalker-api-for-asynchronously-processing-the-stack-frames/StackWalker-1024x648.png)
 
 At this stage we are interested only in the top / current stack frame and not all the others, since we would like to spot the efficiency between the lazy mechanism of building the frames one by one (on demand, using StackWalker API) and the cost of eagerly fetching all of them using Thread::getStackTrace API, even if just one is a matter of interest.
 
@@ -132,7 +132,7 @@ Maybe … let’s try the following approach: let’s asynchronously process (i.
 
 In case of **StackWalker** API, the frames cannot be asynchronously processed! When StackWalker API collects the stack frames from a running thread, it first pauses the thread, collects the stack and then resumes the thread. The stream of frames cannot be returned and walked later on within another thread, it needs to be synchronous to invoking thread in order to lazily get information about the stack traces, otherwise, the stack would be in an inconsistent state.
 
-Below is a graphical representation between the approach of generating a Throwable on Thread #1, dispatching it to Thread #2 for asynchronously processing the frames (i.e. minimizing the cost on Thread #1, hence improving the response time) versus **StackWalker** API which synchronously traverses backward the frames. ![](./StackWalker2.png)
+Below is a graphical representation between the approach of generating a Throwable on Thread #1, dispatching it to Thread #2 for asynchronously processing the frames (i.e. minimizing the cost on Thread #1, hence improving the response time) versus **StackWalker** API which synchronously traverses backward the frames. ![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/an-even-faster-way-than-stackwalker-api-for-asynchronously-processing-the-stack-frames/StackWalker2.png)
 
 This time we are not anymore interested in only the top/current stack frame, but in iterating through more frames (using StackWalker API) to better spot the difference between these two approaches.
 

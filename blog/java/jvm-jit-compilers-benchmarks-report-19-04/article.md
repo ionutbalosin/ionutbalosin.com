@@ -33,7 +33,7 @@ Out of the scope for this report is to macro-benchmark an end to end application
   - Java HotSpot(TM) version 12\_linux-x64 (build 12+33)
 - To eliminate the effects of dynamic frequency scaling, I disabled the *intel\_pstate* driver and I set the CPU governor to *performance*.
 - All benchmark test data structures fit within L1-L3 cache: usually, they are bigger than L1d (32KB) but smaller than L3 (8192KB). Nevertheless, benchmark results are anyway influenced by data sizes (which has also an impact on the CPU caches, branch predictors, etc).
-- All benchmark results are merged in a dedicated [HTML report](report/jmh_visualizer/index.html) on my GitHub account. For better charts quality I would recommend you to open the HTML report since the current post contains only print screens out of it.
+- All benchmark results are merged in a dedicated [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) on my GitHub account. For better charts quality I would recommend you to open the HTML report since the current post contains only print screens out of it.
 
 ## Benchmarks
 
@@ -54,9 +54,9 @@ Where **thresholdLimit** is either:
 - always greater then arrays values – predictable pattern
 - or partially greater than some arrays values – unpredictable pattern
 
-[![](./19_04_IfConditionalBranchBenchmark.png)](./19_04_IfConditionalBranchBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_IfConditionalBranchBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_IfConditionalBranchBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -93,9 +93,9 @@ implicit_null_check(object) {
 }
 ```
 
-[![](./19_04_NullChecksBenchmark.png)](./19_04_NullChecksBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_NullChecksBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_NullChecksBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -162,9 +162,9 @@ Where:
   - **NoEscape** if inlining of equals() succeeds.
   - **ArgEscape** if inlining fails or is disabled.
 
-[![](./19_04_ScalarReplacementBenchmark.png)](./19_04_ScalarReplacementBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_ScalarReplacementBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_ScalarReplacementBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -207,9 +207,9 @@ R[i] = Math.round(A[i]);
 
 Current benchmark also exploits the [vectorization effect](https://en.wikipedia.org/wiki/Automatic_vectorization), however, there are other dedicated test cases in the current report.
 
-[![](./19_04_DoubleMathBenchmark.png)](./19_04_DoubleMathBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_DoubleMathBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_DoubleMathBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -260,9 +260,9 @@ A[i] = i;
 A[i] = i;
 ```
 
-[![](./19_04_VectorizationPatternsSingleIntArrayBenchmark.png)](./19_04_VectorizationPatternsSingleIntArrayBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_VectorizationPatternsSingleIntArrayBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_VectorizationPatternsSingleIntArrayBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -321,9 +321,9 @@ A[i] = A[i + 1] + B[i];
 R[i] = A[i % 2] + B[i];
 ```
 
-[![](./19_04_VectorizationPatternsMultipleFloatArraysBenchmark.png)](./19_04_VectorizationPatternsMultipleFloatArraysBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_VectorizationPatternsMultipleFloatArraysBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_VectorizationPatternsMultipleFloatArraysBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -341,9 +341,9 @@ Tests different vectorization patterns using multiple arrays of ints. All loops 
 
 Benchmark use cases are similar to the ones from **VectorizationPatternsMultipleFloatArraysBenchmark**, hence no need to duplicate them anymore.
 
-[![](./19_04_VectorizationPatternsMultipleIntArraysBenchmark.png)](./19_04_VectorizationPatternsMultipleIntArraysBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_VectorizationPatternsMultipleIntArraysBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_VectorizationPatternsMultipleIntArraysBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -366,9 +366,9 @@ int[] A, B, C, R;
 R[i] = C[i] + A[B[i]];
 ```
 
-[![](./19_04_VectorizationScatterGatherPatternBenchmark.png)](./19_04_VectorizationScatterGatherPatternBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_VectorizationScatterGatherPatternBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_VectorizationScatterGatherPatternBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -413,9 +413,9 @@ int t4999(int i) { // size = 12 bytes
 }
 ```
 
-[![](./19_04_CodeCacheBusterBenchmark.png)](./19_04_CodeCacheBusterBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_CodeCacheBusterBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_CodeCacheBusterBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -435,9 +435,9 @@ method(double d00, double d01, ... double d63) {
 }
 ```
 
-[![](./19_04_MethodArgsBusterBenchmark.png)](./19_04_MethodArgsBusterBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_MethodArgsBusterBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_MethodArgsBusterBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -471,9 +471,9 @@ Where **call\_to\_method**() is:
 - either a call to a native method (e.g. Math.tan, Math.atan)
 - or a user-defined iterative function (e.g. [Leibniz formula](https://en.wikipedia.org/wiki/Leibniz_formula_for_%CF%80) for PI computation using an infinite series).
 
-[![](./19_04_DeadCodeEliminationBenchmark.png)](./19_04_DeadCodeEliminationBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_DeadCodeEliminationBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_DeadCodeEliminationBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -511,9 +511,9 @@ method() {
 
 Current benchmark also exploits the [common subexpression elimination](https://en.wikipedia.org/wiki/Common_subexpression_elimination) since **Math.tan((i – 1) \* x)** is computed twice per loop cycle.
 
-[![](./19_04_LoopInvariantCodeMotionBenchmark.png)](./19_04_LoopInvariantCodeMotionBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_LoopInvariantCodeMotionBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_LoopInvariantCodeMotionBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -543,9 +543,9 @@ method(iterations, accumulator) {
 }
 ```
 
-[![](./19_04_LoopReductionBenchmark.png)](./19_04_LoopReductionBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_LoopReductionBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_LoopReductionBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -584,9 +584,9 @@ method() {
 
 Current benchmark also exploits the [vectorization effect](https://en.wikipedia.org/wiki/Automatic_vectorization), however, there are other dedicated test cases in the current report.
 
-[![](./19_04_LoopFusionBenchmark.png)](./19_04_LoopFusionBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_LoopFusionBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_LoopFusionBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -617,9 +617,9 @@ method() {
 }
 ```
 
-[![](./19_04_ScalarEvolutionAndLoopOptimizationBenchmark.png)](./19_04_ScalarEvolutionAndLoopOptimizationBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_ScalarEvolutionAndLoopOptimizationBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_ScalarEvolutionAndLoopOptimizationBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -661,9 +661,9 @@ Benchmark use cases:
 - **straighten\_3\_int**: tests how well variable integer comparisons are straightened.
 - **straighten\_3\_long**: tests how well variable long comparisons are straightened.
 
-[![](./19_04_StraightenCodeBenchmark.png)](./19_04_StraightenCodeBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_StraightenCodeBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_StraightenCodeBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -693,9 +693,9 @@ shift() {
 
 Where **predicate** is always evaluated to true, at runtime.
 
-[![](./19_04_StrengthReductionBenchmark.png)](./19_04_StrengthReductionBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_StrengthReductionBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_StrengthReductionBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -718,9 +718,9 @@ tail_recursive(int n, int a, int b) {
 }
 ```
 
-[![](./19_04_TailRecursionBenchmark.png)](./19_04_TailRecursionBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_TailRecursionBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_TailRecursionBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -757,9 +757,9 @@ method() {
 }
 ```
 
-[![](./19_04_LockCoarseningBenchmark.png)](./19_04_LockCoarseningBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_LockCoarseningBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_LockCoarseningBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -790,9 +790,9 @@ method() {
 }
 ```
 
-[![](./19_04_LockElisionBenchmark.png)](./19_04_LockElisionBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_LockElisionBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_LockElisionBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -826,9 +826,9 @@ method() {
 }
 ```
 
-[![](./19_04_RecursiveLockBenchmark.png)](./19_04_RecursiveLockBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_RecursiveLockBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_RecursiveLockBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -847,9 +847,9 @@ Benchmark use cases:
 - **redundant\_zero\_volatile\_stores**: test the removal of redundant zero volatile stores following an object allocation.
 - **redundant\_non\_zero\_volatile\_stores**: test the removal of stores followed by other non-zero stores to the same memory location.
 
-[![](./19_04_StoreAfterStoreBenchmark.png)](./19_04_StoreAfterStoreBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_StoreAfterStoreBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_StoreAfterStoreBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -870,9 +870,9 @@ Benchmark use cases:
 - **redundant\_null\_or\_zero\_volatile\_store**: tests allocation with explicit stores of null/zero for all fields, where all fields are volatile.
 - **no\_store**: tests allocation without any explicit stores for any fields.
 
-[![](./19_04_PostAllocationStoresBenchmark.png)](./19_04_PostAllocationStoresBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_PostAllocationStoresBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_PostAllocationStoresBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -893,9 +893,9 @@ Tests how well the Compiler could optimize the **monomorphic**, **bimorphic** an
 
 For further details please check my [previous article](https://ionutbalosin.com/2019/03/kotlin-explicit-inlining-at-megamorphic-call-sites-pays-off-in-performance/), section **A Bit Of Theory**.
 
-[![](./19_04_MegamorphicAbsClassCallBenchmark.png)](./19_04_MegamorphicAbsClassCallBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_MegamorphicAbsClassCallBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_MegamorphicAbsClassCallBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -912,9 +912,9 @@ Tests how well the Compiler could optimize the monomorphic, bimorphic and megamo
 
 Benchmark use cases are similar to the ones from **MegamorphicAbsClassCallBenchmark**, hence no need to duplicate them anymore.
 
-[![](./19_04_MegamorphicInterfaceCallBenchmark.png)](./19_04_MegamorphicInterfaceCallBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_MegamorphicInterfaceCallBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_MegamorphicInterfaceCallBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -946,9 +946,9 @@ Tests lambdas chaining optimizations (capture + invocation) for different depth 
 // ...
 ```
 
-[![](./19_04_ChainingLambdaBenchmark.png)](./19_04_ChainingLambdaBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_ChainingLambdaBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/19_04_ChainingLambdaBenchmark.png)
 
-<<click on the picture to enlarge or open the full [HTML report](report/jmh_visualizer/index.html) from GitHub >>
+<<click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -960,7 +960,7 @@ Tests chaining anonymous class optimizations (capture + invocation) for differen
 
 Benchmark use cases are similar to the ones from **ChainingLambdaBenchmark**, however, instead of lambdas, there are anonymous classes.
 
-Results are also very similar to the **ChainingLambdaBenchmark** case. Please visit the full [HTML report](report/jmh_visualizer/index.html) from GitHub to check them.
+Results are also very similar to the **ChainingLambdaBenchmark** case. Please visit the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub to check them.
 
 #### Conclusions
 
@@ -972,7 +972,7 @@ Tests bounded method reference chaining optimizations (capture + invocation) for
 
 Benchmark use cases are similar to the ones from **ChainingLambdaBenchmark**, however, instead of lambdas, there are bounded method references.
 
-Results are also very similar to the **ChainingLambdaBenchmark** case. Please visit the full [HTML report](report/jmh_visualizer/index.html) from GitHub to check them.
+Results are also very similar to the **ChainingLambdaBenchmark** case. Please visit the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub to check them.
 
 #### Conclusions
 
@@ -984,7 +984,7 @@ Tests unbounded method reference chaining optimizations (capture + invocation) f
 
 Benchmark use cases are similar to the ones from **ChainingLambdaBenchmark**, however, instead of lambdas, there are unbounded method references.
 
-Results are also very similar to the **ChainingLambdaBenchmark** case. Please visit the full [HTML report](report/jmh_visualizer/index.html) from GitHub to check them.
+Results are also very similar to the **ChainingLambdaBenchmark** case. Please visit the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-jit-compilers-benchmarks-report-19-04/report/jmh_visualizer/index.html) from GitHub to check them.
 
 #### Conclusions
 

@@ -66,7 +66,7 @@ In some cases microbenchmarking the application does not help too much, it does 
 
 One important thing about macro-benchmarks is they might give an unrealistic treatment of Garbage Collectors. For example, during the macrobenchmark test there might be either only Young Generation Collections or extremely fewer Old Generation Collections. Below is an example of Heap behavior during performance tests which create a lot of temporary objects, hence stressing the Young Garbage Collector and creating not-accurate results.
 
-![](./HeapEvolution.png)
+![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/how-to-measure-performance-in-java-applications/HeapEvolution.png)
 
 Heap behavior during performance tests when creating a lot of objects
 

@@ -21,7 +21,7 @@ For more than one and a half decades, I have been working on different systems w
 
 When I reason about architectural documentation I tend to look at it from two different perspectives: **quality** and **quantity**. For me the documentation quality is not negotiable, it always needs to have high standards (i.e., in terms of consistency, accuracy, etc.). On the other side, I see the quantity as very much dependent on the environment and all the specifics I mentioned above (e.g., stakeholders, project, development methodology, company, etc.). There is no direct relation between quality and quantity when talking about architectural documentation.
 
-![Architectural Documentation Evaluation Matrix](./ArchitecturalDocumentationAssesmentMatrix.svg)
+![Architectural Documentation Evaluation Matrix](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/architecture/just-enough-architectural-documentation/ArchitecturalDocumentationAssesmentMatrix.svg)
 
 **Just enough** means, in this context, minimum but meaningful architectural documentation, or architectural documentation with high quality and the appropriate quantity.
 
@@ -49,7 +49,7 @@ For example, one project could have a lot of outdated, redundant, or fragmented 
 
 Below is my suggestion in regards to **just enough** architectural documentation that makes sense for the majority of projects where documentation is a concern:
 
-![Just Enough Architectural Documentation](./ArchitecturalDocumentation_HighLevel.svg)
+![Just Enough Architectural Documentation](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/architecture/just-enough-architectural-documentation/ArchitecturalDocumentation_HighLevel.svg)
 
 **Note:** **static view** describes the application structures, the elements (or components), and the relations between them without details about their dynamic behavior, that are captured in the **runtime view**.
 
@@ -67,7 +67,7 @@ The main beneficiaries of this diagram are, in general, the business stakeholder
 
 **Case study:** let’s suppose we design a system called MyBank. The context diagram looks like this:
 
-![Context Diagram](./ContextDiagram_MyBank.svg)
+![Context Diagram](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/architecture/just-enough-architectural-documentation/ContextDiagram_MyBank.svg)
 
 ### ****Software Diagram****
 
@@ -77,7 +77,7 @@ The main beneficiaries of this diagram are, in general, people with a technical 
 
 **Case study:** MyBank software diagram (using a microservices approach):
 
-![Software Architecture Diagram](./SoftwareArchitectureDiagram_MyBank.svg)
+![Software Architecture Diagram](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/architecture/just-enough-architectural-documentation/SoftwareArchitectureDiagram_MyBank.svg)
 
 ### **Deployment Diagram**
 
@@ -87,7 +87,7 @@ The main beneficiaries of this diagram are DevOps, system engineers, security en
 
 **Case study:** MyBank deployment diagram:
 
-![Deployment Diagram](./DeploymentDiagram_MyBank.svg)
+![Deployment Diagram](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/architecture/just-enough-architectural-documentation/DeploymentDiagram_MyBank.svg)
 
 **Note:** the deployment diagram might look a bit cumbersome. It is usually created with the help of DevOps.
 

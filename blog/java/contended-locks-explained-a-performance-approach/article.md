@@ -29,11 +29,11 @@ As opposite, in case of **contended locks**, there is at least one more thread T
 
 Contended locks are associated with a heavy weight locking scheme, also known as inflated locks, in order to handle multiple threads trying to acquire the same monitor. Contended locks do not use anymore CAS operations, as in case of uncontended locks, however, they follow the slow path. This mechanism uses a ‘**WaitSet**‘ queue which contains the set of threads waiting for the same contended lock. When a new thread has to go into the waiting state (i.e. Object.wait()), it is enqueued in the ‘**WaitSet**‘ and dequeued later on, as a result of an Object.notify() or Object.notifyAll(), being able to get the object monitor.
 
-![](./MonitorLocks-1.png)
+![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/contended-locks-explained-a-performance-approach/MonitorLocks-1.png)
 
 All the above cover the fundamentals from Java 8 in regards to contended locks (usually done in the slow path). Now, let’s see where the improvements from Java 9 fit into the picture, in comparison previous version.
 
-![](./MonitorLocks-2.png)
+![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/contended-locks-explained-a-performance-approach/MonitorLocks-2.png)
 
 Prior Java 9, in case of contended locks, when a thread attempts to get into the object monitor (e.g. ObjectMonitor::enter) it follows the slow path (e.g. ObjectMonitor::slow\_enter). Starting Java 9, there is not anymore the slow path, instead, the thread takes the quick path (e.g. ObjectMonitor::quick\_enter). Basically, if the lock is already inflated and there are few threads going to access the monitor, there is no need to keep the threads in the **‘WaitSet’** queue, but rather transferring them directly to the monitor queue. Normally, in the slow path, the threads are enqueued in the **‘WaitSet’** which takes extra CPU cycles, hence impacting the performance. But since the threads are waiting for the monitor and the lock is already inflated, it does not make sense to go via **‘WaitSet’** anymore**!**
 

@@ -38,7 +38,7 @@ Please note this guideline is not exclusive, there might be other handy flags no
 
 Before going into further details, it is important to have a high-level understanding of possible components that shape the HotSpot JVM architecture.
 
-[![](./HotSpotArchitecture.png)](./HotSpotArchitecture.png)**Legend:**
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/hotspot-jvm-performance-tuning-guidelines/HotSpotArchitecture.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/hotspot-jvm-performance-tuning-guidelines/HotSpotArchitecture.png)**Legend:**
 
 - Java Heap contains all Java object instances. In the case of generational Collectors, it is further split into the Young Generation (Eden, Survivor 0 and Survivor 1) and the Tenured Generation.
 - Metaspace (formerly PermGen) contains class metadata (e.g. method bytecodes, symbols, constant pools, annotations, etc.).

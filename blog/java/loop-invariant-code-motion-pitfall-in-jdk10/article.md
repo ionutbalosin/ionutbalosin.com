@@ -194,8 +194,8 @@ public circleLengthModulo_10x() {
 
 To get the full assembly listing you can download it from below:
 
-- [circleLengthModulo\_10x-JDK9](circleLengthModulo_10x-JDK9.txt)
-- [circleLengthModulo\_10x-JDK10](circleLengthModulo_10x-JDK10.txt)
+- [circleLengthModulo\_10x-JDK9](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/loop-invariant-code-motion-pitfall-in-jdk10/circleLengthModulo_10x-JDK9.txt)
+- [circleLengthModulo\_10x-JDK10](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/loop-invariant-code-motion-pitfall-in-jdk10/circleLengthModulo_10x-JDK10.txt)
 
 As we can easily spot, in JDK10 the more “interesting” fact is that method computePi() is inlined multiple times instead of being removed, since it is superfluous and do not impact the semantics of the program (i.e. its return value is not used in case of first 10 calls). This might explain the performance penalty in such case. For JDK9 and JDK11 computePi() method is inlined exactly once within caller method (i.e. removing useless computePi() methods), which leads to almost the same response time for all included JDK versions, as per provided experiment.
 

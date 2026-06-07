@@ -8,7 +8,7 @@
 
 **March 2025 – Voxxed Days Bucharest**
 
-- Unlocking the unknowns, Cryptography essentials for Java devs | [slides](slides/Unlocking-the-unknowns-Cryptography-Essentials-for-Java-Developers.pdf) | [video](https://www.youtube.com/watch?v=WqQ21KYaY4Y)
+- Unlocking the unknowns, Cryptography essentials for Java devs | [slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/talks/slides/Unlocking-the-unknowns-Cryptography-Essentials-for-Java-Developers.pdf) | [video](https://www.youtube.com/watch?v=WqQ21KYaY4Y)
 
 **March 2025 – Voxxed Days Bucharest**
 
@@ -16,7 +16,7 @@
 
 **November 2024 – Vienna Java and Friends Group**
 
-- Application Security for API Microservices – Key Principles and Flows | [slides](slides/Application-Security-for-API-Microservices-Key-Principles-and-Flows.pdf)
+- Application Security for API Microservices – Key Principles and Flows | [slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/talks/slides/Application-Security-for-API-Microservices-Key-Principles-and-Flows.pdf)
 
 **August 2024 – I was invited to talk on Laur Spilca’s YouTube Channel.**
 
@@ -24,15 +24,15 @@
 
 **April 2024 – Vienna Java User Group**
 
-- JVM Performance Comparison for JDK 21 | [slides](slides/JVM-Performance-Comparison-JDK21.pdf)
+- JVM Performance Comparison for JDK 21 | [slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/talks/slides/JVM-Performance-Comparison-JDK21.pdf)
 
 **March 2024 – Voxxed Days Bucharest**
 
-- A Practical Use Case of Software Architecture Evolution | [slides](slides/A-Practical-Use-Case-of-Software-Architecture-Evolution.pdf) | [video](https://www.youtube.com/watch?v=Yo1tNeaDQB0)
+- A Practical Use Case of Software Architecture Evolution | [slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/talks/slides/A-Practical-Use-Case-of-Software-Architecture-Evolution.pdf) | [video](https://www.youtube.com/watch?v=Yo1tNeaDQB0)
 
 **March 2024 – Voxxed Days Bucharest**
 
-- The Future is 💚 A Journey through the Energy Efficient Design Principles of Software Engineering | [slides](slides/The-future-is-green-A-Journey-through-the-Energy-Efficient-Design-Principles-of-Software-Engineering.pdf) | [video](https://www.youtube.com/watch?v=y7ZJ-XpdjNg)
+- The Future is 💚 A Journey through the Energy Efficient Design Principles of Software Engineering | [slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/talks/slides/The-future-is-green-A-Journey-through-the-Energy-Efficient-Design-Principles-of-Software-Engineering.pdf) | [video](https://www.youtube.com/watch?v=y7ZJ-XpdjNg)
 
 **March 2024 – Voxxed Days Bucharest**
 
@@ -40,11 +40,11 @@
 
 **October 2023 – JFall , Netherlands**
 
-- The Future is 💚 A Journey through the Energy Efficient Design Principles of Software Engineering | [slides](slides/A-Journey-through-the-Energy-Efficient-Design-Principles-of-Software-Engineering.pdf) | [video](https://www.youtube.com/watch?v=97xelmmdwGQ)
+- The Future is 💚 A Journey through the Energy Efficient Design Principles of Software Engineering | [slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/talks/slides/A-Journey-through-the-Energy-Efficient-Design-Principles-of-Software-Engineering.pdf) | [video](https://www.youtube.com/watch?v=97xelmmdwGQ)
 
 **October 2023 – Voxxed Days Cluj-Napoca**
 
-- A journey to JVM Excellence: Navigating JDKs and JVMs for Peak Performance | [slides](slides/A-journey-to-JVM-Excellence_Navigating-JDKs-and-JVMs-for-Peak-Performance.pdf) | [video](https://youtu.be/hm3K3dlh9M4)
+- A journey to JVM Excellence: Navigating JDKs and JVMs for Peak Performance | [slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/talks/slides/A-journey-to-JVM-Excellence_Navigating-JDKs-and-JVMs-for-Peak-Performance.pdf) | [video](https://youtu.be/hm3K3dlh9M4)
 
 **October 2023 – Voxxed Days Cluj-Napoca**
 
@@ -52,11 +52,11 @@
 
 **June 2023 – JNation Coimbra, Portugal**
 
-- Create an eco-friendly world with Green Software Engineering | [slides](slides/A-Journey-through-the-Energy-Efficient-Design-Principles-of-Software-Engineering.pdf) | [video](https://www.youtube.com/watch?v=47MlhUgJIKA)
+- Create an eco-friendly world with Green Software Engineering | [slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/talks/slides/A-Journey-through-the-Energy-Efficient-Design-Principles-of-Software-Engineering.pdf) | [video](https://www.youtube.com/watch?v=47MlhUgJIKA)
 
 **March 2023 – Voxxed Days Bucharest**
 
-- JVM Performance Comparison | [slides](slides/JVM-Performance-Comparison-JDK17.pdf) | [video](https://www.youtube.com/watch?v=dLV2mrXXO6I)
+- JVM Performance Comparison | [slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/talks/slides/JVM-Performance-Comparison-JDK17.pdf) | [video](https://www.youtube.com/watch?v=dLV2mrXXO6I)
 
 **March 2023 – Voxxed Days Bucharest**
 
@@ -64,27 +64,27 @@
 
 **October 2022 – Voxxed Days Cluj-Napoca**
 
-- Techniques for a faster JVM start-up | [slides](slides/Techniques-for-a-faster-JVM-start-up.pdf) | [video](https://www.youtube.com/watch?v=R7cXo8YHKe4)
+- Techniques for a faster JVM start-up | [slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/talks/slides/Techniques-for-a-faster-JVM-start-up.pdf) | [video](https://www.youtube.com/watch?v=R7cXo8YHKe4)
 
 **September 2022 – JCON (online)**
 
-- Techniques for a faster JVM start-up | [slides](slides/Techniques-for-a-faster-JVM-start-up.pdf) | [video](https://www.youtube.com/watch?v=Iit5LU-6YRE)
+- Techniques for a faster JVM start-up | [slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/talks/slides/Techniques-for-a-faster-JVM-start-up.pdf) | [video](https://www.youtube.com/watch?v=Iit5LU-6YRE)
 
 **July 2022 – JBCN Conf**
 
-- Techniques for a faster JVM start-up | [slides](slides/Techniques-for-a-faster-JVM-start-up.pdf)
+- Techniques for a faster JVM start-up | [slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/talks/slides/Techniques-for-a-faster-JVM-start-up.pdf)
 
 **March 2022 – Vienna Java User Group**
 
-- Techniques for a faster JVM start-up | [slides](slides/Techniques-for-a-faster-JVM-start-up.pdf)
+- Techniques for a faster JVM start-up | [slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/talks/slides/Techniques-for-a-faster-JVM-start-up.pdf)
 
 **March 2022 – GeeCon Krakow**
 
-- Techniques for a faster JVM start-up | [slides](slides/Techniques-for-a-faster-JVM-start-up.pdf) | [video](https://www.youtube.com/watch?v=5M9M1oRX5UY)
+- Techniques for a faster JVM start-up | [slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/talks/slides/Techniques-for-a-faster-JVM-start-up.pdf) | [video](https://www.youtube.com/watch?v=5M9M1oRX5UY)
 
 **March 2022 – Voxxed Days Bucharest**
 
-- Techniques for a faster JVM start-up | [slides](slides/Techniques-for-a-faster-JVM-start-up.pdf) | [video](https://www.youtube.com/watch?v=paRsFpoCGcM)
+- Techniques for a faster JVM start-up | [slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/talks/slides/Techniques-for-a-faster-JVM-start-up.pdf) | [video](https://www.youtube.com/watch?v=paRsFpoCGcM)
 
 **October 2019 – JokerConf Saint Petersburg**
 
@@ -146,7 +146,7 @@
 
 **May 2018 – GeeCon Krakow**
 
-- Building evolutionary architectures in agile environments | [slides](slides/Building-Evolutionary-Architectures-v1.pdf) | [video](https://www.youtube.com/watch?v=xLHeEw0ycQg)
+- Building evolutionary architectures in agile environments | [slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/talks/slides/Building-Evolutionary-Architectures-v1.pdf) | [video](https://www.youtube.com/watch?v=xLHeEw0ycQg)
 - Demystifying the most significant Java 9 language features | 
 
 **May 2018 – Luxoft Technology Community (online)**
@@ -155,7 +155,7 @@
 
 **May 2018 – Luxoft Technology Series (online)**
 
-- Building evolutionary architectures | [slides](slides/Building-Evolutionary-Architectures-v2.pdf) | [video](https://www.youtube.com/watch?v=ehdTsABrEec&t=67s)
+- Building evolutionary architectures | [slides](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/talks/slides/Building-Evolutionary-Architectures-v2.pdf) | [video](https://www.youtube.com/watch?v=ehdTsABrEec&t=67s)
 
 **March 2018 – Voxxed Days Bucharest**
 

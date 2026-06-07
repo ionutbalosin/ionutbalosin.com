@@ -29,7 +29,7 @@ Nevertheless, diagrams must be self descriptive, consistent, accurate enough and
 
 Before going deeper into possible issues, I would like to have an analogy to an English idiom which says “a picture is worth a thousand words”. As per this [wiki](https://en.wikipedia.org/wiki/A_picture_is_worth_a_thousand_words) explanation, “it refers to the notion that a complex idea can be conveyed with just a single still image or that an image of a subject conveys its meaning or essence more effectively than a description does”. The same concept applies for an architectural diagram: if it raises more questions than answers, the diagram is not well created. Do not let an architectural diagram require thousand of words or clarifications!
 
-![](./improper-architectural-diagram.svg)
+![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/architecture/the-art-of-crafting-architectural-diagrams/improper-architectural-diagram.svg)
 
 **Example of an improper architectural diagram. It suffers most of the issues described below**
 
