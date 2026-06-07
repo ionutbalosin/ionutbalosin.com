@@ -171,7 +171,7 @@ Few conclusions:
 
 ##### Further References:
 
-- [Notify… oh, wait! I have a signal.](http://jpbempel.blogspot.com/2015/07/notify-oh-wait-i-have-signal.html)
+- [Notify… oh, wait! I have a signal.](https://jpbempel.github.io/2015/07/13/notify-oh-wait-i-have-a-signal.html)
 - [Benefitting Power and Performance Sleep Loops](https://software.intel.com/en-us/articles/benefitting-power-and-performance-sleep-loops)
 
 ---

@@ -109,7 +109,7 @@ getStackTrace      avgt 15 10,512.959 ± 212.659 ns/op
 
 ## Conclusion
 
-- **getStackTrace()** seems around 10x times slower than throwing an exception. This basically means that not filling the stack trace itself takes the majority amount of time, but converting it to a Java representation.
+**getStackTrace()** seems around 10x times slower than throwing an exception. This basically means that not filling the stack trace itself takes the majority amount of time, but converting it to a Java representation.
 
 **NB:** What really happens when a stack trace is converted to a Java representation, is that Virtual Machine fills in the StackTraceElement[] array representation relying on a native method call, which is costly.
 

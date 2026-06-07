@@ -1,6 +1,20 @@
 # Loop invariant code motion pitfall in JDK10
 
+## Content
+
+- [Introduction](#introduction)
+- [Benchmark](#benchmark)
+- [What's Different in JDK 10](#whats-different-in-jdk-10)
+  - [JDK9 – rough pseudocode version](#jdk9--rough-pseudocode-version)
+  - [JDK10 – rough pseudocode version](#jdk10--rough-pseudocode-version)
+- [Further Reading](#further-reading)
+- [Update](#update)
+
+## Introduction
+
 Current article illustrates a corner case in regards to [loop invariant code motion](https://en.wikipedia.org/wiki/Loop-invariant_code_motion) optimization in JDK10, which at first glance seems to regress in comparison to JDK9. Such optimization tries to move outside the body of a loop statements or expressions which do not depend on the loop itself, without affecting the overall semantics of the program.
+
+## Benchmark
 
 I have created a small benchmark which contains a loop of 200,000 iterations that computes, at each iteration, the length of a circle (e.g. **2πR**) modulo iteration counter and sums all intermediate results. The **R** is the radius of the arc (i.e. a constant in our case) and the **π** is computed based on explicit math computation formula (not using the [Math.PI](https://docs.oracle.com/javase/10/docs/api/java/lang/Math.html#PI) constant).
 
@@ -126,9 +140,11 @@ Few conclusions:
    - **circleLengthModulo\_5x()** which contains 5 x computePi() loop invariant methods seems ~8 times slower in JDK10 than JDK9 or JDK11
    - **circleLengthModulo\_10x()** which contains 10 x computePi() loop invariant methods seems ~14 times slower in JDK10 than JDK9 or JDK11
 
+## What's Different in JDK 10
+
 Since it might be interesting why it behaves so slow in JDK10 in comparison to JDK9 and JDK11, I tried to write simplistic pseudocode version derived from assembly code generated in case of **circleLengthModulo\_10x()** method (the same for **circleLengthModulo\_5x()**).
 
-###### JDK9 – rough pseudocode version
+### JDK9 – rough pseudocode version
 
 ```
 // JDK 9
@@ -164,7 +180,7 @@ In essence what it does is to inline the method computePi() in the caller only o
 
 I am not targeting to describe in detail all these under the hood Just In Time Compiler optimizations, however if you are interested in the topic you can check my talk [Runtime vs. compile time (JIT vs. AOT) optimizations in Java and C++](https://www.youtube.com/watch?v=O87PaWkXlZ0) .
 
-###### JDK10 – rough pseudocode version
+### JDK10 – rough pseudocode version
 
 ```
 // JDK 10
@@ -199,11 +215,13 @@ To get the full assembly listing you can download it from below:
 
 As we can easily spot, in JDK10 the more “interesting” fact is that method computePi() is inlined multiple times instead of being removed, since it is superfluous and do not impact the semantics of the program (i.e. its return value is not used in case of first 10 calls). This might explain the performance penalty in such case. For JDK9 and JDK11 computePi() method is inlined exactly once within caller method (i.e. removing useless computePi() methods), which leads to almost the same response time for all included JDK versions, as per provided experiment.
 
-##### Further references:
+## Further Reading
 
 - [Runtime vs. compile time (JIT vs. AOT) optimizations in Java and C++](https://www.youtube.com/watch?v=O87PaWkXlZ0)
 
-UPDATE: As per comment from *Jean-Philippe Bempel*, this optimization is more linked to **Dead Code Elimination** rather than **Loop Invariant Code Motion**!
+## Update
+
+As per comment from *Jean-Philippe Bempel*, this optimization is more linked to **Dead Code Elimination** rather than **Loop Invariant Code Motion**!
 
 ---
 

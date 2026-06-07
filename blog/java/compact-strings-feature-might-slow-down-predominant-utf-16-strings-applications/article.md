@@ -1,5 +1,12 @@
 # Compact Strings feature might slow down predominant UTF-16 Strings applications
 
+## Content
+
+- [Motivation](#motivation)
+- [Context](#context)
+- [Microbenchmark](#microbenchmark)
+- [Conclusions](#conclusions)
+
 ## Motivation
 
 Current article aims to reveal how **Compact Strings** feature added in JDK 9 with [JEP 254](http://openjdk.java.net/jeps/254) behaves in case of applications where the Strings are predominant UTF-16.
