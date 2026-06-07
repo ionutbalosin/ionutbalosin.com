@@ -5092,3 +5092,7 @@ We are very thankful to the members of the Oracle GraalVM team for their review 
 - [Aleksey Shipilëv: One Stop Page](https://shipilev.net)
 - [async-profiler](https://github.com/async-profiler/async-profiler)
 - [How to not lie with statistics: the correct way to summarize benchmark results](https://dl.acm.org/doi/pdf/10.1145/5666.5673) - Philip J Fleming, John J Wallace
+
+---
+
+**Tags**: Java, JDK 21, JVM, Performance, Benchmarks, JIT Compiler, C2, GraalVM, GraalVM CE, OpenJDK, Vector API, Compiler Optimizations, Partial Escape Analysis, Inlining, Devirtualization, Vectorization, Intrinsics, JMH, Microbenchmark, x86_64, arm64

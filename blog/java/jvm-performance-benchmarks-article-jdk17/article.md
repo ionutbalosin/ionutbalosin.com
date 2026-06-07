@@ -2017,3 +2017,7 @@ In case you want to contribute to this project, feel free to reach out or open a
 - [Efficient reference classification and quick memory reuse in a system that supports concurrent garbage collection](https://patents.google.com/patent/US9921959B2/en) - Per A. Liden, Stefan Mats Rikard Karlsson
 - [Concurrent Remembered Set Refinement in Generational Garbage Collection](https://www.researchgate.net/publication/220817732_Concurrent_Remembered_Set_Refinement_in_Generational_Garbage_Collection) - David Detlefs, Ross Knippel, William D. Clinger, Matthias Jacob
 - [Renaissance: Benchmarking Suite for Parallel Applications on the JVM](https://renaissance.dev/resources/docs/renaissance-suite.pdf)
+
+---
+
+**Tags**: Java, JDK 17, JVM, Performance, Benchmarks, JIT Compiler, C2, GraalVM, GraalVM CE, GraalVM EE, OpenJDK, Garbage Collection, ZGC, Shenandoah, G1, Parallel GC, Epsilon GC, GC Barriers, JMH, Microbenchmark, x86_64, arm64
