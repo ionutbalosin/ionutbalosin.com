@@ -1,7 +1,15 @@
-# ionutbalosin.com
+# ionutbalosin.com — Articles, Courses & Talks
 
 This repository contains the full content of [ionutbalosin.com](https://ionutbalosin.com) —
 the personal site of Ionut Balosin. It bundles together everything published on the site:
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Repository Layout](#repository-layout)
+- [License](#license)
+
+## Overview
 
 - **Technical articles** — deep, evidence-based pieces on the JVM, software architecture,
   AI/LLM engineering, JVM energy consumption, and application security, aimed at
