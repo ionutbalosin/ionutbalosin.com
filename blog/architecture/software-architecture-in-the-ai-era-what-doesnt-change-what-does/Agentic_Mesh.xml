@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Agentic Mesh" id="IejzNivcjj_2mGGe9IV-">
+    <mxGraphModel dx="1348" dy="759" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-86" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#e8f5e9;strokeColor=#2e7d32;fontFamily=Comic Sans MS;fontSize=13;sketch=1;jiggle=2;curveFitting=1;align=center;fontColor=#1b4d20;" value="&lt;div&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;Domain (repeated per business capability)&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="280" width="560" x="60" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-87" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontColor=#1b4d20;fontStyle=1;fontFamily=Comic Sans MS;sketch=1;curveFitting=1;jiggle=2;fontSize=13;" value="Service&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(27, 77, 32), rgb(152, 195, 156));&quot;&gt;+ Database&lt;/span&gt;" vertex="1">
+          <mxGeometry height="70" width="180" x="80" y="195" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-88" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontColor=#1b4d20;fontStyle=1;fontFamily=Comic Sans MS;sketch=1;curveFitting=1;jiggle=2;fontSize=13;" value="Data Product" vertex="1">
+          <mxGeometry height="60" width="180" x="80" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-89" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fde2e2;strokeColor=#c0392b;fontColor=#5a1a13;fontStyle=1;fontFamily=Comic Sans MS;sketch=1;curveFitting=1;jiggle=2;fontSize=13;" value="AI Sidecar&#xa;RAG · Guardrails · Evals" vertex="1">
+          <mxGeometry height="80" width="200" x="400" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-90" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#7e22ce;fontColor=#3b0764;fontStyle=1;fontFamily=Comic Sans MS;sketch=1;curveFitting=1;jiggle=2;fontSize=13;" value="Global Analytical Fabric" vertex="1">
+          <mxGeometry height="60" width="320" x="770" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-91" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff4e5;strokeColor=#d97706;fontColor=#5b3a00;fontStyle=1;fontFamily=Comic Sans MS;sketch=1;curveFitting=1;jiggle=2;fontSize=13;" value="AI Control Plane&#xa;Foundation Models · Org Guardrails · Registry" vertex="1">
+          <mxGeometry height="80" width="330" x="760" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-92" edge="1" parent="1" source="4f5o_fsx8PeoLzoo9uVf-87" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;fontFamily=Comic Sans MS;fontSize=13;" target="4f5o_fsx8PeoLzoo9uVf-88" value="publishes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-93" edge="1" parent="1" source="4f5o_fsx8PeoLzoo9uVf-87" style="endArrow=classic;startArrow=classic;html=1;labelBackgroundColor=#ffffff;fontFamily=Comic Sans MS;fontSize=13;" target="4f5o_fsx8PeoLzoo9uVf-89" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-94" edge="1" parent="1" source="4f5o_fsx8PeoLzoo9uVf-88" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;fontFamily=Comic Sans MS;fontSize=13;" target="4f5o_fsx8PeoLzoo9uVf-90" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-95" edge="1" parent="1" source="4f5o_fsx8PeoLzoo9uVf-89" style="endArrow=classic;html=1;dashed=1;labelBackgroundColor=#ffffff;fontFamily=Comic Sans MS;fontSize=13;" target="4f5o_fsx8PeoLzoo9uVf-91" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-96" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontFamily=Comic Sans MS;fontSize=13;strokeColor=#B3B3B3;" value="Legend" vertex="1">
+          <mxGeometry height="150" width="870" x="150" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-97" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontColor=#1b4d20;fontFamily=Comic Sans MS;sketch=1;curveFitting=1;jiggle=2;fontSize=13;" value="Per-domain (owned)" vertex="1">
+          <mxGeometry height="30" width="180" x="170" y="485" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-98" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fde2e2;strokeColor=#c0392b;fontColor=#5a1a13;fontFamily=Comic Sans MS;sketch=1;curveFitting=1;jiggle=2;fontSize=13;" value="AI Sidecar (per domain)" vertex="1">
+          <mxGeometry height="30" width="180" x="370" y="485" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-99" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#7e22ce;fontColor=#3b0764;fontFamily=Comic Sans MS;sketch=1;curveFitting=1;jiggle=2;fontSize=13;" value="Shared Analytical Plane" vertex="1">
+          <mxGeometry height="30" width="200" x="570" y="485" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-100" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff4e5;strokeColor=#d97706;fontColor=#5b3a00;fontFamily=Comic Sans MS;sketch=1;curveFitting=1;jiggle=2;fontSize=13;" value="Shared AI Control Plane" vertex="1">
+          <mxGeometry height="30" width="200" x="790" y="485" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-109" parent="1" style="text;html=1;align=left;fontColor=#444444;fontStyle=2;fontFamily=Comic Sans MS;fontSize=13;" value="&lt;b&gt;Each domain owns the trio (service, data product, AI sidecar). The analytical fabric and the AI control plane are shared and consumed across domains.&lt;/b&gt;" vertex="1">
+          <mxGeometry height="25" width="850" x="170" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-110" connectable="0" parent="1" style="group;fontSize=13;" value="" vertex="1">
+          <mxGeometry height="20" width="221" x="184" y="537" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-103" edge="1" parent="4f5o_fsx8PeoLzoo9uVf-110" style="endArrow=classic;html=1;fontFamily=Comic Sans MS;fontSize=13;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="10" as="sourcePoint" />
+            <mxPoint x="106" y="10" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-104" parent="4f5o_fsx8PeoLzoo9uVf-110" style="text;html=1;align=left;fontColor=#222222;fontFamily=Comic Sans MS;fontSize=13;verticalAlign=middle;" value="runtime / publish" vertex="1">
+          <mxGeometry height="20" width="105" x="116" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-111" connectable="0" parent="1" style="group;fontSize=13;" value="" vertex="1">
+          <mxGeometry height="20" width="266" x="420" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-107" edge="1" parent="4f5o_fsx8PeoLzoo9uVf-111" style="endArrow=classic;html=1;dashed=1;fontFamily=Comic Sans MS;fontSize=13;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="10" as="sourcePoint" />
+            <mxPoint x="106" y="10" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-108" parent="4f5o_fsx8PeoLzoo9uVf-111" style="text;html=1;align=left;fontColor=#222222;fontFamily=Comic Sans MS;fontSize=13;verticalAlign=middle;" value="consumes shared concern" vertex="1">
+          <mxGeometry height="20" width="150" x="116" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-112" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Comic Sans MS;fontSize=13;" value="consumes" vertex="1">
+          <mxGeometry height="30" width="60" x="650" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-113" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=13;" value="&lt;span style=&quot;font-family: &amp;quot;Comic Sans MS&amp;quot;; white-space: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;feeds analytics&lt;/span&gt;" vertex="1">
+          <mxGeometry height="30" width="90" x="425" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="4f5o_fsx8PeoLzoo9uVf-114" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=13;" value="&lt;span style=&quot;font-family: &amp;quot;Comic Sans MS&amp;quot;; white-space: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;delegates AI tasks&lt;/span&gt;" vertex="1">
+          <mxGeometry height="30" width="110" x="278" y="200" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

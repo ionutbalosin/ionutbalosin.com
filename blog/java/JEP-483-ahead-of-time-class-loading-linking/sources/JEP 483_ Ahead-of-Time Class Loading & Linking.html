@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii" /><meta http-equiv="Content-Type" content="text/html; charset=us-ascii" /><title>JEP 483: Ahead-of-Time Class Loading &amp; Linking</title><link rel="shortcut icon" href="/images/nanoduke.ico" /><link rel="stylesheet" type="text/css" href="/page.css" /><script type="text/javascript" src="/page.js"><noscript></noscript></script><script src="https://cdn.usefathom.com/script.js" data-site="KCYJJPZX" defer="yes"></script><style type="text/css" xml:space="preserve">
+      TABLE { border-collapse: collapse; padding: 0px; margin: 1em 0 1em 2em; }
+      TR:first-child TH, TR:first-child TD { padding-top: 0; }
+      TH, TD { padding: 0px; padding-top: .5ex; vertical-align: baseline; text-align: left; }
+      TD + TD, TH + TH { padding-left: 1em; }
+      TD:first-child, TH:first-child, TD.jep { text-align: right; }
+      TABLE.head TD:first-child { font-style: italic; padding-left: 2em; white-space: nowrap; }
+      PRE { padding-left: 2em; margin: 1ex 0; font-size: inherit; }
+      TABLE PRE { padding-left: 0; margin: 0; }
+      TABLE.jeps TD:first-child + TD,
+      TABLE.jeps TD:first-child + TD + TD { padding-left: .5em; }
+      TABLE.jeps TD:first-child,
+      TABLE.jeps TD:first-child + TD,
+      TABLE.jeps TD:first-child + TD + TD { font-size: smaller; }
+      TABLE.jeps TD.cl { font-size: smaller; padding-right: 0; text-align: right; }
+      TABLE.jeps TD.cm { font-size: smaller; padding-left: .1em; padding-right: .1em; }
+      TABLE.jeps TD.cr { font-size: smaller; padding-left: 0; }
+      TABLE.jeps TD.z { padding-left: 0; padding-right: 0; }
+      TABLE.head TD { padding-top: 0; }
+    </style></head><body><div id="main"><h1>JEP 483: Ahead-of-Time Class Loading &amp; Linking</h1><table class="head"><tr><td>Authors</td><td>Ioi Lam, Dan Heidinga, &amp; John Rose</td></tr><tr><td>Owner</td><td>Ioi Lam</td></tr><tr><td>Type</td><td>Feature</td></tr><tr><td>Scope</td><td>JDK</td></tr><tr><td>Status</td><td>Closed&#8201;/&#8201;Delivered</td></tr><tr><td>Release</td><td>24</td></tr><tr><td>Component</td><td>hotspot&#8201;/&#8201;runtime</td></tr><tr><td>Discussion</td><td>leyden dash dev at openjdk dot org</td></tr><tr><td>Relates to</td><td><a href="515">JEP 515: Ahead-of-Time Method Profiling</a></td></tr><tr><td></td><td><a href="514">JEP 514: Ahead-of-Time Command-Line Ergonomics</a></td></tr><tr><td>Reviewed by</td><td>Alex Buckley, Brian Goetz, Mark Reinhold, Vladimir Kozlov</td></tr><tr><td>Endorsed by</td><td>Vladimir Kozlov</td></tr><tr><td>Created</td><td>2023/09/06 04:07</td></tr><tr><td>Updated</td><td>2026/03/19 23:52</td></tr><tr><td>Issue</td><td><a href="https://bugs.openjdk.org/browse/JDK-8315737">8315737</a></td></tr></table><div class="markdown"><h2 id="Summary">Summary</h2>
+<p>Improve startup time by making the classes of an application instantly available, in a loaded and linked state, when the HotSpot Java Virtual Machine starts. Achieve this by monitoring the application during one run and storing the loaded and linked forms of all classes in a cache for use in subsequent runs. Lay a foundation for future improvements to both startup and warmup time.</p>
+<h2 id="Goals">Goals</h2>
+<ul>
+<li>
+<p>Improve startup time by exploiting the fact that most applications start up in roughly the same way every time they run.</p>
+</li>
+<li>
+<p>Do not require any change to the code of applications, libraries, or frameworks.</p>
+</li>
+<li>
+<p>Do not require any change to how applications are started from the command line with the <code>java</code> launcher, beyond the command-line options related directly to this feature.</p>
+</li>
+<li>
+<p>Do not require the use of the <code>jlink</code> or <code>jpackage</code> tools.</p>
+</li>
+<li>
+<p>Lay a foundation for continued improvements to startup time and also to warmup time, i.e., the time required for the HotSpot JVM to optimize an application&#8217;s code for peak performance.</p>
+</li>
+</ul>
+<h2 id="Non-Goals">Non-Goals</h2>
+<ul>
+<li>It is not a goal to cache classes that are loaded by user-defined class loaders. Only classes loaded from the class path, the module path, and the JDK itself, by the JDK&#8217;s <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/ClassLoader.html#builtinLoaders">built-in class loaders</a>, can be cached. We may address this limitation in future work.</li>
+</ul>
+<h2 id="Motivation">Motivation</h2>
+<p>The Java Platform is highly dynamic. This is a source of great strength.</p>
+<p>Features such as dynamic class loading, dynamic linkage, dynamic dispatch, and dynamic reflection give vast expressive power to developers. They can create frameworks which use reflection to determine an application&#8217;s configuration by inspecting application code for annotations. They can write libraries which dynamically load and then link to plug-in components discovered at run time. They can, finally, assemble applications by composing libraries which dynamically link to other libraries, leveraging the rich Java ecosystem.</p>
+<p>Features such as dynamic compilation, dynamic deoptimization, and dynamic storage reclamation give broad flexibility to the JVM. It can compile a method from bytecode to native code when it detects, by observing an application&#8217;s behavior, that doing so will be worthwhile. It can speculatively optimize native code, assuming a particular frequent path of execution, and revert to interpreting bytecode when it observes that the assumption no longer holds. It can reclaim storage when it observes that doing will be profitable. By these and related techniques, the JVM can achieve higher peak performance than is possible with traditional static approaches.</p>
+<p>All this dynamism comes at a price, however, which must be paid every time an application starts.</p>
+<p>The JVM does a lot of work during the startup of a typical server application, interleaving several kinds of activities:</p>
+<ul>
+<li>
+<p>It scans hundreds of JAR files on disk and reads and parses thousands of class files into memory;</p>
+</li>
+<li>
+<p>It <a href="https://docs.oracle.com/javase/specs/jvms/se22/html/jvms-5.html#jvms-5.4.3">loads the parsed class data into class objects</a> and <a href="https://docs.oracle.com/javase/specs/jvms/se22/html/jvms-5.html#jvms-5.3">links them together</a> so that classes can use each others&#8217; APIs, which involves <a href="https://docs.oracle.com/javase/specs/jvms/se22/html/jvms-5.html#jvms-5.4.1">verifying bytecodes</a> and <a href="https://docs.oracle.com/javase/specs/jvms/se22/html/jvms-5.html#jvms-5.4.3">resolving symbolic references</a>, which in turn may involve <a href="https://cr.openjdk.org/~briangoetz/lambda/lambda-translation.html">instantiating lambda objects</a>; and</p>
+</li>
+<li>
+<p>It executes the static initializers of classes &#8212; their <code>static</code> field initializers and <code>static { ... }</code> blocks &#8212; which can create many objects and even perform I/O operations such as opening log files.</p>
+</li>
+</ul>
+<p>If, additionally, the application uses a framework, e.g., the Spring Framework, then the framework&#8217;s startup-time discovery of <code>@Bean</code>, <code>@Configuration</code>, and related annotations will trigger yet more work.</p>
+<p>All this work is done on demand, lazily, just in time. It is heavily optimized, however, so many Java programs start up in milliseconds. Even so, a large server application which uses a web application framework plus libraries for XML processing, database persistence, etc., may require seconds or even minutes to start up.</p>
+<p>Yet applications tend to repeat themselves, often doing essentially the same thing every time they start: Scanning the same JAR files, reading and parsing and loading and linking the same classes, executing the same static initializers, and using reflection to configure the same application objects. The key to improving startup time is to try to do at least some of this work eagerly, ahead of time, rather than just in time. To put it another way, in the terms of <a href="https://openjdk.org/projects/leyden/">Project Leyden</a>, we aim to <a href="https://openjdk.org/projects/leyden/notes/02-shift-and-constrain">shift some of this work earlier in time</a>.</p>
+<h2 id="Description">Description</h2>
+<p>We extend the HotSpot JVM to support an <em>ahead-of-time cache</em> which can store classes after reading, parsing, loading, and linking them. Once a cache is created for a specific application, it can be re-used in subsequent runs of that application to improve startup time.</p>
+<p>To create a cache takes two steps. First, run the application once, in a <em>training run</em>, to record its AOT configuration, in this case into the file <code>app.aotconf</code>:</p>
+<pre><code>$ java <b>-XX:AOTMode=record -XX:AOTConfiguration=app.aotconf</b> \
+       -cp app.jar com.example.App ...
+</code></pre>
+<p>Second, use the configuration to create the cache, in the file <code>app.aot</code>:</p>
+<pre><code>$ java <b>-XX:AOTMode=create -XX:AOTConfiguration=app.aotconf</b> \
+       <b>-XX:AOTCache=app.aot</b> -cp app.jar
+</code></pre>
+<p>(This second step doesn&#8217;t run the application, it just creates the cache. We intend to streamline the process of cache creation in future work.)</p>
+<p>Subsequently, in testing or production, run the application with the cache:</p>
+<pre><code>$ java <b>-XX:AOTCache=app.aot</b> -cp app.jar com.example.App ...
+</code></pre>
+<p>(If the cache file is unusable or does not exist then the JVM issues a warning message and continues.)</p>
+<p>Note that the format of the configuration and cache files is not specified and is subject to change without notice.</p>
+<p>With the AOT cache, the reading, parsing, loading, and linking work that the JVM would usually do just-in-time when the program runs in the third step is shifted ahead-of-time to the second step, which creates the cache. Subsequently, the program starts up faster in the third step because its classes are available instantly from the cache.</p>
+<p>For example, here is a program which, though short, uses the <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/stream/package-summary.html">Stream API</a> and thus causes almost 600 JDK classes to be read, parsed, loaded, and linked:</p>
+<pre><code>import java.util.*;
+import java.util.stream.*;
+
+public class HelloStream {
+
+    public static void main(String ... args) {
+        var words = List.of("hello", "fuzzy", "world");
+        var greeting = words.stream()
+            .filter(w -&gt; !w.contains("z"))
+            .collect(Collectors.joining(", "));
+        System.out.println(greeting);  // hello, world
+    }
+
+}</code></pre>
+<p>This program runs in 0.031 seconds on JDK&#160;23. After doing the small amount of additional work required to create an AOT cache it runs in in 0.018 seconds on JDK&#160;24 &#8212; an improvement of 42%. The AOT cache occupies 11.4 megabytes.</p>
+<p>For a representative server application, consider <a href="https://github.com/spring-projects/spring-petclinic">Spring PetClinic</a>, version 3.2.0. It&#160;loads and links about 21,000 classes at startup. It starts in 4.486 seconds on JDK&#160;23 and in 2.604 seconds on JDK&#160;24 when using an AOT cache &#8212; also an improvement of 42%, by coincidence. The AOT cache occupies 130 megabytes.</p>
+<h3 id="How-to-train-your-JVM">How to train your JVM</h3>
+<p>A training run captures application configuration and execution history for use in subsequent testing and production runs. A good candidate for a training run is, therefore, a production run. Using a production run for training, however, is not always practical, especially for server applications which, e.g., create log files, open network connections, and access databases. For such cases we recommend creating a synthetic training run that resembles actual production runs as much as possible. It should, among other things, fully configure itself and exercise typical production code paths.</p>
+<p>One way to achieve this is to add a second main class to your application specifically for training, e.g., <code>com.example.AppTrainer</code>. This class can invoke the production main class to exercise the common modes of the application using a temporary log-file directory, a local network configuration, and a mocked database if required. You might already have such a main class in the form of an integration test.</p>
+<p>Some additional tips:</p>
+<ul>
+<li>
+<p>To optimize for startup time, structure the training run so that it loads the same classes that a production run loads when it starts. You can check which classes are loaded via the <code>-verbose:class</code> command-line option or the <code>jdk.ClassLoad</code> event of the <a href="https://dev.java/learn/jvm/jfr/">JDK Flight Recorder</a>.</p>
+</li>
+<li>
+<p>To minimize the size of the AOT cache, avoid loading classes in the training run that are not used in production runs. Do not, e.g., use a test suite written with a rich test framework. We may provide a way to filter such classes from the cache in future work.</p>
+</li>
+<li>
+<p>If, in production, your application interacts with other hosts on the network or accesses a database then, in training, you may want to mock those interactions to ensure that the necessary classes are loaded. Such mocking, if done in Java code, will cause additional classes to be cached which are not needed in production. Again, we may provide a way to filter such classes from the cache in future work. If, for some reason, you cannot mock these kinds of interactions, and therefore cannot include them in the training run, then the classes required in production to handle them will be loaded from the class path or from modules, just-in-time, as usual.</p>
+</li>
+<li>
+<p>Focus on running a broad set of short verification scenarios, sometimes called &#8220;smoke tests&#8221; or &#8220;sanity tests.&#8221; This is often enough to load most of the classes you will need in production. Avoid large test suites that cover rare corner cases and seldom-used functionality. Also avoid stress and regression tests, which generally do not characterize typical startup activities.</p>
+</li>
+<li>
+<p>Keep in mind that an AOT cache only helps insofar as the training run does similar things as production runs. If the training run stops short of that then the cache will be less useful.</p>
+</li>
+</ul>
+<h3 id="Consistency-of-training-and-subsequent-runs">Consistency of training and subsequent runs</h3>
+<p>To enjoy the benefits of the AOT cache generated during a training run, the training run and all subsequent runs must be essentially similar.</p>
+<ul>
+<li>
+<p>All runs must use the same JDK release and be on the same hardware architecture (e.g., <code>x64</code> or <code>aarch64</code>) and operating system.</p>
+</li>
+<li>
+<p>All runs must have consistent class paths. A subsequent run may specify extra class-path entries, appended to the training class path; otherwise, the class paths must be identical. Class paths must contain only JAR files; directories in class paths are not supported because the JVM cannot efficiently check them for consistency.</p>
+</li>
+<li>
+<p>All runs must have consistent module options on the command line, and consistent module graphs. The arguments to the <code>-m</code>, <code>--module</code>, <code>-p</code>, <code>--module-path</code>, <code>--add-modules</code>, and <code>--enable-native-access</code> options, if present, must be identical. The <code>--add-exports</code>, <code>--add-opens</code>, <code>--add-reads</code>, <code>--illegal-native-access</code>, <code>--limit-modules</code>, <code>--patch-module</code>, and <code>--upgrade-module-path</code> options must not be used.</p>
+</li>
+<li>
+<p>All runs must not use JVMTI agents that can arbitrarily rewrite classfiles using ClassFileLoadHook.</p>
+</li>
+<li>
+<p>All runs must not use JVMTI agents that call the <code>AddToBootstrapClassLoaderSearch</code> and <code>AddToSystemClassLoaderSearch</code> APIs.</p>
+</li>
+</ul>
+<p>If any of these constraints are violated then the JVM, by default, issues a warning and ignores the cache.</p>
+<p>To check if your JVM is correctly configured to use the AOT cache, you can add the option <code>-XX:AOTMode=on</code> to the command line:</p>
+<pre><code>$ java -XX:AOTCache=app.aot <b>-XX:AOTMode=on</b> \
+       -cp app.jar com.example.App ...
+</code></pre>
+<p>If this option is present then the JVM reports an error and exits if any of the above constraints are violated, or if the cache does not exist.</p>
+<p>(The <code>-XX:AOTMode=on</code> option should be used for diagnostic purposes only and should be avoided in production environment. Otherwise, your application may fail to launch if an incompatible VM option is added outside of your control. E.g., a cloud provider may decide to run some of your JVMs with JVMTI/ClassFileLoadHook for monitoring purposes).</p>
+<p>(If needed, you can disable the AOT cache entirely via <code>-XX:AOTMode=off</code>. You can also specify the default mode via <code>-XX:AOTMode=auto</code>, in which case the JVM tries to use the AOT cache specified via the <code>-XX:AOTCache</code> option; if the cache is unusable or does not exist then it issues a warning message and continues.)</p>
+<p>A useful exception to the requirement for consistency is that training and subsequent runs may use different garbage collectors. Another useful exception is that training and subsequent runs may use different main classes; this gives flexibility in constructing training runs, as noted above.</p>
+<h3 id="History">History</h3>
+<p>The ahead-of-time cache proposed here is a natural evolution of an old feature in the HotSpot JVM, <a href="https://dev.java/learn/jvm/cds-appcds/"><em>class-data sharing</em></a> (CDS).</p>
+<p>CDS was <a href="https://web.archive.org/web/20040604034719/http://java.sun.com/j2se/1.5.0/docs/guide/vm/class-data-sharing.html">first introduced</a> in an update to JDK&#160;5, in 2004. It initially aimed to shrink the memory footprint of multiple Java applications running on the same machine. It achieved this by reading and parsing JDK class files, storing the resulting metadata in a read-only archive file that could later be mapped directly into memory by multiple JVM processes using the same virtual-memory pages. We later extended CDS so that it could also store metadata for application classes.</p>
+<p>Nowadays the sharing benefit of CDS has been reduced by new security practices such as <a href="https://en.wikipedia.org/wiki/Address_space_layout_randomization">address space layout randomization</a> (ASLR), which makes the address at which a file is mapped into memory unpredictable. CDS still, however, offers a significant startup-time improvement &#8212; so much so that builds of JDK&#160;12 and later include a <a href="https://openjdk.org/jeps/341">built-in CDS archive</a> containing the metadata of over a thousand commonly-used JDK classes. CDS is, therefore, ubiquitous, even though many Java developers have never heard of it and few have used it directly.</p>
+<p>The AOT cache builds upon CDS by not only reading and parsing class files ahead-of-time but also loading and linking them. You can see the effect of the latter two optimizations by disabling them via the <code>-XX:-AOTClassLinking</code> option when creating a cache:</p>
+<pre><code>$ java -XX:AOTMode=create -XX:AOTConfiguration=app.aotconf \
+       -XX:AOTCache=app.aot <b>-XX:-AOTClassLinking</b>
+</code></pre>
+<p>When we use this option, we can see that most of the improvement to the startup time of the <code>HelloStream</code> program is due to ahead-of-time loading and linking, while most of the improvement to the startup time of the PetClinic application is due to the ahead-of-time reading and parsing already done by CDS today (all times are in seconds, and percentages are cumulative):</p>
+<table>
+  <tbody><tr>
+    <td>
+    </td><td><code>HelloStream</code></td>
+    <td>PetClinic</td>
+  </tr>
+  <tr>
+    <td>JDK 23</td>
+    <td>0.031</td>
+    <td>4.486</td>
+  </tr>
+  <tr>
+    <td>AOT cache, no loading or linking</td>
+    <td>0.027 (+13%)</td>
+    <td>3.008 (+33%)</td>
+  </tr>
+  <tr>
+    <td>AOT cache, with loading and linking</td>
+    <td>0.018 (+42%)</td>
+    <td>2.604 (+42%)</td>
+  </tr>
+</tbody></table>
+<p>Users of <a href="https://docs.spring.io/spring-boot/how-to/class-data-sharing.html">Spring Boot</a> and, more generally, the <a href="https://docs.spring.io/spring-framework/reference/integration/cds.html">Spring Framework</a>, can therefore enjoy significant startup-time improvements, today, simply by using the CDS feature already available in previous JDK releases.</p>
+<p>The new <code>-XX:AOT*</code> command-line options are, for the most part at this time, macros for existing CDS options such as <code>-Xshare</code>, <code>-XX:DumpLoadedClassList</code>, and <code>-XX:SharedArchiveFile</code>. We are introducing the <code>-XX:AOT*</code> options in order to provide a uniform user experience for both this and future ahead-of-time features, and to drop the potentially confusing words &#8220;share&#8221; and &#8220;shared.&#8221;</p>
+<h3 id="Compatibility">Compatibility</h3>
+<p>Ahead-of-time class loading and linking works with every existing Java application, library, and framework. It requires no changes to source code and no changes to build configurations, aside from the additional step of creating the AOT cache. It fully supports the highly dynamic nature of the Java Platform, including run-time reflection.</p>
+<p>This is so because the timing and ordering of class reading, parsing, loading, and linking is immaterial to Java code. The Java language and virtual-machine specifications give the JVM broad freedom in scheduling these operations. When we shift these operations from just-in-time to ahead-of-time, the application observes classes being loaded and linked as if the JVM did that work at the exact moment requested &#8212; though unaccountably fast.</p>
+<h2 id="Future-work">Future work</h2>
+<ul>
+<li>
+<p>The two-step workflow proposed here is cumbersome. In the near future we expect to reduce this to one step which both performs the training run and creates the AOT cache.</p>
+</li>
+<li>
+<p>At present, the only way to do a training run is to have the application run a representative workload, at least through startup, and then exit. In future work we may create new tools to help developers more flexibly define and evaluate such training runs and workloads, and perhaps also allow them to manually adjust what is stored in AOT caches. We may also enable training data to be gathered unobtrusively during production runs.</p>
+</li>
+<li>
+<p>ZGC is not yet supported. We intend to address this limitation in <a href="https://bugs.openjdk.org/browse/JDK-8326035">future work</a>.</p>
+</li>
+<li>
+<p>In some cases the JVM cannot load classes ahead of time, much less link them. These include classes loaded by user-defined class loaders, old classes which require an old version of the bytecode verifier, and signed classes. If a class cannot be AOT-loaded then other, AOT-loadable classes cannot be AOT-linked to it. In all such cases the JVM falls back to loading and linking just-in-time, as usual. We may address these limitations in future work, if and when they prove significant.</p>
+</li>
+<li>
+<p>Loading and linking classes ahead-of-time enables future improvements to warmup time. In the future, during training runs we can record statistics about which code runs most frequently and cache any optimized code that is generated. This will enable applications to start immediately in an optimized state.</p>
+</li>
+</ul>
+<h2 id="Testing">Testing</h2>
+<ul>
+<li>
+<p>We will create new unit-test cases to cover the new command-line options.</p>
+</li>
+<li>
+<p>Ahead-of-time loading and linking is independent of existing CDS features. Most CDS tests should pass when run with the <code>-XX:+AOTClassLinking</code> option. A few tests are sensitive to the order in which classes are loaded; we will revise them as appropriate.</p>
+</li>
+</ul>
+<h2 id="Risks-and-Assumptions">Risks and Assumptions</h2>
+<ul>
+<li>
+<p>We assume that the <a href="#Consistency-of-training-and-subsequent-runs">consistency</a> required across training and subsequent runs is tolerable to developers who want to use this feature. They must, especially, ensure that class paths and module configurations are consistent in all runs.</p>
+</li>
+<li>
+<p>We assume that the limited support for user-defined class loaders is tolerable. Conversations with some potential users suggest that they are willing to accept fixed class paths and module configurations, and thus a fixed set of built-in class loaders, and to use specialized class loaders only when that flexibility is required.</p>
+</li>
+<li>
+<p>We assume that the low-level side effects of ahead-of-time loading and linking are immaterial in practice. These include the timing of filesystem accesses, log messages, JDK-internal bookkeeping activities, and changes in CPU and memory usage. Applications that observe and depend on such subtle effects may become unstable if classes are loaded and linked ahead-of-time. We assume that such applications are rare, and that they can be adjusted to compensate.</p>
+</li>
+</ul>
+</div></div><div id="sidebar"><div id="openjdk-sidebar-logo"><a href="/"><img alt="OpenJDK logo" width="91" height="25" src="/images/openjdk2.svg" /></a></div><div class="links"><div class="link"><a href="/install/">Installing</a></div><div class="link"><a href="/guide/#contributing-to-an-openjdk-project">Contributing</a></div><div class="link"><a href="/guide/#reviewing-and-sponsoring-a-change">Sponsoring</a></div><div class="link"><a href="/guide/">Developers' Guide</a></div><div class="link"><a href="/groups/vulnerability/report">Vulnerabilities</a></div><div class="link"><a href="https://jdk.java.net">JDK GA/EA Builds</a></div></div><div class="links"><div class="links"><a href="https://mail.openjdk.org">Mailing lists</a></div><div class="link"><a href="https://wiki.openjdk.org">Wiki</a>
+                      &#183; <a href="/irc">IRC</a></div><div class="link"><a href="https://mastodon.social/@openjdk" rel="me">Mastodon</a></div><div class="link"><a href="https://bsky.app/profile/openjdk.org">Bluesky</a></div></div><div class="links"><div class="links"><a href="/bylaws">Bylaws</a> &#183; <a href="/census">Census</a></div><div class="link"><a href="/legal/">Legal</a> &#183; <a href="/legal/ai">AI</a></div></div><div class="links"><div class="links"><a href="/workshop"><b>Workshop</b></a></div></div><div class="links"><div class="links"><a href="/jeps/0"><b>JEP Process</b></a></div></div><div class="links"><div class="about">Source code</div><div class="link"><a href="https://github.com/openjdk/">GitHub</a></div><div class="link"><a href="https://hg.openjdk.org">Mercurial</a></div></div><div class="links"><div class="about">Tools</div><div class="link"><a href="http://git-scm.org/">Git</a></div><div class="link"><a href="/jtreg/">jtreg harness</a></div></div><div class="links"><div class="about">Groups</div><div class="link"><a href="/groups/">(overview</a>,
+      <a href="/groups/archive">archive</a>)</div><div class="link"><a href="/groups/adoption">Adoption</a></div><div class="link"><a href="/groups/build">Build</a></div><div class="link"><a href="/groups/client-libs">Client Libraries</a></div><div class="link"><a href="/groups/csr">Compatibility &amp; Specification Review</a></div><div class="link"><a href="/groups/compiler">Compiler</a></div><div class="link"><a href="/groups/conformance">Conformance</a></div><div class="link"><a href="/groups/core-libs">Core Libraries</a></div><div class="link"><a href="/groups/gb">Governing Board</a></div><div class="link"><a href="/groups/hotspot">HotSpot</a></div><div class="link"><a href="/groups/ide-support">IDE Tooling &amp; Support</a></div><div class="link"><a href="/groups/i18n">Internationalization</a></div><div class="link"><a href="/groups/members">Members</a></div><div class="link"><a href="/groups/net">Networking</a></div><div class="link"><a href="/groups/porters">Porters</a></div><div class="link"><a href="/groups/quality">Quality</a></div><div class="link"><a href="/groups/security">Security</a></div><div class="link"><a href="/groups/serviceability">Serviceability</a></div><div class="link"><a href="/groups/vulnerability">Vulnerability</a></div><div class="link"><a href="/groups/web">Web</a></div></div><div class="links"><div class="about">Projects</div><div class="link">(<a href="/projects/">overview</a>,
+      <a href="/projects/archive">archive</a>)</div><div class="link"><a href="/projects/amber">Amber</a></div><div class="link"><a href="/projects/babylon">Babylon</a></div><div class="link"><a href="/projects/brisbane">Brisbane</a></div><div class="link"><a href="/projects/crac">CRaC</a></div><div class="link"><a href="/projects/code-tools">Code Tools</a></div><div class="link"><a href="/projects/coin">Coin</a></div><div class="link"><a href="/projects/cvmi">Common VM Interface</a></div><div class="link"><a href="/projects/detroit">Detroit</a></div><div class="link"><a href="/projects/guide">Developers' Guide</a></div><div class="link"><a href="/projects/duke">Duke</a></div><div class="link"><a href="/projects/graal">Graal</a></div><div class="link"><a href="/projects/icedtea">IcedTea</a></div><div class="link"><a href="/projects/jdk8u">JDK 8 Updates</a></div><div class="link"><a href="/projects/jdk9">JDK 9</a></div><div class="link"><a href="/projects/jdk">JDK</a>
+      (&#8230;,
+       <a href="/projects/jdk/25">25</a>,
+       <a href="/projects/jdk/26">26</a>,
+       <a href="/projects/jdk/27">27</a>)</div><div class="link"><a href="/projects/jdk-updates">JDK Updates</a></div><div class="link"><a href="/projects/jmc">JMC</a></div><div class="link"><a href="/projects/jigsaw">Jigsaw</a></div><div class="link"><a href="/projects/lanai">Lanai</a></div><div class="link"><a href="/projects/leyden">Leyden</a></div><div class="link"><a href="/projects/lilliput">Lilliput</a></div><div class="link"><a href="/projects/loom">Loom</a></div><div class="link"><a href="/projects/jmm">Memory Model Update</a></div><div class="link"><a href="/projects/metropolis">Metropolis</a></div><div class="link"><a href="/projects/mlvm">Multi-Language VM</a></div><div class="link"><a href="/projects/nashorn">Nashorn</a></div><div class="link"><a href="/projects/nio">New I/O</a></div><div class="link"><a href="/projects/openjfx">OpenJFX</a></div><div class="link"><a href="/projects/panama">Panama</a></div><div class="link"><a href="/projects/aarch32-port">Port: AArch32</a></div><div class="link"><a href="/projects/aarch64-port">Port: AArch64</a></div><div class="link"><a href="/projects/bsd-port">Port: BSD</a></div><div class="link"><a href="/projects/haiku-port">Port: Haiku</a></div><div class="link"><a href="/projects/mips-port">Port: MIPS</a></div><div class="link"><a href="/projects/mobile">Port: Mobile</a></div><div class="link"><a href="/projects/ppc-aix-port">Port: PowerPC/AIX</a></div><div class="link"><a href="/projects/riscv-port">Port: RISC-V</a></div><div class="link"><a href="/projects/s390x-port">Port: s390x</a></div><div class="link"><a href="/projects/sctp">SCTP</a></div><div class="link"><a href="/projects/shenandoah">Shenandoah</a></div><div class="link"><a href="/projects/skara">Skara</a></div><div class="link"><a href="/projects/sumatra">Sumatra</a></div><div class="link"><a href="/projects/tsan">Tsan</a></div><div class="link"><a href="/projects/valhalla">Valhalla</a></div><div class="link"><a href="/projects/wakefield">Wakefield</a></div><div class="link"><a href="/projects/zero">Zero</a></div><div class="link"><a href="/projects/zgc">ZGC</a></div></div><div class="buttons"><a href="https://oracle.com"><img alt="Oracle logo" width="100" height="13" src="/images/oracle.svg" /></a></div></div><div id="footer">
+
+        &#169; 2026 Oracle Corporation and/or its affiliates
+        <br /><a href="/legal/tou/">Terms of Use</a>
+        &#183;
+        
+            License: <a href="/legal/gplv2+ce.html">GPLv2</a>
+        &#183; <a href="https://www.oracle.com/us/legal/privacy/">Privacy</a>
+        &#183; <a href="https://openjdk.org/legal/openjdk-trademark-notice.html">Trademarks</a></div><script type="text/javascript"  src="/-9ys1EPi4/Ms9YCW4mX/wWttiMBSw/a1QuhGJwzOShzr1u/EhZlAQ/RVxcB/CBTJkUB"></script></body></html>

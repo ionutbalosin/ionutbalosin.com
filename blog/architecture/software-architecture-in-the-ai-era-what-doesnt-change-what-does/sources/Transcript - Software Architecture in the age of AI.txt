@@ -1,0 +1,1261 @@
+Transcript for Software Architecture in the age of AI | Cyfrin head of engineering Mike Karan
+
+URL: https://www.youtube.com/watch?v=fx3lnv3fkss
+
+Search in video
+0:03
+[Music]
+0:10
+Heat. [Music]
+0:26
+Heat. [Music]
+1:02
+G. GMGM everybody welcome to another uh to another interview to
+1:08
+another live stream uh learning about tech learning about blockchain learning about uh everything in this wonderful
+1:14
+landscape uh that we participate in uh today is going to be a little bit different I don't normally do this um
+1:20
+where I bring on somebody from the siphon team but uh we're bringing on somebody from the siphon team today
+1:26
+because uh there's a lot of things I wanted to talk about a lot of questions I wanted to ask him and I said hey you
+1:31
+know what let me just let me just ask you on stream. That'll that'll be fun for the two of us. Um and
+1:38
+especially around hey, how do we architecture? How do we architect things in 2025 with AI uh with you know, web 2,
+1:46
+web 3 technologies becoming so much more prevalent? How do we think about that? You know, what are the challenges associated with it? For anybody who take
+1:52
+who has taken the full stack curriculum on cipher updraft, this is definitely for you. For people who are looking to
+1:58
+build products uh in this industry, this is for you. Uh and we have, you know, the mastermind uh behind uh many of the
+2:07
+Siphon products out there today, you know, including Updraft, um you know, Code Hawks, uh our sites,
+2:13
+you know, um our our head of engineering here at Siphon. We have uh Mike, welcome to the stream, Mike. How are you?
+2:20
+I'm good. Yeah, great to be here. It's going to be good getting uh roasted by my boss live on stream.
+2:27
+very very excited uh for this opportunity. But uh yeah, no, I'm
+2:32
+excited to talk about all the decisions we made, the right decisions, the wrong decisions. I'm not going to shy away from saying that some stuff was wrong.
+2:38
+Uh but yeah, I'm I'm really happy with the platform that we have. So yeah, I'll behave. Ask away.
+2:45
+I'll behave. Um uh that's actually Yeah. So and for um
+2:50
+for everybody kind of tuning tuning in, uh you know, Mike and I work on the same team. We work on Siphon. Um, and we, you
+2:56
+know, all the cool things that, uh, you know, everyone, uh, hopefully uses and, uh, engages with. So, um, yeah, before
+3:04
+we jump into, uh, kind of the the the topic here, yeah, Mike, if you want to give like a little introduction, you
+3:10
+know, what's your background, you know, how you got into web 3, how you got, uh, involved with Cipher, you know, um,
+3:16
+how'd you get here? Yeah, absolutely. Yeah, I'll try to give a TLDDR. Uh, I've been in the industry for about 11 years. in the industry.
+3:23
+What I'm talking about is like development, web development. Started mostly front end. Uh transitioned pretty
+3:28
+quickly to backend. Uh worked on some larger projects. So like companies like
+3:35
+Walmart, Nike, uh worked with them quite a bit uh early on in my career. Uh and
+3:40
+then I realized I really like startupy stuff and less corporate infrastructure stuff. So I moved on to startups uh and
+3:48
+worked with helping people get products to the end goal, right? Like my whole mentality isn't really like, hey, I'm a
+3:54
+front-end engineer, I'm a backend engineer. I'm more of like a solutions architect where I come in, see what
+4:00
+needs to be done to get the product over the finish line. Whether that be backend, front end, I'll do it or I'll
+4:06
+hire people to do it or I'll manage the people that are already doing it and try to get a product to a finish line as
+4:13
+best as possible, as quickly as possible with the resources that are available. Um, with the web 3 stuff, uh, I was in
+4:19
+between contracts at the time and, you know, E, Ethereum, Salana was blowing
+4:25
+up. Uh, I was looking for the next thing to look at. Um, I'm much I like niche
+4:30
+development stuff. So, I was on like the Chrome app game probably the year that
+4:35
+it came out with Chrome extensions and Chrome apps and that led to like multiple big contracts for me. So, I was
+4:41
+like, as soon as I was done with that, I was like, what's the next big thing? like what's next that I could niche down into and it seemed that web 3 was the
+4:48
+thing. Now I I don't know if this was a mistake or positive. I did go down the Salana route initially before they even
+4:54
+had docs. Um so I bang my head against the brick wall like 15 times eventually learning how that worked and how the
+5:01
+Salana ecosystem inter interface with web development. Uh which was it was fun to figure it out without like really
+5:08
+good documentation was different challenge and that led me to a couple contracts in that space. led me to a
+5:15
+couple connections that eventually led me to you Patrick where we had a chat. Uh you were just starting Cipher I think
+5:20
+at the time and we connected and I think we had good like synergy of like what we wanted to get done and how quickly we
+5:26
+wanted to get done because that's kind of what I'm known for is hey what's your goal? This is all the steps you need for
+5:31
+that goal. Let's get that goal done as quickly as possible. Oh yeah thanks for the uh the intro
+5:37
+there. Yeah, the um the fact that you got into kind of Salana first has made
+5:42
+it so that yeah, a lot of the the the siphon devs are Salana. Um which is
+5:48
+interesting because we do so much EVM content and yet like the team you know working on the back end is is just very
+5:53
+very Salana because yeah like a lot of them a lot of our team you know knew you through um yeah the the Salana ecosystem
+6:01
+and uh that's just kind of funny how that uh that works out. So uh yeah. All right, Mike. So let's let's jump into
+6:07
+stuff. So um full stack architecture building uh ecosystems especially in the
+6:14
+web 3 space. So one of the things one of the main questions I want to talk about was um you know testing and and setting
+6:22
+up like a like a strong testing environment. Um so and to give everyone
+6:28
+listening some context. So you know we launched the full stack curriculum on cipher updraft at the beginning of the
+6:35
+year. The full stack curriculum teaches people how to build web 3 apps right in the in the ecosystem. Hey, how do you,
+6:41
+you know, run an indexer? How do you connect to a wallet? How do you send transactions? How do you read um how do
+6:48
+you read uh from the blockchain? All that stuff. And Mike and I had a number of conversations. Hey, how do we want to
+6:54
+teach people? You know, what technology do we want to use? And I'm going to steal a little bit of Mike's thunder
+6:59
+here. Uh but Siphon, we are a spelt shop. So pretty much all of our apps or
+7:04
+what what like 90 90% I feel like there's a couple yeah there's a couple random you know
+7:09
+nextjs here uh nextjs project products here there but mostly what we do is spelt and originally we were like hey
+7:15
+let's do spelt um but as we got into that we were like ah like so few people
+7:21
+know spelt AI is really good at react maybe we just do react and actually
+7:27
+before we get into testing let me let me ask you this so how did we why did we eventually go back from spelt which arguably you
+7:36
+know would be beneficial for us to teach people spelt because then it would be easier for us to onboard people why did we decide to go with nextjs instead of
+7:42
+spelt yeah it's a great question so I think you hit a couple nails there but I'll expand on that as well so essentially
+7:49
+this was our first forier or not our first forier our first latest forier into full stack curriculum and what I
+7:57
+was looking at at the time was like what's out there that people understand already that can then link to the web3
+8:03
+side of things easily and spelt is there for sure. There is some like patterns that you can follow spelt adapt wallet
+8:10
+adapters but Nex.js is the dominant player in the space and when you go to AI and a lot of a lot of our students as
+8:16
+we know go to AI to get help a lot of the responses especially at that time
+8:22
+were giving responses directly in next.js JS and even right now if you don't specify a web development
+8:27
+framework to use the default coming back to you is always going to be Nex.js. So
+8:32
+that hurdle to me was a little bit too much for the first full stack development course that we're going to
+8:37
+be releasing on Updraft, right? I wanted people to have a really really good on-ramp into web development. And when
+8:43
+we had that discussion, I was like, I like spelt and I we can go into the reasons why we chose spelt for the
+8:48
+platforms as well later if you want. But like I really like spelt. I think it has a lot of good positives, but the problem
+8:54
+is the education around it. And I wanted to be the first the first course that we
+9:00
+put out to be the best on-ramp into web 3 full stack which is right now Nex.js.
+9:07
+Now having said that since we've had that discussion a lot of stuff has changed in the sense of all of these
+9:14
+newer models GPT5 claude 4 4.1 sonnet they all have a lot more context on
+9:20
+spelt now than they did back then and so they're giving slightly like actually significantly better responses to the
+9:26
+spelt stuff so it might have changed our opinion on it right now but again I
+9:32
+still would have probably leaned towards Nex.js JS just due to the mountain mountain of the of resources available
+9:38
+out there and to get people into it as quickly as possible. Okay. So for uh for Siphon then if you
+9:46
+know you've been on the team for two years now. Two years and a hell yeah. Um thanks
+9:53
+Mike. Uh if you were to go back um or if today I was like yo Mike we're going to
+9:58
+build this thing called Siphon. We're going to build updraft. Uh we're going to build Solidit. We're going to build
+10:04
+um code hawks. We're going to build, you know, all these products. Would you still choose felt?
+10:10
+Yes. Why? I would still choose felt. So, are you are you um knowing that it's
+10:16
+actually going to be harder for us to get talent because um of what you just said, right? There's
+10:23
+this mountain of Nex.js uh information out there. You know, yes, you're saying AIs are getting better.
+10:28
+felt um but especially in the you know the web 3 ecosystem which we haven't
+10:34
+really touched on especially in the web3 ecosystem where like you know VM and um
+10:40
+uh WagMe you know they have like Nex.js JS support out the box, whereas like
+10:46
+spelt support, you basically have to do vanilla JavaScript and then kind of port it over to Sorry, I'm kind of like
+10:52
+teetering off in too many directions here, but yeah, you would still choose spelt. I would still choose spelt and I would actually choose it based on what
+10:58
+you just said. Uh, so the fact that you have to use vanilla JavaScript is one of
+11:03
+the reasons that I really like spelt and vanilla JavaScript with that I really mean TypeScript. Everything that we build in Ciphern is TypeScript related.
+11:10
+Like we don't have any JS files. But regardless, the fact that you can use straightjs, straight TypeScript to adapt
+11:15
+anything to spelt is one of the main reasons that I like spelt. I'm as I was
+11:22
+going through my career, I realized that the base foundations of each language are the things that draw me to that
+11:28
+language usually and the abstraction layers that are built on top of them. The more abstraction, the less I get the
+11:35
+more I get put off, I guess. And when I was going through my kind of, you know, from vanilla JavaScript to whatever
+11:41
+framework next, I tried React. I really didn't like React at the time. Now, now having said that, this was like seven
+11:47
+years ago, uh, when React was class-based and stuff like that. It wasn't the greatest experience, but then
+11:52
+I tried Vue and I kind of resonated with Vue a little bit more. It was a little bit more like JavaScript, a little bit more like TypeScript, you know, back
+11:58
+again to that language barrier. And then when I start started going into sevelt, it was almost exactly like TypeScript
+12:05
+and JavaScript, right? And I really like that it was foundationally just just that and I could build
+12:12
+anything in Typescript and JavaScript without having to worry really about an adapter layer on top. So the adapter
+12:17
+layer that you're building for something like WagMe is really just a couple API points. like it's just an API that will
+12:24
+point to whatever UI that you need to build rather than having to wrap it inside of the React compiler or
+12:30
+interface with the React uh with the React like uh APIs. You're just
+12:35
+interfacing with more or less JavaScript APIs. So that's one of the main reasons I like it. And on the other side of it,
+12:41
+you you mentioned like it would make it harder to hire people. I don't see it that way because on-ramping onto spelt
+12:48
+when you're already established in a framework is really really easy. And the reason I actually like hiring Next.js
+12:55
+devs uh onto onto our spelt projects and I always when I you know post a job spec
+13:00
+I'll say like next.js JS is perfectly acceptable and same with Nux and any other framework because I can see them
+13:07
+starting to understand like the framework side of things and then when they get into spelt they usually like oh this this abstraction layer is easier to
+13:13
+understand this abstraction layer is easy to understand related to the react one and so they almost like on-ramp and
+13:19
+then are their satisfaction goes up a lot of time a lot of times and therefore their knowledge goes up and it's really
+13:25
+like at the end of the day when you learn one framework that's all you really need to know to understand all the other frameworks they're so similar
+13:30
+nowadays that it doesn't matter too much from a syntax perspective anymore. And so I
+13:36
+don't the limitations of like onramping people isn't really a big thing. The limitation for like finding the right
+13:43
+resources is the thing that scares me for like recommending spelt right off the top because there's just so many
+13:50
+more React Next.js JS resources that when someone's just searching and when someone has already ramped up a little
+13:56
+bit and they're looking for the next step and like updraft could be their next step into web development they
+14:02
+might get put off that they see spelt there and not take it because they see spelt there because they've already been
+14:07
+on-ramped into nextjs. So that's what I wanted to avoid again. And the next step of that is hopefully at some point we
+14:14
+will have a spelt course on updraft where people can do the exact same on-ramp I just talked about where we hire people and they can be like, "Oh,
+14:20
+this makes sense." And when you switch from framework to framework, you also solidify the foundational concepts of
+14:26
+what a framework does a lot better. Whereas if you stick with one framework, it's hard to separate where the
+14:32
+TypeScript is and where the JavaScript or where the React is. And you start to get lost in that like barrier. and uh it
+14:39
+becomes harder to troubleshoot a lot of times. So I highly recommend people try different frameworks as they're going
+14:44
+through. It doesn't have to be spelt. There's like a million other ones out there because it'll solidify the concepts in whatever framework you need
+14:50
+to use more. I I uh took some notes on a couple of
+14:57
+your your points you were making there. Um there's a couple different directions we want to go down. I want to go down this direction just real quick and then
+15:04
+I do want to get to like architecture and testing. Um so you said hey at some
+15:09
+point you know we want to have a stell course on updraft but so with AI um
+15:18
+you know becoming so prevalent a part of me you know wants to ask like how important is it even for somebody to
+15:26
+have experience in a framework you know because because I'm also thinking from my end okay like you know I I have
+15:32
+limited time at the end of the day right like and if I want to if I'm going to make a course if I'm going to release a Of course, I wanted to have maximal
+15:38
+impact. You know, the um so we have, you know, we have Solidity and we have Viper on Updraft right now. And a lot of, you
+15:46
+know, what I did was I, you know, I rewrote a lot of the Solidity and Viper um to, you know, make my work a little
+15:52
+bit easier. Yeah, I used AI to help me, but I still had to like go back through and like, you know, make sure stuff was
+15:57
+correct. And there were there were times when I was doing that when I was like,
+16:03
+is this is this even a good use of my time? If you learn the solidity, you're like 95% of the way there. Yeah, there's
+16:10
+some nuance differences, but you kind of have to get to like assembly to even really understand what's going on under
+16:17
+the hood. What are the differences there? Um, so like on you saying, hey, I would love for us to have a spelt course
+16:22
+at some point in the age of AI, is that going to be a big deal? Is that going to
+16:29
+matter? Is that Mike? Mike, is that a good use of my time? Is that like do you want me to do that?
+16:34
+No, it's a really good question. I think it all depends on where AI goes, right? Like this is where I kind of always come
+16:40
+back to with the AI discussion. I don't want to extrapolate out more than a couple years or even less than that
+16:47
+because I'm afraid that that could lead to us being like, "Oh, let's not do anything because, you know, if if if our
+16:52
+if the trajectory stays the same or it's even if it's slowly it slows down even a little bit, as long as it doesn't
+16:58
+plummet off the hill, like we know where it's going. We know it's going to change the landscape of development in all
+17:04
+languages. Doesn't matter web development, like smart contracts, everything. Um, and so if we start to
+17:09
+plan for that from a perspective of content right now, it it's almost impossible and I I feel
+17:16
+like it'll make us freeze. It'll make us not do anything. So the reason that I think again a spelt course is still
+17:23
+relevant even in the age of AI right now is again I do believe that the people that are going to be able to understand
+17:29
+the foundational elements of a a language of a project of a framework are
+17:34
+still going to have the ability to be participating in the economy like the the web development or the programming
+17:41
+development economy in terms of getting a job because they will be the ones that control the AIS like there's still going
+17:47
+to be a man in the middle somewhere that's going to be you know monitor monitoring everything. And the more foundational knowledge you have, the
+17:52
+easier it's going to be for you to review code. That's the other thing is like when you're teaching AI, I feel
+17:58
+like part of that teaching is also going to be really understanding deep concepts so that you can review code because you
+18:03
+know how hard it is to review code. I mean our auditors in Cipher, they review code every day. That's one of the hardest jobs out there, right? Like it's
+18:10
+like writing code is one thing. Reviewing code, I feel like that's the next level of of as a developer. like
+18:15
+when you're going through your career, you realize that as you get more senior, you're writing less code and reviewing
+18:21
+more code and makingru, you know, architectural decisions. So, it's a long-winded way to say that
+18:28
+learning again a more foundational framework like will teach you more
+18:33
+foundational concepts in JavaScript and will teach you a better foundational understanding of frameworks in general,
+18:40
+of how they work in general. And I think that that will provide a a good on-ramp again for you to be a higher level
+18:46
+developer. I I uh I guess the the question more than I'm trying to get at right is if I teach an X.js course or a spelt course.
+18:55
+Um it almost still sounds like it kind of won't matter in the future because
+19:01
+either one's going to give the foundational one. So kind of like the Viper to solidity like in the future you
+19:08
+kind of just learn like I don't know may maybe I I I feel like maybe you did answer this and I kind of missed it but
+19:15
+um like I feel like if you learn solidity you basically learn Viper if you learn um Nex.js JS you basically
+19:22
+learn spelt or you saying no it's not not the case like like is is an additional if if I go back and I do take
+19:30
+our nextjs course and I re redo it in spelt
+19:35
+is that going to to achieve like what you're you're talking about here like will will it be a good use of time for
+19:42
+somebody who went through the nextjs course to also go through this felt course or I wouldn't want it to be a onetoone
+19:47
+reproduction for sure I would want it to cover other topics of some sorts uh and yeah we can we can discuss that
+19:53
+but uh the idea that I have is that like yes if you understand solidity you know
+19:59
+you you do understand other languages but like solidity and python are significantly different languages
+20:06
+but but solidity and viper are pretty similar. Yeah, fair enough. Okay, solidity and viper are pretty similar. So maybe
+20:11
+that's a good comparison I guess to react and spelt. I don't know the the differences between those two. Um I do
+20:17
+know that there are some pretty significant differences between React and Spelt. And again
+20:23
+my my point my point is that knowing one and just like especially if you learned let's say that you jumped into
+20:28
+programming you didn't learn the foundational like elements of programming you just jumped into solidity. I think a lot of people can
+20:34
+say that that that was their path maybe right like they they skipped the core fundamentals they just jumped into
+20:39
+solidity. I know that's a lot of path of people that learned React is that they've literally jumped into web
+20:44
+development and then instead of learning JavaScript and TypeScript first, they went straight into React, right? So learning that it's good and you'll get a
+20:51
+lot of found you'll get a lot of knowledge from that. But you're going to start missing some core concepts of how
+20:57
+JavaScript and TypeScript work if you do that. And I think it's the same if you do the same thing with Solidity. And again, you
+21:03
+can correct me if I'm wrong. If you didn't understand the core concepts of programming languages, you're going to
+21:08
+jump in and you're not going to know where solidity begins and you know core I don't know what is it built on. Is it
+21:15
+uh what's the actual language underneath? Uh it's uh C C. Yeah. Okay. So I mean yeah you're
+21:23
+that's that's quite a a far abstraction from uh from C but okay so you're not
+21:28
+going to know where you know solidity begins and C ends or something or C ends and solidity begins right and knowing that I feel like you can be
+21:35
+a way more effective developer in a smart contract like if you know C first and you jump into solidity I feel like
+21:41
+you'll be a better developer. Yeah. Okay. So, but um I guess it's not
+21:48
+doesn't answer your question directly. Yeah, I was say I get that and I think again I I do think that we it it has
+21:54
+some nuance there and I I still think that there's some value to make another spelt course, not a onetoone copy of the
+21:59
+nextjs course. It would probably be a short one, a shorter one just to get people to understand that
+22:05
+there's multiple options out there and again having them switch between them is a good thing for them at the end.
+22:10
+Yeah. And then maybe there's there's uh this is maybe a much longer conversation just on like all right well what's the
+22:16
+future of education um going to look like with AI but you know um whole other
+22:21
+whole other conversation. Yeah. And then Kier wants a course. Um K we we need to we need to do more ZK
+22:28
+first. You know there's not no time no time for C. Um but okay I I want to pivot a little bit because I do want to
+22:34
+get to like architecture and testing. So let's say okay I've decided I'm going to go with Nex.js. I'm going to build a web
+22:41
+3 DAP. Amazing. Let's go forward. Um on with Siphon, we have kind of this uh
+22:48
+what I think is like becoming kind of the enterprise standard of apps. So on
+22:53
+Updraft, everything's pretty simple. Um where you have your front end
+23:00
+and your backend is exclusively, you know, blockchain. We had a little little
+23:05
+uh blockchain opposite not blockchain, right? The back end is not blockchain on updraft.
+23:12
+Uh, excuse me. The um the in the updraft curriculum, excuse me, updraft curriculum, the apps that we would make,
+23:18
+the back end is exclusively blockchain. Um, and we had a little, you know, little introduction to kind of a
+23:24
+centralized backend at the end of the course where we teach you how to run your own indexer, which if you haven't
+23:30
+checked out our indexer by the way, and you're using a paid for indexer service, um, consider switching because our
+23:36
+indexer is awesome. It's built by um the head of engineering at a be sure to check that out. Um
+23:44
+but so yeah, at Updraft or excuse me at Siphon we have kind of a mixed bag, right? We have, you know, we have
+23:49
+profiles which integrate with your wallets. We have um updraft which has kind of a more traditional, you know,
+23:56
+database. We have um uh code hawks which is obviously a mix as well. you have
+24:02
+wallets integration and then um uh traditional database as well. In updraft
+24:10
+or in the updraft curriculum, I promise I'm going someplace with this. In the updraft curriculum, we have you spin up
+24:16
+kind of your anvil chain. You test there, spin up kind of a a uh your R indexer to connect to your anvil chain,
+24:22
+and that's where you do all your testing. But in a more professional environment,
+24:28
+that becomes a lot harder. you have maybe spin up a a fake database and then
+24:34
+maybe spin also spin up a fake blockchain and there's different databases for different services and there's different uh microservices that
+24:41
+you might have to spin up and from my perspective where I'm you know most of
+24:46
+my work is like in solidity where everything is very particular very stringent very strict uh I feel like
+24:53
+testing in the solidity environment is a wonderful experience um anytime I go to contribute to
+24:59
+decipher platform. I am miserable. I have a much worse experience. I feel
+25:05
+like I have to spin up a 100 Docker instances. Uh I feel like nobody in the
+25:10
+industry has like um a good uh like there's not like all right this
+25:17
+is like how we test you know like in Updraft we we talked Sinress which is like an ET testing solution for wallets.
+25:24
+Uh a lot of people love it. A lot of people hate it and think it's a waste of time and so they roll their own. Everyone seems to kind Everyone seems to
+25:31
+be rolling their own full stack testing solution. And to me that's like insane
+25:36
+coming from the smart contract world where testing is so critical to get correct. Um I don't even
+25:43
+know what my question is here. Yeah. Why why is full stack development like
+25:48
+such a pain in the ass when you get to like you know bigger scale? Like what what's uh h how do you test? How do you
+25:55
+think about testing? How do you think about spinning up Docker instances and different services and Yeah. What what
+26:01
+what are your thoughts there? Why why is full stack development and testing? Why why do I think it's a nightmare? Why
+26:08
+do I think it's a nightmare? Yeah. Yeah. Read into my brain. Tell me why I think Tell me why I don't like
+26:15
+development. I'll I'll definitely try because I I have my own frustrations with testing, but essentially testing is
+26:22
+seen in the web development space very differently than a lot of other verticals, right? So in web development
+26:30
+because we have so many different pieces connecting connecting together, the idea isn't to have 100% test coverage. And I
+26:37
+think that screws some stuff up where a lot of, you know, I'm assuming solidity
+26:43
+code when you're, you know, dealing with millions of dollars potentially should have 100% test coverage. Is that right?
+26:50
+Uh, it not not necessarily 100%, but like yeah, very you should aim for very high test coverage. 100 100% test
+26:57
+coverage can kind of be like a vanity metric because you know like I've seen you know products will come to us oh we
+27:02
+have 100 test coverage and they'll be like you know the test will just be like yeah true it passes like you know how like
+27:09
+claude like um will like comment out a line be like I commented out this line so the test would pass it's like okay
+27:15
+well great um but yeah high test coverage yeah yeah so it's very different in the web
+27:21
+development space depending on what you're doing and it all depends on what you're actually doing. So let's take our
+27:28
+platform for example. Uh we have code hawks which is our you know competitive audit platform. We have uptrack which is
+27:33
+our education platform. What we do in the web development space and what in our team it for testing is we figure out
+27:39
+areas that are extremely highly important and those are the areas we start with tests. So for updraft for
+27:47
+example can you watch a video right? Like that's an important part of it. So that should be covered in a test. for
+27:52
+code hawks for example rewards calculation that should be covered in a test but
+27:57
+outside of that adding tests just for the sake of stuff to pass for instance
+28:03
+uh you have like a page that has a testimonial on it to add a test to show that that testimonial appears exactly as
+28:09
+it should appear every single time right that's additional overhead that you
+28:14
+would add if you had a large team of enterprise developers but as a startup you have to make compromises outside of
+28:21
+that field, right? Yeah. So, so I guess I guess my question would be, so um what you just said, hey,
+28:27
+like can I watch videos on updraft, right? That's like a fundamental thing and you just said there should be a test
+28:33
+for that, right? If I'm coding a Solidity contract and I,
+28:39
+you know, I I can just go into my Foundry test suite, I can say, you know, function test, you know, check to see if
+28:46
+video plays, right? and I'll, you know, write it in solidity in um in full stack
+28:52
+development. I feel like you I can go to my, you know, my test.ts
+28:58
+file. I can write a test, but it's kind of dependent on like 80 different Docker
+29:04
+services running. And I feel like before I even write the test, I'm actually going to try to run it myself to see if
+29:11
+I can see a video and then I'm going to go write the test. In Solidity, I I don't have to do that because I know my
+29:17
+tests is just going to work. Um, it it feels it almost feels like it feels very
+29:23
+bizarre to me that I have to like run the entire suite first, check to see if it works, then write the test, and then
+29:29
+check to make sure the test actually matches like my manual QA that I've just
+29:34
+done. Whereas, like in Solidity, I just write the test and I I'm confident to know that that's going to work. Um I
+29:42
+don't know if I'm I'm getting across kind of the question I have here. I think you are. So you're kind of describing the difference between like a
+29:48
+unit test and an end toend test in the in our space. So a unit test is exactly what you're saying that solidity does.
+29:53
+So in our case if we have a for example uh the code hawks rewards calculation
+30:00
+logic is covered in unit test that you don't need to really run the UI to run. It's just literally you know going
+30:05
+against the function. You're you're seeing you're seeing what you're inputting stuff and you're seeing what the outputs are. That's it. and input
+30:11
+and output. That's unit testing onetoone. Where it gets complicated is exactly where you're saying when you
+30:16
+have dependent services that need to be run before that. It's very difficult to set up a unit test that can mimic all
+30:23
+those dependent services and arguably there's no value in it. Like you can, you know, you can write a custom thing
+30:28
+that can pretend that it's a UI and pretend that it's a video for whatever reason. You could do that, but what's
+30:35
+the value? Because if that custom thing is saying yes and the actual services break somewhere down the line, there's
+30:40
+no point. So that's why a lot of times I lean towards endto-end testing in full stack development to cover different
+30:46
+paths. Like don't cover everything in one end to end test. Cover many different paths and many different endto-end tests that are critical
+30:53
+because of that integration aspect. If you're trying to do too many unit tests
+30:58
+across a web development space, uh that's just going to bog down
+31:03
+everything. It's going to bog down the testing suite. It's going to bog down developers. it's gonna require you to
+31:08
+essentially be writing more tests than code like than actual like functional uh
+31:14
+feature code uh due to the complexity of those integrations
+31:19
+and I've seen I've been in in situations again the reason that I've moved towards startups is I've been in situations
+31:24
+where that was a requirement and I saw the teams that did that and like you were shipping one feature every two
+31:31
+months and to be clear in some instances that's required you know a banking application that should how it is. I
+31:37
+don't know if it's actually how it is, but that should be how it is. Any feature that you that you implement can impact someone's wallet, that should be
+31:43
+how it is. Any health care, any healthare application that impacts people's livelihood, right? Their
+31:48
+health, that's probably how it is. Well, they they already messed they should be using blockchain on the back end, so they've already they've already
+31:54
+made an architectural mistake there. But that's correct, you know, not here or there. Um,
+32:00
+but so uh definitely right definitely makes sense. This is one of the points that I usually kind of talk about. um a
+32:06
+lot too is okay web two is like a little bit I don't know easier is not the right word but yeah yeah the testing
+32:13
+requirements are less stringent you know if you make a mistake in a smart contract you lose a billion dollars if
+32:19
+you make a mistake on your UI well somebody gets a image of a cat instead of an image of a dog like okay whatever
+32:25
+um but I guess like so with all this uh so yeah like integration tests you know and integration test exists in smart
+32:32
+contracts as well you know maybe you'll like mock the result from like a chain link uh uh
+32:37
+oracle and I hear what you're saying. Hey, maybe it doesn't make sense to like mock the you know the video hosting
+32:43
+platform for like the video to like test some some weird integration because that's going to be a lot of engineering work just to build the mock and you know
+32:50
+blah blah blah. Um but it but it almost feels like then okay if we're if if that's the case then and doing kind of
+32:57
+these manual QA tests as you're building is like almost the requirement. It
+33:03
+almost feels like um being like a a DevOps or a Docker pro is
+33:12
+like almost more important because because here here's what like a lot of developers run into. you know, they'll
+33:17
+take like the siphon fullstack course and you know, I've taught them all these things and then they go to a more
+33:23
+production environment and they're like, "All right, yeah, now you got to spin up the Docker environment to run your tests and they're like, "What the hell?
+33:29
+Patrick didn't teach me that. Now I feel bad because I haven't taught people Docker." Um, but like I feel like that
+33:37
+is a whole other can of worms. um you know how how do I very quickly teach
+33:43
+containerization you know while also like you know I guess I could I could just make the
+33:48
+course twice as long um uh but but you know what I mean like there's this it
+33:54
+feels like there's this whole there's almost we're getting to this this whole other skill set and um I've run into
+33:59
+this uh pretty much at every org um that I've worked at where kind of the full stack development for for me like
+34:06
+compared compared to solidity it feels like the full stack development is like yolo Oh yeah, like whatever. Um, but
+34:13
+yeah, is this becoming really strong at Docker and DevOps like does is that like
+34:20
+a prerequisite to even doing full stack development now? Like AI I I feel like
+34:25
+when it comes to like DevOps stuff, AI is good, but like still kind of the same level of idiot as like me when it comes
+34:32
+to like it's like it gets most of the stuff right, but the one thing it gets wrong is like the thing that I needed it
+34:38
+to get right. Um, this is I keep asking like these super long not direct questions. Should you be like a DevOp
+34:45
+DevOps expert, a Docker expert to do full stack development? It's a really good question and actually
+34:51
+I I sit on a uh a council for one of the colleges that I went to where we had this exact discussion like you get into
+34:59
+from college you're you're taught one thing and you get into the work and you have like holy you have a Jenkins
+35:04
+pipeline you have CI/CD here you have you have a million different things that are very different across org toorg and
+35:11
+that's what you're saying it's kind of chaos every or handles this differently like we talked to IBM they're like oh
+35:16
+we're all in Jenkins we have our own Jenkins custom pipelines And we've written it. We've literally rewritten
+35:22
+Jenkins from the ground up to to service our service our needs. You go to meta, it's the same thing. They've rewritten
+35:27
+the entire CI/CD pipeline from the ground up. So there's no there's no real way to even learn it now to get in and
+35:35
+get ready. And that goes towards almost every organization where you're literally in a spot where you're like
+35:40
+it's cha like you get in and you're just like, okay, how do you guys do it? You do it completely differently than than I did it before. Good. Now I have to
+35:46
+figure this out. and learning one way to do it. So I think it is valuable to
+35:51
+learn something like a simple docker like how to create as a simp simple docker compose how to uh you know deploy
+35:58
+deploy that to something like Heroku or digital ocean or something like that how
+36:03
+to manage it with something like Koolifi like a dashboard in front of it. It's good to learn that kind of stuff. The thing is is it's not going to prepare
+36:10
+you for what you're going to actually hit in production like in enterprise whenever you get your first job as a developer or wherever because it's going
+36:17
+to be completely written from scratch. But knowing at least the concepts of what's going on is going to help you
+36:22
+adapt to whatever system they've implemented in in the first place, right? The biggest skill that you need to learn is to be able to adapt, to be
+36:28
+able to read documentation, to be able to ask the right questions of the seniors that are there to be able to actually sit through orientation and
+36:34
+like, you know, ingest the information that they're throwing at you. It's like, here's how you, you know, push to
+36:39
+production. Okay, don't do that, right? Like, don't do this, don't do that. Like, actually follow those steps and
+36:45
+make sure that as a company you have those steps set up. Now, that's maybe where we're lacking a little bit because
+36:50
+we haven't been able to come back and been like, here's all the new steps that we've added since we've implemented all
+36:55
+these systems. And that's where I think when you go into our cipher platform system, you're kind of lost because we
+37:00
+have a team, we have an we have an orientation structure, we have a onboarding structure, and that's what
+37:06
+gets people up to speed with our systems. And usually it's about one to two weeks and everyone is understanding at least of the critical components of
+37:12
+how our pipeline works. Whereas if you come into it from someone that you know is isn't interacting with the team on a
+37:18
+day-to-day basis and you just look at our documentation, it is chaos. Absolutely is chaos. And so like that
+37:23
+that's why that onboarding component during your first couple weeks is so critical in pretty much any organization
+37:32
+that like it it sets you up for success down the line to be able to troubleshoot these things. And that's the hard part
+37:37
+too. So for uh for context uh for people watching um so yeah as you know like you
+37:43
+know most of my work the smart contract space you know I'm on I sit on a lot of security councils now doing security
+37:50
+work I do you know I still make you know educational content um but every once in
+37:56
+a while I'm like hey there's a feature I want cipher platform have I'm just going
+38:02
+to go make it and uh obviously Mike loves hearing you know loves loves
+38:07
+hearing it when I'm like, "Hey, I'm going to go make this thing. I haven't been onboarded and you know, you know, I'm too arrogant, you know." I'm like,
+38:14
+"Yeah, I can do it." Like, I'm I'm smart, you know. Um, and then I rock up
+38:19
+and I'm like, "Why doesn't this work?" You know, uh, what's going on? Um, so basically what Mike's saying is I have
+38:25
+uh skipped a couple of steps here, you know, saying that onboarding process is is super important. Um, and I'm just
+38:32
+like complaining about Docker and stuff because I uh I missed I missed the uh the orientation. Um, but I I think what
+38:40
+you're saying um makes a lot of sense and it almost is kind of um
+38:46
+coalescing. Is that the right word? I don't think that's the right word, but maybe it's the right word. Coalesing to kind of like two thoughts. Um number
+38:52
+one, yeah, any org you work at no matter what is going to have a different process. So, you know, learning the this
+38:58
+is where learning foundations is so important. Mhm. And you definitely want, you know, um no
+39:04
+matter what org you work at, they're you know, they're going to have an onboarding process and you want to go through that, right? Like it's it's not
+39:10
+going to be, you know, Foundry and smart contract development is really nice because everyone's kind of just doing
+39:17
+everything the same way. Yeah. Okay. Foundry versus hard hat versus moccasin are going to be a little bit different,
+39:22
+but it's the on ramp is going to be really easy. In uh full stack development, that's just not the case.
+39:27
+There's so many technologies, there's so many services, there's so much more nuance that um it's just it's just
+39:35
+harder. And this is actually kind of almost leads me to like a side tangent. I actually think that sometimes full stack development is harder. Full stack
+39:42
+development is conceptually harder than smart contract development just because there's so much stuff. smart contract
+39:48
+development is harder than full stack development because the risks are so much higher. Yeah. Um and so to me they're they're both
+39:54
+harder but for different reasons. Um which is interesting. And then the final, you know, piece that I'm kind of
+40:00
+taking away from this is um I probably should have taught Docker in the full stack course, but uh now I'm
+40:09
+like ah that that'll be like another six hours of curriculum, I guess.
+40:14
+Uh but but yeah, like just ju to your point, like so that they have some experience so that when they when they
+40:21
+do rock up and they're like, "All right, cool. Like run um pmppm Docker up." Um
+40:26
+you know, like they don't go, "What what the hell is this this Docker thing?" You know, the the a common question that new
+40:33
+developers ask is, "Okay, well, why do I even need Docker?" You know, the whole like, "Oh, it works on my machine" thing.
+40:39
+Um but yeah, sorry I interrupted what you're gonna say. No, I I I think that I
+40:44
+think you're right. Uh I don't know if it'd be six hours. That's my only push back on it is I don't think it's that
+40:50
+complicated to not be able to be at least conceptually taught and like throw
+40:55
+in an example here and there in a in an hour or two. Uh again, for what a web developer needs
+41:01
+to be able to interact with it in a that's the mindset you have to be. They don't have to be the ones that create the Docker containers. They don't have
+41:07
+to be the ones that go in and usually like maintain the Docker containers even. They just have to be able to interface with the Docker containers,
+41:13
+right? They have to be able to spin it up. They have to be able to spin it down. They have to be able to know how the connections between the Docker containers work to some degree, right?
+41:19
+So that they can troubleshoot that. And that's really it. Uh they don't need the in-depth knowledge of like how do we create a
+41:26
+Docker compose file from scratch. Like you can you can kind of almost gloss over that and stuff like that. So there's ways to teach it
+41:31
+that will benefit web developers without it being like a six six hour course.
+41:36
+Got it. Okay. All right. So, so Mike, uh, Mike has given me some additional curriculum work to do. I appreciate it,
+41:42
+man. I should have gave it to you during our like first review session. So, that's my bad. Well, I I probably didn't want, you
+41:48
+know, in the back of my mind, I'm like, "Yeah, just don't even ask him. Just like just do our indexer, do Anvil." Um,
+41:54
+because at at the same time, the goal was to really be like, "All right, like here's how you make, you know, these static apps that interact with Anvil."
+42:02
+And then towards the end, you know, I was like, "All right, let's, you know, you will probably use an an indexer if
+42:07
+you have a professional environment." And that would be something you would want to spin up in a Docker container,
+42:12
+and that would probably be like a nice um added next step. Uh, and actually, yeah, maybe that would be like an easy
+42:18
+way to extend the course by like an hour or two. Um, and not be too like over
+42:25
+overburden some. Um, cool. Okay. So uh next topic I do want to talk to you about um in terms of
+42:34
+you know web 3 web two integrations. So something that we don't have a lot of on
+42:40
+the cipher platforms but we we want to and we're we're you know we're looking into it. Um is like integrations with
+42:47
+with blockchain. So right now our stuff is pretty simple. It's like um you know for like code hawks for example, we used
+42:54
+to have checks on if you're a smart contract wallet or not because we wanted to be able to like um work with
+43:00
+different chains easier. Um wallet integration stuff is
+43:06
+relatively uh easy to do. We don't send any transactions yet. Um
+43:12
+uh how are we how are yeah how are we basically you
+43:18
+know making that work? How how do you you know you have built a lot of apps that integrate directly with with blockchains. What I I know you're not
+43:25
+spinning up like a docker a dockerized anvil instance or a dockerized blockchain. You know how how do you
+43:30
+think about approaching you know these systems that have all these web two services and web 3 services that
+43:37
+integrate with blockchains that integrate with APIs, databases? Like is it just like another
+43:43
+another container that you spin up? like how how do you combine the two into like a a professional system?
+43:51
+Um honestly like for what we need and for what we'll it all depends on the
+43:56
+complexity level that we're going to be integrating but initially a test net integration is honestly more than enough
+44:01
+for testing test net RPC test net integration and then sort of mix
+44:08
+like like what I'm talking about not not like sending transactions but like just reading off the chain
+44:14
+right you got it that's really all all we're going to be doing at this point in time
+44:19
+as we start sending transactions. That's where it becomes more complicated and that's where you're probably going to need a DevNet. You're probably going to
+44:25
+have to spin up something local uh to to do that. You're there there's going to be so many more
+44:30
+steps involved in that that it's going to require most likely a rearchitecture of a few elements of our applications.
+44:36
+Uh it's going to be a whole other a whole other thing. And like you said, it's going to be part of probably part
+44:42
+of our Docker pipeline. Like it's going to be something that's spun up using a pmppm uh you know.
+44:47
+Yeah. when we essentially when we spin up one of our apps, we do pmpp whatever the app name is and part of that process
+44:53
+is like a bunch of different uh docker dockerized containers that spin up one of those is most likely going to be
+44:59
+a local devnet. So, one of the things that we we push really hard in updraft curriculum and I and I push for every
+45:06
+group to do, no matter who you are, is um have a local um like a local version
+45:14
+of your network so you can run unit tests. You know, I will um I'll take
+45:20
+snapshots of Anvil and I will put that into um you know, my my make file or my just
+45:27
+file for for running tests. And if I want to run an integration test, I already have a snapshot of like a fake
+45:32
+blockchain that I've specifically set up, you know, and this is what we're talking about like, you know, taking a lot of time to build all these mocks and
+45:38
+all this testing infrastructure. But that's something that I I do. Um I also do that so that anybody else who comes
+45:44
+to work on the project can just do like, you know, just anvil. It has an anvil
+45:49
+command which spins up this fake blockchain already in this certain state. Um obviously like uh that's very
+45:58
+helpful but it's also like a lot of work. What are your thoughts there like on combining
+46:05
+um you know the web three the blockchain stuff with the web two stuff the databases um and everything. Do you think it makes more sense to do a devet
+46:12
+or should people be spinning up their own like local devets? Should we have like a cloud um should we just you know
+46:20
+drop an anvil instance in the cloud have people connect to that? Um yeah what do you think would be your ideal setup for
+46:28
+when we do more uh transaction sending like where do you want to go Mike? I mean right now to follow the same
+46:35
+patterns that we have it probably be a local setup local dockerized setup just
+46:40
+to have it would be it would be a dockerized train. It would be dockerized. Yeah. Okay. it would be dockerized uh just to follow
+46:46
+because all of our local all of our databases are mocked locally not mocked but actually spun up in Docker containers separately locally including
+46:52
+our caching and like we have a ton of different databases obviously internally and that's just how we've done it and
+46:58
+it's just a lot easier to troubleshoot you know you just spin up that local container you can go right into it and do whatever you want server admin server
+47:05
+admin wise if something is not working correctly um and obviously those are very much onetoone mimicked to what we
+47:11
+have in production as well Now that's where this is a little bit different I guess because it wouldn't be exactly one
+47:17
+to one mimicked in as in production because it's a local devet but I still think we'd follow that pattern but having said that I mean the the other
+47:24
+options you said like having a something in the cloud maybe is okay like it sounds expensive
+47:31
+uh for for what it is but yeah my the instant that left my mouth I
+47:38
+cloud probably that way but I don't know how I don't know how as an industry like a pieops into like
+47:45
+thinking cloud was cool for 15 years like that that is that is crazy to me
+47:51
+actually that's not true I do understand there's a lot of there's a lot of money behind it there's a lot of money
+47:56
+it's approaching a trillion I think I heard that the cloud infrastructure stuff is approaching a trillion it's like 900 billion or something like that
+48:02
+I mean like if if you go to univer like this is another one of these like um component skills that we're talking about here like hey when you learn
+48:08
+development they don't teach you docker when you learn development they don't really teach to um uh like cloud or well
+48:16
+they kind of basically what they do is they go hey spin this up on AWS right and it's almost like baked into your
+48:22
+curriculum that yeah you will use cloud and like that's the you know and then like you go oh if I just bought the
+48:28
+hardware I would recoup those costs in like two months um but you know anyways
+48:34
+uh what were we talking about oh yeah dockerized uh dockerized blockchain yeah so so you're thinking yeah it would
+48:40
+be like a local local dockerized setup and then you could play with your your your chain locally and you know do
+48:47
+whatever tweaks that you need to do. Yes. Now like that's just like off the cuff right now before we actually go
+48:53
+into that space which is probably going to be soon actually uh it'll probably be me going through updraft to a certain
+48:59
+degree and seeing how you guys do it and uh probably taking that knowledge and putting that into the consideration as
+49:05
+well. So, but from what you're saying, yeah, it sounds like to match our current patterns, it would be a
+49:10
+dockerized container. Yeah. No, that makes a lot of sense to me. And and from my perspective, like, yeah, that would be that would be the
+49:17
+way that I would want to do it. Um, because it it allows, like I was saying, allows everyone to do kind of the same
+49:25
+testing process. And if when you are working with smart contracts, you know, when you are working with, you know, uh,
+49:30
+you know, once you once you make the API call, once you hit enter, that's it. like the money's gone or the
+49:37
+transactions through or whatever, you know, we we want to be u incredibly specific with how we're doing tests and
+49:43
+um have everyone follow the the same methodology. So um makes a lot of sense there. So the the only uh other question I had and
+49:50
+this is something um I've I've read a lot about and I know
+49:57
+that you and I have had this conversation um before uh but I I think it is
+50:03
+interesting enough that I want to ask you on stream here too. So monor repos versus and like a monolithic
+50:09
+architecture if you will uh and maybe we can even make parallels to to blockchain if we want here. Monor repos versus I
+50:16
+don't know what's the like modular repos multiple repos what's what's the opposite of mon just normal I don't know
+50:22
+just normal yeah or or like a bunch of repos right yeah yeah yeah just
+50:28
+so we uh we we we enjoy the monor repo um setup here at Ciphern and um that's
+50:36
+something that's always been like a little foreign to me because you know this is the first time that I worked in
+50:41
+an org that did a monor repo I know like Google, you know, they have their their
+50:47
+massive monor repo that they have everything in. Um, but yeah, what like
+50:52
+why did we make that choice, you know, why do we like monor repos? Um, and the the reason I asked is because of the the
+50:59
+the like the like clean code part of me is like you want to modularize stuff and
+51:06
+you know um you can just have in my mind I'm like oh you can just have a repo and have it install from the other repo. Um,
+51:13
+but I also kind of get like, oh, everything in one place, so that's nicer. You can make all the integrations better. You know, why why did we decide
+51:19
+to do a monor repo? And, you know, what are your thoughts on people, you know, choosing monor repos as their their
+51:24
+architectural setups? And and then just one more one more caveat like in the blockchain space, we typically typically
+51:31
+don't see this. We actually see, you know, most uh groups, they have like a UI repo,
+51:37
+boom, that's one repo. They have an indexer repo, boom, that's another repo. They have their contracts repo. Boom. That's another repo. Um, very few
+51:45
+blockchain projects are choosing this monor repo structure. So, yeah. Why did we choose this? You know, what are the
+51:50
+thoughts there? Yeah. Uh, it's a really good question because I was actually pretty anti- monor repo for a long time,
+51:57
+probably up to like three or four years ago. Um, because of all the negative experiences that I've had with it, it
+52:03
+used to over complicate things a lot. And that's probably where you're coming from as well, like where it just made it
+52:08
+so that the dependencies would clash. Like that would happen a lot or like you would download you would start downloading dependencies and would
+52:14
+download all your dependencies into what into separate folders and then you would have to like repeat those downloads. It
+52:19
+wouldn't share dependencies. Uh there was a lot of weirdness in monor repos
+52:24
+before stuff like pmppm workspaces came to be NX which is a good monor repo
+52:29
+framework and then the one that we're using which is turbo repo which is the one that's supported by burcell. Um the
+52:35
+main reason that we went down the monor reaper route is because again we're a startup. We had a small team and it
+52:41
+integrated very well with our versell infrastructure that we had at the time or we have right now as well partially
+52:46
+uh and it made it very easy to again like you were saying connect all of our
+52:52
+all of our platforms and all the packages that they share. So we have we are we do apply a very modular approach
+52:58
+like all of our UI is shared in a UI package. All of our like shared tooling is shared in a in in a package called
+53:05
+tools and lib and stuff like that. So there's a ton of shared components between all of our applications. And if
+53:10
+you go to our applications right now and you go to code hawks updraft profiles, you'll see how similar they look and a
+53:17
+lot of that is made simpler. Not like I I understand that the distributed or the standard approach totally doable with
+53:24
+that, but it's made a lot simpler with the monor repo approach where you don't have to have these sim links where you
+53:29
+don't have to pull different repos in from different places where it's just literally all in one place and when
+53:35
+you're working on it and it's all in one uh editor. You don't have to customly, you know, I know you can put multiple
+53:40
+repos into one editor, but again, all of that is overhead for just opening up your your repo and opening up and
+53:47
+starting to cook program, right? troubleshooting is slightly easier. Sim link like linking between the repos is
+53:53
+you know built in. Um they can be solved either way. Like I'm not saying that monor repos are the one
+54:00
+and only solution to this problem. Like obviously that's not the case. But because of the evolution of them and the
+54:06
+dx upgrade and pmppm coming to the scene I I I think I've had a better time than
+54:12
+I would have had with separate repos at the right now. Um, not that we haven't
+54:17
+had our issues with the monor repos as well. Like there is they're not perfect in any way, shape or form.
+54:25
+Yeah. Basically the answer is kind of with anything there's uh there's nuance
+54:31
+preference. Very rarely a technology is objectively better. It's just trade-offs. And um and
+54:38
+we made some trade-offs. Um, and uh, even though I'm I'm I'm I'm kind of grilling you on a lot of your choices
+54:44
+here live on stream. Uh, I'm uh, yeah, I mean, Updraft is sick. Cipher Site is
+54:50
+sick, Solid is sick, you know, like all of our products are sick. So, um, for my, you know, opinion, hell yeah. Great
+54:56
+uh, great choices. They resulted in great stuff here. So, uh, Mike, we have
+55:02
+five minutes left. I wanted to actually jump into the comments because we've had a lot of people uh
+55:07
+leaving some questions in here that I wanted to get to before jumping off. Um do you have a hard stop at 11 or
+55:13
+uh technically yes, I have a stand up but uh yeah. Okay. Uh we'll uh we'll answer
+55:18
+some questions uh really really quickly. Let me just rock up um in the questions
+55:27
+here. I'm going to skip over questions some questions. Sorry. Um, so, uh,
+55:32
+somebody donated, uh, to us. Thank you so much. Um, Ravikant, I hopefully I,
+55:38
+uh, said your name correct. Solidity, EVM versus Rust, SVM, Aptos, Sui, etc.
+55:44
+Um, actually, I don't know what the question is here. Yeah. Um, they, uh, I guess I can take this
+55:51
+one. Um, actually, exactly what I just said. You know, very rarely is a technology
+55:58
+strictly better than another. There's always trade-offs. Same thing here. There's trade-offs between each one of these technologies. Solidity right now
+56:04
+has like 85% of all smart contract value. So, if you want to learn a skill that's directly applicable, Solidity is
+56:10
+a great way to go. Rust, SVM, Aptos, Sway, they're kind of a combination of
+56:17
+um maybe that last 10 to 15%. Uh if you want to learn like a newer technology
+56:22
+that you know has some potential upside, great. There's obviously some risk that
+56:27
+it isn't adopted as well, but uh Rust might be the exception here because Rust
+56:32
+obviously is applicable even outside the blockchain space. So uh whatever you want to do
+56:39
+without C or C++ can't we learn solidity properly? You you you actually can learn solidity fine without C and C++. So uh
+56:47
+um don't worry about that. But when you do get to the assembly sections like much much later uh and you do want to
+56:53
+learn the lower level um stuff like having C or C++ is actually like very
+56:58
+helpful. Um yeah and that's the thing like I think it it you can you can do anything with
+57:04
+just solidity like you can be the like a really stacked programmer just solidity. I think just having that extra bit of
+57:11
+foundational knowledge just makes you like level up a little bit. Um, but it doesn't you're not it's not required for
+57:17
+anything really. Definitely. Um, oh wow. Uh, thank you
+57:22
+again for the donation. Wow. Uh, do companies even consider who are just starting in web 3 freshers with no
+57:28
+professional experience? How to stand out from others if everyone has the same source of learning and thank you Cypher Napra. Well, thank you for the donation.
+57:35
+Really appreciate that. Uh, yeah. Mike, do companies even consider who are just starting in web three or even, you know,
+57:41
+web two with no professional experience? How how do you stand out as a uh person looking for a job?
+57:47
+Yeah, it's uh I mean it's tougher right now than it was, you know, three or four years ago, but having said that, it's
+57:53
+always been tough. Uh this has been a challenge for people. If you're just learning, if without a traditional
+57:58
+education, you're you're self-learning. You have to do many different things to stand out. Uh something that I've seen a
+58:03
+lot of success in and like even in our internal team is someone that contributes to open source. You find an open source project that you're
+58:09
+passionate about and you consistently contribute. someone's going to notice. The maintainers are going to notice and
+58:14
+the maintainer has the ability. Like obviously they're going to try to hire you the the person that's been helping
+58:19
+them for free essentially uh over the person over some random person that they
+58:24
+have to go out and hire. Like the hiring process is a long begrudging process. the more you can circumvent it by again
+58:31
+open source or going to meetups, you know, doing hackathons,
+58:37
+whatever it takes to get you a portfolio and to get you in front of people that actually make the decisions on hiring,
+58:43
+right? Rather than just going and cold applying on everything. Not that that doesn't work. You can still get a job by cold applying. I think people have blown
+58:50
+that out of proportion a little bit, but it's very difficult now. So, I really highly recommend you do all the
+58:55
+different extracurriculars that you are capable of doing. I understand not everyone can travel and go to all these
+59:00
+different meetups. So, maybe you only do the online ones. I understand that not everyone can spend a bunch of time doing
+59:06
+open source. So, you have to pick the things that work for you best. But not doing any of them is almost a guaranteed
+59:13
+risk of not being able to break in right now. You need to do something. You need to build your portfolio. You need to
+59:19
+reach the right people. Yeah. Uh 100% agree. right? That, you know, in the updraft curriculum, we talk
+59:25
+about this a lot, too. Open source contributing is kind of this really underrated thing. Um, and the
+59:32
+reason it's underrated is because it's hard. It's not easy. It's almost kind of the same, you know, I get uh security,
+59:39
+you know, new security researchers saying, "Hey, how do I get a job work at a firm?" And I go, "Find bugs."
+59:45
+You know, like if you find bugs, you will get a job. Um, you know, and I might back, "Oh, that's like, hey,
+59:50
+that's really hard. Like, how am I supposed to find bugs?" And it's like, well, that's what the job is going to be, you know? So, if you want to get
+59:56
+hired to find bugs, go find bugs. If you want to get hired to write code, write
+1:00:03
+code, you know, um write code and then prove that you write code. So, if you want to stand out, that's how to do it,
+1:00:09
+you know. As as Mike said, you know, um we've hired a lot of people who have worked on um stuff with us um because
+1:00:16
+we've been like, "Wow, like we want to we want you to keep doing that and we'll pay you." um and uh or people who have a
+1:00:23
+track record of building, you know, amazing things. For our audit team, you know, we hired people who found bugs. Uh
+1:00:30
+you know, nobody on the cipher audit team came from, you know, out of nowhere. Um and uh yes, the cipher
+1:00:39
+updraft certificate uh is indeed hard. Um but that's a great place to go as well to even see, hey, do I even have
+1:00:45
+the knowledge that is expected? Um, I've had a lot of people tell me, "Hey, we should make the cipher updraft easier so
+1:00:53
+more people can pass." And I'm like, "No, it's hard." And, uh, just be
+1:00:59
+better. You know, um, I I I don't want to give a solidity to somebody who
+1:01:05
+sticks their private key in a B, you know what I mean? Like, I'm not gonna Yeah. Um, last question here
+1:01:12
+and uh, uh, we will let Oh, maybe last two questions. I know I know Mike's got to
+1:01:18
+go to standup. What would be the jump for someone from updraft to a professional web 3 developer? Um yeah, I
+1:01:25
+guess I'll I'll take this one. Uh kind of exactly what we just talked about here, right? Um
+1:01:32
+write code, contribute to open source, you know, find bugs. Um the beauty about web 3 is that so much stuff is open
+1:01:39
+source that you actually have the opportunity. This is actually one of the things I love about web 3. Um in web two
+1:01:46
+most companies are closed source so you don't even have the opportunity to contribute but in web 3 you know you
+1:01:52
+know unis swap has the well unis swap is source available a is open source um
+1:01:59
+curve is open source solidity is open source viper is open source every you know big org um in this industry is open
+1:02:07
+source so you can start to try to contribute um and then last question here what do you
+1:02:13
+think about specializ ization in the industry as a developer. Do I have to be an expert in all areas like CK Interop D5? Uh Mike, what do you think about
+1:02:20
+that? Uh no, you don't. You can't be an expert in all areas. I should be clear there.
+1:02:26
+Like it's pretty much impossible because of the scope of each area. Uh I think starting as a generalist and finding
+1:02:33
+your niche that you kind of resonate with is actually a good way to go. I've noticed that people that go deeper
+1:02:39
+lately have got had more success rather than people that go constantly spread. Um, you are limiting yourself because
+1:02:46
+based on the niche, you might be limiting the opportunities in the other spaces. But if you find the right one,
+1:02:52
+it could make you stand out. And again, you're looking for that area to stand out right now. The hard part is is
+1:02:58
+finding the right niche to actually go down. whether it's ZK, it sounds like the good niche, you know, interop, DeFi,
+1:03:03
+like all of these are really good and they all actually, some of these actually do connect pretty intensely, but uh yeah, uh I would recommend
+1:03:11
+starting wide to see where your interests and abilities lie and then going down that path.
+1:03:18
+Excellent. Well, okay, last question because they they donated. Thank you so much for donating. I don't know what
+1:03:23
+five I don't know what currency that is, but great. Uh any ZK courses you really recommend? A small but useful project
+1:03:29
+will be valuable. Uh cipher updraft. We have a noir course uh that teaches uh ZK. We have um uh more ZK curriculum
+1:03:37
+coming. Uh be sure to stay tuned. So and uh yeah there's a um ZK is still kind of
+1:03:45
+niche uh when it comes to its applications. That is something that I think as we see
+1:03:50
+more um Oh yeah, excuse me. Uh Kira also just said we on updraft we also have an
+1:03:56
+intro to ZK as well. Um so uh I would say if you're looking to start somewhere definitely go there and then start
+1:04:02
+building stuff. You know tornado cache uh is a fantastic codebase to research and read to learn more about CK. So um
+1:04:10
+but thank you all so much for coming. Mike, I really appreciate you letting me take you on stream and you know asking
+1:04:16
+you grilling you uh all these questions about hey why did we do this as a company? Um, definitely kind of a
+1:04:22
+different interview here, but hopefully, you know, you all found some value because, yeah, like we're literally being like, "Yeah, here's how we do
+1:04:28
+things. Here's how we made these decisions." So, kind of like peeking behind the curtain a little bit here. Um, Mike, where can other people follow
+1:04:36
+you and if they want to listen to, you know, the other huge huge amount of
+1:04:41
+knowledge that you have, where can they, you know, follow you and where can they, uh, listen to you more? Yeah, absolutely. Uh, so I'm on XHTML
+1:04:49
+everything. Uh, and we have a web development podcast that we release weekly called HTML All the Things. So,
+1:04:55
+go check that out. Give that a listen. Let me know what you think. HTML All the Things podcast. One of
+1:05:01
+these uh one of these uh niche podcasts where they just dump knowledge every
+1:05:06
+single week. Uh definitely highly highly recommend checking out especially if you're looking to break into uh web
+1:05:12
+development, web two development, any type of development. Um, uh, yeah, they
+1:05:17
+some top people come by and just talk about, uh, things that you wouldn't get on a normal podcast. So, definitely
+1:05:23
+definitely definitely definitely be sure to go check that out. So, all right. Well, uh, thank you everybody and have a
+1:05:29
+great one. Thank you, Mike. Bye. Thanks, everyone.

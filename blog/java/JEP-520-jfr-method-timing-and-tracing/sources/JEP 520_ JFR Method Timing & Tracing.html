@@ -1,0 +1,298 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii" /><meta http-equiv="Content-Type" content="text/html; charset=us-ascii" /><title>JEP 520: JFR Method Timing &amp; Tracing</title><link rel="shortcut icon" href="/images/nanoduke.ico" /><link rel="stylesheet" type="text/css" href="/page.css" /><script type="text/javascript" src="/page.js"><noscript></noscript></script><script src="https://cdn.usefathom.com/script.js" data-site="KCYJJPZX" defer="yes"></script><style type="text/css" xml:space="preserve">
+      TABLE { border-collapse: collapse; padding: 0px; margin: 1em 0 1em 2em; }
+      TR:first-child TH, TR:first-child TD { padding-top: 0; }
+      TH, TD { padding: 0px; padding-top: .5ex; vertical-align: baseline; text-align: left; }
+      TD + TD, TH + TH { padding-left: 1em; }
+      TD:first-child, TH:first-child, TD.jep { text-align: right; }
+      TABLE.head TD:first-child { font-style: italic; padding-left: 2em; white-space: nowrap; }
+      PRE { padding-left: 2em; margin: 1ex 0; font-size: inherit; }
+      TABLE PRE { padding-left: 0; margin: 0; }
+      TABLE.jeps TD:first-child + TD,
+      TABLE.jeps TD:first-child + TD + TD { padding-left: .5em; }
+      TABLE.jeps TD:first-child,
+      TABLE.jeps TD:first-child + TD,
+      TABLE.jeps TD:first-child + TD + TD { font-size: smaller; }
+      TABLE.jeps TD.cl { font-size: smaller; padding-right: 0; text-align: right; }
+      TABLE.jeps TD.cm { font-size: smaller; padding-left: .1em; padding-right: .1em; }
+      TABLE.jeps TD.cr { font-size: smaller; padding-left: 0; }
+      TABLE.jeps TD.z { padding-left: 0; padding-right: 0; }
+      TABLE.head TD { padding-top: 0; }
+    </style></head><body><div id="main"><h1>JEP 520: JFR Method Timing &amp; Tracing</h1><table class="head"><tr><td>Owner</td><td>Erik Gahlin</td></tr><tr><td>Type</td><td>Feature</td></tr><tr><td>Scope</td><td>JDK</td></tr><tr><td>Status</td><td>Closed&#8201;/&#8201;Delivered</td></tr><tr><td>Release</td><td>25</td></tr><tr><td>Component</td><td>hotspot&#8201;/&#8201;jfr</td></tr><tr><td>Discussion</td><td>hotspot dash jfr dash dev at openjdk dot org</td></tr><tr><td>Effort</td><td>S</td></tr><tr><td>Duration</td><td>S</td></tr><tr><td>Reviewed by</td><td>Markus Gr&#246;nlund, Vladimir Kozlov</td></tr><tr><td>Endorsed by</td><td>Vladimir Kozlov</td></tr><tr><td>Created</td><td>2024/03/20 14:10</td></tr><tr><td>Updated</td><td>2025/07/11 19:51</td></tr><tr><td>Issue</td><td><a href="https://bugs.openjdk.org/browse/JDK-8328610">8328610</a></td></tr></table><div class="markdown"><h2 id="Summary">Summary</h2>
+<p>Extend the <a href="https://dev.java/learn/jvm/jfr/">JDK Flight Recorder</a> (JFR) with facilities for method timing and tracing via <a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.instrument/java/lang/instrument/Instrumentation.html">bytecode instrumentation</a>.</p>
+<h2 id="Goals">Goals</h2>
+<ul>
+<li>
+<p>For method invocations, record complete and exact statistics rather than incomplete and inexact sample-based statistics.</p>
+</li>
+<li>
+<p>Allow execution times and stack traces to be recorded for specific methods without requiring source code modifications.</p>
+</li>
+<li>
+<p>Allow methods to be selected via command-line arguments, configuration files, the <a href="https://docs.oracle.com/en/java/javase/24/docs/specs/man/jcmd.html"><code>jcmd</code> tool</a>, and over the network via the <a href="https://docs.oracle.com/en/java/javase/24/jmx/introduction-jmx-technology.html">Java Management Extensions API</a> (JMX).</p>
+</li>
+</ul>
+<h2 id="Non-Goals">Non-Goals</h2>
+<ul>
+<li>
+<p>It is not a goal to record method arguments or the values of non-static fields.</p>
+</li>
+<li>
+<p>It is not a goal to time or trace methods that do not have a bytecode representation, such as abstract, native, or non-static non-default interface methods.</p>
+</li>
+<li>
+<p>It is not a goal to time or trace a large number of methods simultaneously, since that would significantly degrade performance. Use method sampling in such cases.</p>
+</li>
+<li>
+<p>JFR generally aims to impose a CPU overhead of less than one percent. It is not a goal to remain within this constraint when timing and tracing methods.</p>
+</li>
+</ul>
+<h2 id="Motivation">Motivation</h2>
+<p>Timing and tracing method invocations can help to identify performance bottlenecks, optimize code, and find the root causes of bugs. For example, if an application takes an unusually long time to start, tracing static initializers can reveal class loading that could be deferred to a later stage. If a method was changed to fix a performance bug, timing its execution can confirm that the fix was successful. If an application fails because it runs out of database connections, tracing the method that opens connections can suggest how to manage those connections more effectively.</p>
+<p>During development, we already have good tools for analyzing method execution: The <a href="https://github.com/openjdk/jmh">Java Microbenchmark Harness</a> (JMH) can measure method execution times, and debuggers built on top of the <a href="https://docs.oracle.com/en/java/javase/24/docs/api/jdk.jdi/module-summary.html">Java Debug Interface</a> (JDI) can set breakpoints and inspect call stacks.</p>
+<p>During testing and production, however, timing and tracing pose challenges. There are several approaches, none fully satisfactory:</p>
+<ul>
+<li>
+<p>Add temporary log statements or JFR events to the methods under investigation. This is cumbersome at best, and not feasible for third-party libraries or classes in the JDK.</p>
+</li>
+<li>
+<p>Use sample-based profilers, such as the one <a href="https://openjdk.org/jeps/518">built into JFR</a> or third-party tools such as <a href="https://github.com/async-profiler/async-profiler">async-profiler</a>. These tools capture stack traces for frequently executed methods, but they fall short of timing and tracing every invocation.</p>
+</li>
+<li>
+<p>Use a <a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.instrument/java/lang/instrument/package-summary.html">Java agent</a>, such as the one employed by the <a href="https://www.oracle.com/java/technologies/jdk-mission-control.html">JDK Mission Control tool</a>, to instrument methods to emit JFR events. While this approach works, doing such instrumentation from within the JDK would have performance benefits. For example, the JVM can filter methods, eliminating the need to parse the bytecode of every loaded class twice. Having this feature in the JDK would also simplify usage, since methods could be timed and traced without having to configure or install an agent.</p>
+</li>
+</ul>
+<p>The JDK should provide a way to time and trace method invocations with low overhead, enabling developers to easily and efficiently analyze and optimize their applications.</p>
+<h2 id="Description">Description</h2>
+<p>We introduce two new JFR events, <code>jdk.MethodTiming</code> and <code>jdk.MethodTrace</code>. They both accept a filter to select the methods to time and trace.</p>
+<p>For example, to see what triggers the resize of a <code>HashMap</code>, you can configure the <code>MethodTrace</code> event's filter when making a recording and then use the <a href="https://docs.oracle.com/en/java/javase/24/docs/specs/man/jfr.html"><code>jfr</code> tool</a> to display the recorded event:</p>
+<pre><code>$ java -XX:StartFlightRecording:<b>jdk.MethodTrace#filter=java.util.HashMap::resize</b>,filename=recording.jfr ...
+$ jfr print --events jdk.MethodTrace --stack-depth 20 recording.jfr
+jdk.MethodTrace {
+    startTime = 00:39:26.379 (2025-03-05)
+    duration = 0.00113 ms
+    method = java.util.HashMap.resize()
+    eventThread = "main" (javaThreadId = 3)
+    stackTrace = [
+      java.util.HashMap.putVal(int, Object, Object, boolean, boolean) line: 636
+      java.util.HashMap.put(Object, Object) line: 619
+      sun.awt.AppContext.put(Object, Object) line: 598
+      sun.awt.AppContext.&lt;init&gt;(ThreadGroup) line: 240
+      sun.awt.SunToolkit.createNewAppContext(ThreadGroup) line: 282
+      sun.awt.AppContext.initMainAppContext() line: 260
+      sun.awt.AppContext.getAppContext() line: 295
+      sun.awt.SunToolkit.getSystemEventQueueImplPP() line: 1024
+      sun.awt.SunToolkit.getSystemEventQueueImpl() line: 1019
+      java.awt.Toolkit.getEventQueue() line: 1375
+      java.awt.EventQueue.invokeLater(Runnable) line: 1257
+      javax.swing.SwingUtilities.invokeLater(Runnable) line: 1415
+      java2d.J2Ddemo.main(String[]) line: 674
+    ]
+}
+$ </code></pre>
+<p>The filter is specified as <code>java.util.HashMap::resize</code>, just like a <a href="https://docs.oracle.com/javase/specs/jls/se24/html/jls-15.html#jls-15.13">method reference</a> in source code. As the JVM starts up, it instruments this method by injecting bytecode to emit a <code>MethodTrace</code> event.</p>
+<h3 id="Use-via-configuration-files">Use via configuration files</h3>
+<p>In practice, JFR is usually configured via a configuration file rather than by explicitly mentioning events on the command line. The JDK includes two configuration files, <code>default.jfc</code> and <code>profile.jfc</code>; the former is used when no configuration file is specified, while the latter contains convenient configuration settings for profiling. Such files can declare options which can be given on the command line when starting the JVM, or via <code>jcmd</code> on an already running JVM.</p>
+<p>We enhance <code>default.jfc</code> and <code>profile.jfc</code> with two new options, <code>method-timing</code> and <code>method-trace</code>, which control the filter settings for the <code>MethodTiming</code> and <code>MethodTrace</code> events. The <code>method-timing</code> option counts the number of invocations and calculates the average execution time of methods that match the filter, while the <code>method-trace</code> option records stack traces for methods that match the filter.</p>
+<p>Additionally, we enhance the <code>jfr view</code> and <code>jcmd &lt;pid&gt; JFR.view</code> commands to display method timing and tracing results.</p>
+<p>To put this all together, if an application suffers from slow startup, timing the execution of all static initializers might suggest where lazy initialization could be used. We can time all static initializers in all classes by omitting the class name, specifying <code>::&lt;clinit&gt;</code> as the filter:</p>
+<pre><code>$ java '-XX:StartFlightRecording:<b>method-timing=::&lt;clinit&gt;</b>,filename=clinit.jfr' ...
+$ jfr view method-timing clinit.jfr
+
+                                 Method Timing
+
+Timed Method                                           Invocations Average Time
+------------------------------------------------------ ----------- ------------
+sun.font.HBShaper.&lt;clinit&gt;()                                     1 32.500000 ms
+java.awt.GraphicsEnvironment$LocalGE.&lt;clinit&gt;()                  1 32.400000 ms
+java2d.DemoFonts.&lt;clinit&gt;()                                      1 21.200000 ms
+java.nio.file.TempFileHelper.&lt;clinit&gt;()                          1 17.100000 ms
+sun.security.util.SecurityProviderConstants.&lt;clinit&gt;()           1  9.860000 ms
+java.awt.Component.&lt;clinit&gt;()                                    1  9.120000 ms
+sun.font.SunFontManager.&lt;clinit&gt;()                               1  8.350000 ms
+sun.java2d.SurfaceData.&lt;clinit&gt;()                                1  8.300000 ms
+java.security.Security.&lt;clinit&gt;()                                1  8.020000 ms
+sun.security.util.KnownOIDs.&lt;clinit&gt;()                           1  7.550000 ms
+...
+$ 
+</code></pre>
+<h3 id="Filtering-on-classes-and-annotations">Filtering on classes and annotations</h3>
+<p>Besides a method, a filter can name a class, in which case all methods in the class are timed or traced.</p>
+<p>A filter can also name an annotation. This causes all methods bearing the annotation, and all methods in all classes bearing the annotation, to be timed or traced. For example, to see the number of times that a <a href="https://javadoc.io/static/jakarta.ws.rs/jakarta.ws.rs-api/3.0.0/index.html">Jakarta REST</a> endpoint is invoked, and measure the approximate execution time:</p>
+<pre><code>$ jcmd &lt;pid&gt; JFR.start <b>method-timing=@jakarta.ws.rs.GET</b></code></pre>
+<p>You can specify multiple filters, separating them with semicolons. For example, we can find where file descriptors are leaking by tracing their creation and destruction and looking for events that do not match up:</p>
+<pre><code>$ java '-XX:StartFlightRecording:filename=fd.jfr,<b>method-trace=java.io.FileDescriptor::&lt;init&gt;;java.io.FileDescriptor::close</b>' ...
+$ jfr view --cell-height 5 MethodTrace fd.jfr
+
+                                                  Method Trace
+
+Start Time    Duration Event Thread     Stack Trace                                     Method
+---------- ----------- ---------------- ----------------------------------------------- -------------------------------
+20:32:39   0.000542 ms AWT-EventQueue-0 java.io.FileInputStream.&lt;init&gt;(File)            java.io.FileDescriptor.&lt;init&gt;()
+                                        sun.security.provider.FileInputStreamPool.ge...                                
+                                        sun.security.provider.NativePRNG$RandomIO.&lt;i...                                
+                                        sun.security.provider.NativePRNG.initIO(...)                                   
+                                        sun.security.provider.NativePRNG.&lt;clinit&gt;() 
+20:32:39   0.000334 ms AWT-EventQueue-0 java.io.FileInputStream.&lt;init&gt;(File)            java.io.FileDescriptor.&lt;init&gt;()
+                                        java.io.FileInputStream.&lt;init&gt;(String)                                         
+                                        sun.awt.FontConfiguration.readFontConfigFile...                                
+                                        sun.awt.FontConfiguration.init()                                               
+                                        sun.font.CFontManager.createFontConfiguration()                                
+20:32:39     0.0166 ms AWT-EventQueue-0 java.io.FileInputStream$1.close()               java.io.FileDescriptor.close() 
+                                        java.io.FileDescriptor.closeAll(Closeable)                                     
+                                        java.io.FileInputStream.close()                                                
+                                        sun.awt.FontConfiguration.readFontConfigFile...                                
+                                        sun.awt.FontConfiguration.init()                                               
+...
+$ 
+</code></pre>
+<p>The <code>--cell-height</code> option sets the maximum number of rows to display for an event. In this example, it sets the maximum number of frames to show for each stack trace.</p>
+<h3 id="Filter-grammar">Filter grammar</h3>
+<p>Overall, the grammar for filters is:</p>
+<pre><code>filter ::= target (";" target)*
+target ::= class | class-method | method | annotation
+class ::= identifier ("." identifier)*
+class-method ::= class method
+method ::= "::" method-name
+method-name ::= identifier | "&lt;clinit&gt;" | "&lt;init&gt;"
+annotation ::= "@" class
+identifier ::= see <a href="https://docs.oracle.com/javase/specs/jls/se24/html/jls-3.html#jls-3.8">JLS &#167;3.8</a>
+</code></pre>
+<p>A filter with the method name <code>&lt;init&gt;</code> matches all of the specified class's constructors, just as <code>&lt;clinit&gt;</code> matches the class's static initializer.</p>
+<p>A filter will match multiple methods when the specified method name is <a href="https://docs.oracle.com/javase/specs/jls/se24/html/jls-8.html#jls-8.4.9">overloaded</a>, in which case JFR instruments every method of that name in the specified class.</p>
+<h3 id="Custom-configuration-files">Custom configuration files</h3>
+<p>If you need to time or trace more than a few methods, you can create a separate configuration file to name them all:</p>
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;configuration version="2.0"&gt;
+  &lt;event name="jdk.MethodTiming"&gt;
+    &lt;setting name="enabled"&gt;true&lt;/setting&gt;
+    &lt;setting name="filter"&gt;
+      com.example.Foo::method1;
+      com.example.Bar::method2;
+      ...
+      com.example.Baz::method17
+    &lt;/setting&gt;
+  &lt;/event&gt;
+&lt;/configuration&gt;</code></pre>
+<p>You can then use this in conjunction with the default configuration:</p>
+<pre><code>$ java -XX:StartFlightRecording:settings=timing.jfc,settings=default ...</code></pre>
+<h3 id="Custom-annotations">Custom annotations</h3>
+<p>It can be convenient to define custom annotations with which to label methods or classes for future investigation. For example:</p>
+<pre><code>package com.example;
+
+@Retention(RUNTIME)
+@Target({ TYPE, METHOD })
+public @interface StopWatch {
+}
+
+@Retention(RUNTIME)
+@Target({ TYPE, METHOD })
+public @interface Initialization {
+}
+
+@Retention(RUNTIME)
+@Target({ TYPE, METHOD })
+public @interface Debug {
+}</code></pre>
+<p>When you need to troubleshoot the application, you can specify the appropriate annotations for timing or tracing:</p>
+<pre><code>$ java -XX:StartFlightRecording:<b>method-trace=@com.example.Debug</b> ...
+$ java -XX:StartFlightRecording:<b>method-timing=@com.example.Initialization,@com.example.StopWatch</b> ...
+</code></pre>
+<p>You can correlate the resulting <code>MethodTiming</code> and <code>MethodTrace</code> events with other events that JFR emits, such as events for lock contention, method sampling, or I/O, to determine why the annotated parts of the program were slow.</p>
+<h3 id="Remote-configuration">Remote configuration</h3>
+<p>You can use <a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.management/module-summary.html">JMX</a> and the JFR <a href="https://docs.oracle.com/en/java/javase/24/docs/api/jdk.management.jfr/jdk/management/jfr/RemoteRecordingStream.html"><code>RemoteRecordingStream</code></a> class to configure timing and tracing over the network. For example:</p>
+<pre><code>import javax.management.remote.*;
+import jdk.management.jfr.*;
+
+/// Establish non-secure connection to remote host
+var url = "service:jmx:rmi:///jndi/rmi://example.com:7091/jmxrmi";
+var jmxURL = new JMXServiceURL(url);
+try (var conn = JMXConnectorFactory.connect(jmxURL)) {
+    try (var r = new RemoteRecordingStream(conn.getMBeanServerConnection())) {
+
+        // Create map for settings
+        var settings = new HashMap&lt;String,String&gt;();
+
+        // Trace methods in class com.foo.Bar that take more than 1 ms to execute
+        settings.put("jdk.MethodTrace#enabled", "true");
+        settings.put("jdk.MethodTrace#stackTrace", "true");
+        settings.put("jdk.MethodTrace#threshold", "1 ms");
+        settings.put("jdk.MethodTrace#filter", "com.foo.Bar");
+
+        // Subscribe to trace events
+        r.onEvent("jdk.MethodTrace", event -&gt; ...);
+
+        // Measure execution time and invocation count for methods with
+        // the jakarta.ws.rs.GET annotation, and emit the result every 10 s
+        settings.put("jdk.MethodTiming#enabled", "true");
+        settings.put("jdk.MethodTiming#filter", "@jakarta.ws.rs.GET");
+        settings.put("jdk.MethodTiming#period", "10 s");
+
+        // Subscribe to timing events
+        r.onEvent("jdk.MethodTiming", event -&gt; ...);
+
+        // Set the settings, then time and trace for 60 seconds
+        r.setSettings(settings);
+        r.startAsync();
+        Thread.sleep(60_000);
+        r.stop();
+
+    }
+}</code></pre>
+<p>When the stream is started, the remote JVM instruments the specified methods by injecting bytecode to emit <code>MethodTiming</code> and <code>MethodTrace</code> events, as appropriate. When the stream is stopped, after 60 seconds, the injected bytecode is removed. Then, after waiting for any pending events to be consumed, the stream is closed and the remote JVM discards its recording data, restoring the system to its original state.</p>
+<p>You can also use the <code>RemoteRecordingStream</code> class to consume <code>MethodTiming</code> and <code>MethodTrace</code> events within a process in a similar manner, for example in a Java agent.</p>
+<p>If multiple recordings run at the same time, whether started remotely or locally, JFR applies the union of all filters.</p>
+<h3 id="Event-details">Event details</h3>
+<p>A <code>jdk.MethodTiming</code> event has these fields:</p>
+<ul>
+<li><code>method</code> &#8212; the name of the method that was timed,</li>
+<li><code>startTime</code> &#8212; the wall-clock time when the event was emitted,</li>
+<li><code>invocations</code> &#8212; the number of times the method was invoked,</li>
+<li><code>minimum</code> &#8212; an approximation of the minimum wall-clock time it took for the method to execute</li>
+<li><code>average</code> &#8212; an approximation of the average wall-clock time it took for the method to execute</li>
+<li><code>maximum</code> &#8212; an approximation of the maximum wall-clock time it took for the method to execute</li>
+</ul>
+<p>A <code>jdk.MethodTrace</code> event has these fields:</p>
+<ul>
+<li><code>method</code> &#8212; the name of the method that was traced,</li>
+<li><code>startTime</code> &#8212; the wall-clock time when the method was entered,</li>
+<li><code>duration</code> &#8212; the wall-clock time it took to execute the method,</li>
+<li><code>eventThread</code> &#8212; the thread that the method executed in, and</li>
+<li><code>stackTrace</code> &#8212; a stack trace, starting from the traced method&#8217;s caller.</li>
+</ul>
+<p>The precision of the <code>average</code> and <code>duration</code> fields depends upon the time it takes to obtain a timestamp, which in turn depends upon the hardware and operating system.</p>
+<p>The duration recorded for a method includes the time spent executing any methods that it invokes.</p>
+<h2 id="Future-Work">Future Work</h2>
+<p>Sometimes, a class to be timed or traced implements a known interface, but the name of the class itself is unknown. In such cases it would be convenient to be able to specify the interface in a filter, causing every class implementing that interface to be timed or traced. We could add such functionality in the future, without altering this design.</p>
+<h2 id="Alternatives">Alternatives</h2>
+<ul>
+<li>
+<p>JFR could record method arguments and non-static fields when timing or tracing. That would, however, enable it to be used as an attack vector for exfiltrating sensitive information, either programmatically by an unvetted third-party library or through a maliciously crafted configuration file.</p>
+</li>
+<li>
+<p>The filter grammar could allow specific method-name overloads to be specified. That would, however, complicate the syntax since comma-separated parameter names would conflict with the commas that separate JFR options.</p>
+</li>
+<li>
+<p>The filter grammar could accept wildcards, but that could lead to excessive numbers of instrumented methods, bringing the application to a halt.</p>
+</li>
+<li>
+<p>To prevent excessive numbers of instrumented methods, JFR could limit the number of methods that can be instrumented. There are, however, scenarios where that can be acceptable. For example, static initializers are only invoked once, so asking to time or trace all of them is not unreasonable.</p>
+</li>
+</ul>
+<h2 id="Risks-and-Assumptions">Risks and Assumptions</h2>
+<p>Specifying a filter that includes JDK methods used by the injected instrumentation bytecode can lead to infinite recursion. JFR attempts to avoid this, but its mechanism for doing so is fragile. If you observe such recursion then please submit a bug report; in the mean time, you can avoid the recursion by removing JDK methods from your filter.</p>
+</div></div><div id="sidebar"><div id="openjdk-sidebar-logo"><a href="/"><img alt="OpenJDK logo" width="91" height="25" src="/images/openjdk2.svg" /></a></div><div class="links"><div class="link"><a href="/install/">Installing</a></div><div class="link"><a href="/guide/#contributing-to-an-openjdk-project">Contributing</a></div><div class="link"><a href="/guide/#reviewing-and-sponsoring-a-change">Sponsoring</a></div><div class="link"><a href="/guide/">Developers' Guide</a></div><div class="link"><a href="/groups/vulnerability/report">Vulnerabilities</a></div><div class="link"><a href="https://jdk.java.net">JDK GA/EA Builds</a></div></div><div class="links"><div class="links"><a href="https://mail.openjdk.org">Mailing lists</a></div><div class="link"><a href="https://wiki.openjdk.org">Wiki</a>
+                      &#183; <a href="/irc">IRC</a></div><div class="link"><a href="https://mastodon.social/@openjdk" rel="me">Mastodon</a></div><div class="link"><a href="https://bsky.app/profile/openjdk.org">Bluesky</a></div></div><div class="links"><div class="links"><a href="/bylaws">Bylaws</a> &#183; <a href="/census">Census</a></div><div class="link"><a href="/legal/">Legal</a> &#183; <a href="/legal/ai">AI</a></div></div><div class="links"><div class="links"><a href="/workshop"><b>Workshop</b></a></div></div><div class="links"><div class="links"><a href="/jeps/0"><b>JEP Process</b></a></div></div><div class="links"><div class="about">Source code</div><div class="link"><a href="https://github.com/openjdk/">GitHub</a></div><div class="link"><a href="https://hg.openjdk.org">Mercurial</a></div></div><div class="links"><div class="about">Tools</div><div class="link"><a href="http://git-scm.org/">Git</a></div><div class="link"><a href="/jtreg/">jtreg harness</a></div></div><div class="links"><div class="about">Groups</div><div class="link"><a href="/groups/">(overview</a>,
+      <a href="/groups/archive">archive</a>)</div><div class="link"><a href="/groups/adoption">Adoption</a></div><div class="link"><a href="/groups/build">Build</a></div><div class="link"><a href="/groups/client-libs">Client Libraries</a></div><div class="link"><a href="/groups/csr">Compatibility &amp; Specification Review</a></div><div class="link"><a href="/groups/compiler">Compiler</a></div><div class="link"><a href="/groups/conformance">Conformance</a></div><div class="link"><a href="/groups/core-libs">Core Libraries</a></div><div class="link"><a href="/groups/gb">Governing Board</a></div><div class="link"><a href="/groups/hotspot">HotSpot</a></div><div class="link"><a href="/groups/ide-support">IDE Tooling &amp; Support</a></div><div class="link"><a href="/groups/i18n">Internationalization</a></div><div class="link"><a href="/groups/members">Members</a></div><div class="link"><a href="/groups/net">Networking</a></div><div class="link"><a href="/groups/porters">Porters</a></div><div class="link"><a href="/groups/quality">Quality</a></div><div class="link"><a href="/groups/security">Security</a></div><div class="link"><a href="/groups/serviceability">Serviceability</a></div><div class="link"><a href="/groups/vulnerability">Vulnerability</a></div><div class="link"><a href="/groups/web">Web</a></div></div><div class="links"><div class="about">Projects</div><div class="link">(<a href="/projects/">overview</a>,
+      <a href="/projects/archive">archive</a>)</div><div class="link"><a href="/projects/amber">Amber</a></div><div class="link"><a href="/projects/babylon">Babylon</a></div><div class="link"><a href="/projects/brisbane">Brisbane</a></div><div class="link"><a href="/projects/crac">CRaC</a></div><div class="link"><a href="/projects/code-tools">Code Tools</a></div><div class="link"><a href="/projects/coin">Coin</a></div><div class="link"><a href="/projects/cvmi">Common VM Interface</a></div><div class="link"><a href="/projects/detroit">Detroit</a></div><div class="link"><a href="/projects/guide">Developers' Guide</a></div><div class="link"><a href="/projects/duke">Duke</a></div><div class="link"><a href="/projects/graal">Graal</a></div><div class="link"><a href="/projects/icedtea">IcedTea</a></div><div class="link"><a href="/projects/jdk8u">JDK 8 Updates</a></div><div class="link"><a href="/projects/jdk9">JDK 9</a></div><div class="link"><a href="/projects/jdk">JDK</a>
+      (&#8230;,
+       <a href="/projects/jdk/25">25</a>,
+       <a href="/projects/jdk/26">26</a>,
+       <a href="/projects/jdk/27">27</a>)</div><div class="link"><a href="/projects/jdk-updates">JDK Updates</a></div><div class="link"><a href="/projects/jmc">JMC</a></div><div class="link"><a href="/projects/jigsaw">Jigsaw</a></div><div class="link"><a href="/projects/lanai">Lanai</a></div><div class="link"><a href="/projects/leyden">Leyden</a></div><div class="link"><a href="/projects/lilliput">Lilliput</a></div><div class="link"><a href="/projects/loom">Loom</a></div><div class="link"><a href="/projects/jmm">Memory Model Update</a></div><div class="link"><a href="/projects/metropolis">Metropolis</a></div><div class="link"><a href="/projects/mlvm">Multi-Language VM</a></div><div class="link"><a href="/projects/nashorn">Nashorn</a></div><div class="link"><a href="/projects/nio">New I/O</a></div><div class="link"><a href="/projects/openjfx">OpenJFX</a></div><div class="link"><a href="/projects/panama">Panama</a></div><div class="link"><a href="/projects/aarch32-port">Port: AArch32</a></div><div class="link"><a href="/projects/aarch64-port">Port: AArch64</a></div><div class="link"><a href="/projects/bsd-port">Port: BSD</a></div><div class="link"><a href="/projects/haiku-port">Port: Haiku</a></div><div class="link"><a href="/projects/mips-port">Port: MIPS</a></div><div class="link"><a href="/projects/mobile">Port: Mobile</a></div><div class="link"><a href="/projects/ppc-aix-port">Port: PowerPC/AIX</a></div><div class="link"><a href="/projects/riscv-port">Port: RISC-V</a></div><div class="link"><a href="/projects/s390x-port">Port: s390x</a></div><div class="link"><a href="/projects/sctp">SCTP</a></div><div class="link"><a href="/projects/shenandoah">Shenandoah</a></div><div class="link"><a href="/projects/skara">Skara</a></div><div class="link"><a href="/projects/sumatra">Sumatra</a></div><div class="link"><a href="/projects/tsan">Tsan</a></div><div class="link"><a href="/projects/valhalla">Valhalla</a></div><div class="link"><a href="/projects/wakefield">Wakefield</a></div><div class="link"><a href="/projects/zero">Zero</a></div><div class="link"><a href="/projects/zgc">ZGC</a></div></div><div class="buttons"><a href="https://oracle.com"><img alt="Oracle logo" width="100" height="13" src="/images/oracle.svg" /></a></div></div><div id="footer">
+
+        &#169; 2026 Oracle Corporation and/or its affiliates
+        <br /><a href="/legal/tou/">Terms of Use</a>
+        &#183;
+        
+            License: <a href="/legal/gplv2+ce.html">GPLv2</a>
+        &#183; <a href="https://www.oracle.com/us/legal/privacy/">Privacy</a>
+        &#183; <a href="https://openjdk.org/legal/openjdk-trademark-notice.html">Trademarks</a></div><script type="text/javascript"  src="/-9ys1EPi4/Ms9YCW4mX/wWttiMBSw/a1QuhGJwzOShzr1u/EhZlAQ/RVxcB/CBTJkUB"></script></body></html>

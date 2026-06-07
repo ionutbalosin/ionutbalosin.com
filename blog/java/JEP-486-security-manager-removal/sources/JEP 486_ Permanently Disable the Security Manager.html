@@ -1,0 +1,413 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii" /><meta http-equiv="Content-Type" content="text/html; charset=us-ascii" /><title>JEP 486: Permanently Disable the Security Manager</title><link rel="shortcut icon" href="/images/nanoduke.ico" /><link rel="stylesheet" type="text/css" href="/page.css" /><script type="text/javascript" src="/page.js"><noscript></noscript></script><script src="https://cdn.usefathom.com/script.js" data-site="KCYJJPZX" defer="yes"></script><style type="text/css" xml:space="preserve">
+      TABLE { border-collapse: collapse; padding: 0px; margin: 1em 0 1em 2em; }
+      TR:first-child TH, TR:first-child TD { padding-top: 0; }
+      TH, TD { padding: 0px; padding-top: .5ex; vertical-align: baseline; text-align: left; }
+      TD + TD, TH + TH { padding-left: 1em; }
+      TD:first-child, TH:first-child, TD.jep { text-align: right; }
+      TABLE.head TD:first-child { font-style: italic; padding-left: 2em; white-space: nowrap; }
+      PRE { padding-left: 2em; margin: 1ex 0; font-size: inherit; }
+      TABLE PRE { padding-left: 0; margin: 0; }
+      TABLE.jeps TD:first-child + TD,
+      TABLE.jeps TD:first-child + TD + TD { padding-left: .5em; }
+      TABLE.jeps TD:first-child,
+      TABLE.jeps TD:first-child + TD,
+      TABLE.jeps TD:first-child + TD + TD { font-size: smaller; }
+      TABLE.jeps TD.cl { font-size: smaller; padding-right: 0; text-align: right; }
+      TABLE.jeps TD.cm { font-size: smaller; padding-left: .1em; padding-right: .1em; }
+      TABLE.jeps TD.cr { font-size: smaller; padding-left: 0; }
+      TABLE.jeps TD.z { padding-left: 0; padding-right: 0; }
+      TABLE.head TD { padding-top: 0; }
+    </style></head><body><div id="main"><h1>JEP 486: Permanently Disable the Security Manager</h1><table class="head"><tr><td>Author</td><td>Sean Mullan &amp; Alex Buckley</td></tr><tr><td>Owner</td><td>Sean Mullan</td></tr><tr><td>Type</td><td>Feature</td></tr><tr><td>Scope</td><td>SE</td></tr><tr><td>Status</td><td>Closed&#8201;/&#8201;Delivered</td></tr><tr><td>Release</td><td>24</td></tr><tr><td>Component</td><td>security-libs&#8201;/&#8201;java.security</td></tr><tr><td>Discussion</td><td>security dash dev at openjdk dot java dot net</td></tr><tr><td>Effort</td><td>L</td></tr><tr><td>Duration</td><td>L</td></tr><tr><td>Relates to</td><td><a href="411">JEP 411: Deprecate the Security Manager for Removal</a></td></tr><tr><td>Reviewed by</td><td>Alan Bateman, Mark Reinhold, Stuart Marks</td></tr><tr><td>Endorsed by</td><td>Alan Bateman</td></tr><tr><td>Created</td><td>2024/08/19 23:43</td></tr><tr><td>Updated</td><td>2025/09/02 15:58</td></tr><tr><td>Issue</td><td><a href="https://bugs.openjdk.org/browse/JDK-8338625">8338625</a></td></tr></table><div class="markdown"><h2 id="Summary">Summary</h2>
+<p>The Security Manager has not been the primary means of securing client-side Java code for many years, it has rarely been used to secure server-side code, and it is costly to maintain. We therefore deprecated it for removal in Java&#160;17 via <a href="https://openjdk.org/jeps/411">JEP&#160;411</a> (2021). As the next step toward removing the Security Manager, we will revise the Java Platform specification so that developers cannot enable it and other Platform classes do not refer to it. This change will have no impact on the vast majority of applications, libraries, and tools. We will remove the Security Manager API in a future release.</p>
+<h2 id="Goals">Goals</h2>
+<ul>
+<li>
+<p>Remove the ability to enable the Security Manager when starting the Java runtime (<code>java -Djava.security.manager ...</code>).</p>
+</li>
+<li>
+<p>Remove the ability to install a Security Manager while an application is running (<code>System.setSecurityManager(...)</code>).</p>
+</li>
+<li>
+<p>Improve the maintainability of hundreds of JDK classes that currently delegate resource-access decisions to the Security Manager.</p>
+</li>
+<li>
+<p>Revise the specification of the Security Manager API so that all implementations of it behave as if no Security Manager is ever enabled.</p>
+</li>
+<li>
+<p>Retain the Security Manager API in this release, so that maintainers of existing code that depends upon it have time to migrate away.</p>
+</li>
+</ul>
+<h2 id="Non-Goals">Non-Goals</h2>
+<ul>
+<li>It is not a goal to provide a replacement for any of the Security Manager's functionality, in particular the ability to sandbox Java code or intercept calls to the Java Platform API.</li>
+</ul>
+<h2 id="Motivation">Motivation</h2>
+<p>The Security Manager has been a feature of the Java Platform since its first release. It is based upon the <em>principle of least privilege:</em> Code is untrusted by default, so it cannot access resources such as the filesystem or the network, and developers place trust in specific code by granting it permission to access specific resources. In theory, this can protect machines and applications against code that contains accidental vulnerabilities or was crafted with malicious intent. In practice, however, the permission scheme is so complex that the Security Manager has always been disabled by default, and its use is exceedingly rare.</p>
+<p>Despite the fact that the Security Manager is disabled by default, the least-privilege model induces extraordinary complexity in the Java Platform libraries. From networking, I/O, and JDBC, to XML, AWT, and Swing, the libraries must implement the least-privilege model in case the Security Manager is enabled:</p>
+<ul>
+<li>
+<p>Over 1,000 methods must check for permission to access resources when the Security Manager is  enabled. For example, the <a href="https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/io/FileOutputStream.html#%3Cinit%3E(java.lang.String)">constructors</a> of the <code>FileOutputStream</code> class <a href="https://github.com/openjdk/jdk/blob/ae63aaaa5847a68542e1483ecf1f0d5a3704e741/src/java.base/share/classes/java/io/FileOutputStream.java#L236-L239">delegate to the Security Manager</a>, which applies a complex algorithm to determine whether access is permitted.</p>
+</li>
+<li>
+<p>Over 1,200 methods must elevate their privileges when the Security Manager is enabled. For example, if an application does not have permission to read files, but it invokes <a href="https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/time/LocalDateTime.html#now()"><code>java.time.LocalDateTime.now()</code></a>, then the <code>java.time</code> code must <a href="https://github.com/openjdk/jdk/blob/ae63aaaa5847a68542e1483ecf1f0d5a3704e741/src/java.base/share/classes/java/time/zone/ZoneRulesProvider.java#L151">assert its own, stronger permission</a> in order to read the JDK&#8217;s internal time-zone database file.</p>
+</li>
+</ul>
+<p>The <a href="https://openjdk.org/census#core-libs">OpenJDK Core Libraries Group</a> devotes significant time and energy to reviewing every change to any of these methods. Every new API must be designed, and its implementation carefully audited, with the least-privilege model in mind. However, only a tiny number of applications actually enable the Security Manager. To make matters worse, most of them, in our experience, blindly grant all permissions to their code, thereby giving up the benefits of the least-privilege model.</p>
+<p>We therefore deprecated the Security Manager, for removal, in Java&#160;17 via <a href="https://openjdk.org/jeps/411">JEP&#160;411</a> (2021). In addition to terminally deprecating the Security Manager API and related APIs, we also revised the JDK to issue warning messages when the Security Manager is enabled. These changes were designed to prepare users and developers for the removal of the Security Manager in a future release.</p>
+<h3 id="Deprecating-the-Security-Manager-had-hardly-any-impact">Deprecating the Security Manager had hardly any impact</h3>
+<p>JDK 17 and later releases enjoyed wide adoption as developers and enterprises upgraded from JDK&#160;8 and JDK&#160;11. We have seen hardly any discussion in the Java ecosystem about the <a href="https://openjdk.org/jeps/411#Issue-warnings">warnings</a> that these releases issue when enabling the Security Manager. This indicates that the Security Manager is almost completely irrelevant to current Java developers. We appear to have been correct when we said, in <a href="https://openjdk.org/jeps/411">JEP&#160;411</a>, that,</p>
+<blockquote>
+<p>"In the quarter-century since the Security Manager was introduced, adoption has been low&#8221;,</p>
+</blockquote>
+<p>and,</p>
+<blockquote>
+<p>"In summary, there is no significant interest in developing modern Java applications with the Security Manager."</p>
+</blockquote>
+<p>Since the release of JDK 17, the maintainers of some of the handful of frameworks and tools that supported the Security Manager have removed support for it; these include <a href="https://lists.apache.org/thread/c9qvfzvfh5lc9n41rb0638rwx2vdjz80">Derby</a>, <a href="https://ant.apache.org/antnews.html#Apache%20Ant%201.10.14">Ant</a>, <a href="https://github.com/spotbugs/spotbugs/issues/1579">SpotBugs</a>, and <a href="https://tomcat.apache.org/tomcat-11.0-doc/security-howto.html#Security_manager">Tomcat</a>. The maintainers of Jakarta EE <a href="https://jakarta.ee/specifications/platform/11/jakarta-platform-spec-11.0-m4#jakarta-ee-security-manager-related-requirements">removed the requirement for EE applications to support the Security Manager</a>. We are not aware of any new projects that support the Security Manager.</p>
+<h3 id="Moving-forward">Moving forward</h3>
+<p>The vast majority of applications, libraries, and tools do not require the Security Manager, do not recommend the Security Manager, do not use the Security Manager, and do not work if other code uses the Security Manager. It is time for the Java ecosystem to take the next step and stop using the Security Manager entirely.</p>
+<p>We will therefore revise the specification of the Security Manager so that developers cannot enable it, and we will revise the specifications of other Java Platform libraries so that they do not delegate resource-access decisions to it. We will leave a minimal version of the <code>java.lang.SecurityManager</code> class in place for compatibility with the few applications, libraries, and tools that still use it. We will remove this class in a future release.</p>
+<h3 id="Removing-the-Security-Manager-will-improve-Java-security">Removing the Security Manager will improve Java security</h3>
+<p>We believe that the vast majority of Java developers would prefer to see the OpenJDK Core Libraries Group focus on practical security features needed by Internet-facing applications. The above revisions to the specification will allow us to remove the implementation of the Security Manager from the JDK codebase, together with thousands of permission checks and privilege elevations. That, in turn, will make more contributor time and energy available for other work such as</p>
+<ul>
+<li>Implementing new protocols such as TLS 1.3 and <a href="https://openjdk.org/jeps/517">HTTP/3</a>,</li>
+<li>Implementing modern, stronger cryptographic algorithms such as HSS/LMS, SHA-3, RSASSA-PSS, and EdDSA,</li>
+<li><a href="https://www.java.com/en/jre-jdk-cryptoroadmap.html">Deprecating and disabling weak cryptographic protocols and algorithms</a>, and</li>
+<li>Introducing cryptographic APIs for <a href="https://openjdk.org/jeps/452">key encapsulation</a> and <a href="https://openjdk.org/jeps/478">key derivation</a>, which will provide foundational support for post-quantum cryptographic algorithms.</li>
+</ul>
+<p>Most contemporary security threats involve malicious data, against which the Security Manager is ill equipped to defend. Removing the implementation of the Security Manager will make more contributor time and energy available for security features that defend against malicious data directly, such as:</p>
+<ul>
+<li>
+<p><em>Safer serialization</em> &#8212; The process of deserialization involves interpreting a stream of data that might have been crafted with malicious intent. In 2017, Java&#160;9 introduced <a href="https://docs.oracle.com/en/java/javase/23/core/serialization-filtering1.html">deserialization filters</a> so that developers can prevent malicious data from being deserialized in the first place. For the longer term, work is already underway <a href="https://openjdk.org/projects/amber/design-notes/towards-better-serialization">toward a better approach to serialization</a>.</p>
+</li>
+<li>
+<p><em>Stricter XML processing</em> &#8212; XML documents can refer to Document Type Definitions (DTDs) anywhere on the Internet, causing the JDK to open network connections to untrusted machines. In JDK&#160;23, application developers can lock down XML processing by starting the Java runtime with <code>java -Djava.xml.config.file=...</code> and specifying a <a href="https://bugs.openjdk.org/browse/JDK-8331016">configuration file</a> that prohibits outbound connections.</p>
+</li>
+</ul>
+<h3 id="Sandboxing-Java-code">Sandboxing Java code</h3>
+<p><em>Sandboxing</em> is the ability to run some Java code with different permissions than other code. The permissions for each piece of code are determined by a security policy, which is enforced by the Security Manager. Code running with restricted permissions, such as untrusted or potentially hostile code, is often referred to as being <em>in a sandbox</em>.</p>
+<p>Historically, the Security Manager was used to sandbox applets; we never recommended it for sandboxing entire applications. Java applications should be sandboxed in the same way as native applications, using technologies outside the JDK such as <a href="https://en.wikipedia.org/wiki/Containerization_(computing)">containers</a>, <a href="https://en.wikipedia.org/wiki/Hypervisor">hypervisors</a>, and OS mechanisms such as the <a href="https://developer.apple.com/documentation/security/app_sandbox">macOS App Sandbox</a> or the <a href="https://en.wikipedia.org/wiki/Seccomp">Linux seccomp feature</a>. Like the Security Manager, these technologies can restrict how applications use local and remote resources; they can, e.g., prevent code from accessing the network to exfiltrate data. Unlike the Security Manager, however, they have wide adoption and are relatively easy to learn and use effectively.</p>
+<h3 id="Intercepting-calls-to-the-Java-Platform-API">Intercepting calls to the Java Platform API</h3>
+<p>A small number of applications have used the Security Manager not to enforce a security policy but, rather, as a means to intercept calls to the Java Platform API. In the absence of a security policy and permission checking, calls to the Java Platform API are no longer a security concern as such. Truly malicious code has innumerable ways to bypass the Security Manager's interception of API calls. Nonetheless, some applications find interception useful, particularly to block calls to methods such as <code>System::exit</code>.</p>
+<p>We designed, prototyped, and evaluated a variety of mechanisms that an application could use instead of the Security Manager to intercept calls to the Java Platform API. We found that the use cases were too broad, and the requirements too diffuse, to support the introduction of such a mechanism. The OpenJDK Core Libraries Group is unwilling to maintain an arbitrary number of API interception points with ill-defined requirements across the JDK in perpetuity.</p>
+<p>In most cases, we found that issues that seemed to need interception could be adequately addressed outside the JDK, using techniques such as source code modification, static code analysis and rewriting, or <a href="https://docs.oracle.com/en/java/javase/23/docs/api/java.instrument/java/lang/instrument/package-summary.html">agent-based</a> dynamic code rewriting at class load time. See the <a href="#Appendix">Appendix</a> for an example of an agent that uses dynamic code rewriting to intercept calls to <code>System::exit</code>.</p>
+<h3 id="The-Security-Manager-in-older-Java-releases">The Security Manager in older Java releases</h3>
+<p>The Security Manager will continue to be available in every release prior to JDK&#160;24. Application deployers who are wary of adopting new releases because they value stability above all else are unlikely ever to upgrade to JDK&#160;24, and therefore will never be affected by changes to the Security Manager in JDK&#160;24 or subsequent releases.</p>
+<h2 id="Description">Description</h2>
+<p>In JDK 24, we will:</p>
+<ul>
+<li>Remove the ability to enable the Security Manager at startup,</li>
+<li>Remove the ability to install a custom Security Manager during run time, and</li>
+<li>Render the Security Manager API non-functional, in advance of removing the API in a future release.</li>
+</ul>
+<h3 id="Enabling-the-Security-Manager-in-JDK-24-is-an-error">Enabling the Security Manager in JDK 24 is an error</h3>
+<p>In JDK 24, you cannot enable the Security Manager at startup, nor can you install a custom Security Manager during run time.</p>
+<ul>
+<li>
+<p>It is an error to enable a Security Manager at startup, for example via:</p>
+<pre><code>$ java -Djava.security.manager                  -jar app.jar
+$ java -Djava.security.manager=""               -jar app.jar
+$ java -Djava.security.manager=allow            -jar app.jar
+$ java -Djava.security.manager=default          -jar app.jar
+$ java -Djava.security.manager=com.foo.CustomSM -jar app.jar</code></pre>
+<p>Attempting to do so causes the JVM to report the error and then exit:</p>
+<pre><code>Error occurred during initialization of VM
+java.lang.Error: A command line option has attempted to allow or enable the Security Manager. Enabling a Security Manager is not supported.
+        at java.lang.System.initPhase3(java.base@24/System.java:2067)</code></pre>
+<p>You cannot suppress this error message, nor can you reduce it to the <a href="https://openjdk.org/jeps/411#Issue-warnings">warnings given in JDK&#160;17 through 23</a>.</p>
+<p>(The five invocations of java -D... shown above set the system property <code>java.security.manager</code> to, respectively, the empty string, the empty string, the string <code>allow</code>, the string <code>default</code>, and the class name of a custom Security Manager.)</p>
+</li>
+<li>
+<p>It is not an error to disable the installation of a custom Security Manager during run time, for example via:</p>
+<pre><code>$ java -jar app.jar
+$ java -Djava.security.manager=disallow -jar app.jar</code></pre>
+<p>No warning or error message is issued at startup, and the application runs without a Security Manager, just as it did before.</p>
+<p>(The default value of <code>java.security.manager</code> <a href="https://bugs.openjdk.java.net/browse/JDK-8270380">has been <code>disallow</code> since JDK&#160;18</a>, so <code>java -jar app.jar</code> means the same as <code>java -Djava.security.manager=disallow -jar app.jar</code>.)</p>
+</li>
+<li>
+<p>It is an error to install a Security Manager at run time by calling <code>System::setSecurityManager</code>. Attempting to do so causes the JVM to throw an <code>UnsupportedOperationException</code> with the detail message</p>
+<blockquote>
+<p><code>Setting a Security Manager is not supported</code></p>
+</blockquote>
+</li>
+</ul>
+<h3 id="How-to-determine-if-an-application-enables-the-Security-Manager">How to determine if an application enables the Security Manager</h3>
+<p>If you are not sure whether your application enables the Security Manager, here are some things you can do to find out:</p>
+<ul>
+<li>
+<p>Check scripts or documentation to see if the application is launched with the Security Manager allowed or enabled, via command line options, or requires policy files to be installed and configured.</p>
+</li>
+<li>
+<p>Run the application on one of JDK 17 through 23 and look for <a href="https://openjdk.org/jeps/411#Issue-warnings">messages on the console warning that the Security Manager is deprecated and will be removed in a future release</a>.</p>
+</li>
+<li>
+<p>Run the application on one of JDK 17 through 23 with the command-line option <code>-Djava.security.manager=disallow</code>. If the application installs a custom Security Manager via the <code>System::setSecurityManager</code> method then the JVM will throw an <code>UnsupportedOperationException</code>.</p>
+</li>
+<li>
+<p>Use the <a href="https://docs.oracle.com/en/java/javase/23/docs/specs/man/jdeprscan.html"><code>jdeprscan</code></a> tool in JDK&#160;17 through&#160;23 to scan for uses of deprecated Security Manager APIs such as <code>System::setSecurityManager</code> or <code>java.security.Policy::setPolicy</code>.</p>
+</li>
+</ul>
+<h3 id="Rendering-the-Security-Manager-API-non-functional">Rendering the Security Manager API non-functional</h3>
+<p>The Security Manager API consists of:</p>
+<ul>
+<li>Methods in the <code>java.lang.SecurityManager</code> class,</li>
+<li>Methods in the <code>AccessController</code>, <code>AccessControlContext</code>, <code>Policy</code>, and <code>ProtectionDomain</code> classes of the <code>java.security</code> package, and</li>
+<li>The <code>getSecurityManager</code> and <code>setSecurityManager</code> methods in the <code>java.lang.System</code> class.</li>
+</ul>
+<p>We are not removing these methods from Java&#160;24; rather, we are degrading their behavior. They will, as appropriate, return <code>null</code> or <code>false</code>, or pass through the caller's request, or unconditionally throw a <code>SecurityException</code> or <code>UnsupportedOperationException</code>. These behavioral changes are compatible for most of the libraries that use the Security Manager API, but incompatible for a very small number of libraries: see the <a href="#Advice-to-maintainers-of-libraries-that-support-the-Security-Manager">advice to library maintainers</a> for details. The full set of behavioral changes is available <a href="https://bugs.openjdk.org/browse/JDK-8338412">here</a>. We will remove the Security Manager API in a future release.</p>
+<p>In addition to changing the behavior of the API, we will:</p>
+<ul>
+<li>
+<p>Remove the <a href="https://docs.oracle.com/en/java/javase/23/security/permissions-jdk1.html#GUID-789089CA-8557-4017-B8B0-6899AD3BA18D">system policy file</a>, <code>conf/security/java.policy</code>.</p>
+</li>
+<li>
+<p>Cause system properties specific to the Security Manager, in particular <a href="https://docs.oracle.com/en/java/javase/23/security/permissions-jdk1.html#GUID-75C71299-8B56-4AC9-A83F-41BC14535545"><code>java.security.policy</code></a> and <a href="https://docs.oracle.com/en/java/javase/23/security/permissions-jdk1.html#GUID-83063225-0ACB-4909-9BAB-7F7D4E3749E2__LISTOFSYSTEMPROPERTIESTOCUSTOMIZEPA-C3268ADF"><code>jdk.security.filePermCompat</code></a>, to be ignored. We will later document the complete list of affected system properties.</p>
+</li>
+<li>
+<p>Cause security properties specific to the Security Manager, in particular <a href="https://docs.oracle.com/en/java/javase/23/security/permissions-jdk1.html#GUID-75C71299-8B56-4AC9-A83F-41BC14535545"><code>policy.provider</code></a>, <a href="https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/lang/SecurityManager.html#checkPackageAccess(java.lang.String)"><code>package.access</code></a>, and <a href="https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/lang/SecurityManager.html#checkPackageDefinition(java.lang.String)"><code>package.definition</code></a>, to be ignored. We will later document the complete list of affected security properties.</p>
+</li>
+<li>
+<p>Cause the <code>access</code> and <code>policy</code> options of the <code>java.security.debug</code> system property to be ignored, since they no longer apply. See <a href="https://docs.oracle.com/en/java/javase/23/security/troubleshooting-security.html">Troubleshooting Security</a> in the <em>Security Developer's Guide</em> for information about how to use this system property.</p>
+</li>
+</ul>
+<h3 id="Changes-elsewhere-in-the-Java-Platform-API">Changes elsewhere in the Java Platform API</h3>
+<p>Approximately 1,000 constructors and methods in the Platform are specified to throw <code>SecurityException</code> if the Security Manager is enabled and appropriate permissions have not been granted. They span 264&#160;classes, 73&#160;packages, and 25&#160;modules. For example, <code>java.base</code> has 640&#160;methods specified to throw <code>SecurityException</code>.</p>
+<p>In Java 24, we will revise the specifications of all such constructors and methods to remove mentions of <code>SecurityException</code> since that exception will now never be thrown. The complete list of revised constructors and methods is available <a href="https://bugs.openjdk.org/browse/JDK-8338412">here</a>.</p>
+<p>Here is an example of the specification change for a <a href="https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/io/FileOutputStream.html#%3Cinit%3E(java.lang.String)">constructor</a> in <code>java.io.FileOutputStream</code> (struck through text is deleted):</p>
+<pre>public FileOutputStream(String name)
+         throws FileNotFoundException
+
+Creates a file output stream to write to the file with the specified
+name. A new FileDescriptor object is created to represent this file
+connection.
+
+<del>First, if there is a security manager, its checkWrite method is
+called with name as its argument.</del>
+
+If the file exists but is a directory rather than a regular file,
+does not exist but cannot be created, or cannot be opened for any
+other reason then a FileNotFoundException is thrown.
+
+<b>Implementation Requirements:</b>
+   Invoking this constructor with the parameter name is equivalent
+   to invoking new FileOutputStream(name, false).
+<b>Parameters:</b>
+   name - the system-dependent file name.
+<b>Throws:</b>
+   FileNotFoundException - if the file exists but is a directory
+   rather than a regular file, does not exist but cannot be created,
+   or cannot be opened for any other reason
+   <del>SecurityException - if a security manager exists and its checkWrite
+   method denies write access to the file.</del>
+<del><b>See Also:</b>
+   SecurityManager.checkWrite(java.lang.String)</del>
+</pre>
+<h3 id="Advice-to-maintainers-of-libraries-that-support-the-Security-Manager">Advice to maintainers of libraries that support the Security Manager</h3>
+<p>A small number of libraries were designed to use the Security Manager if it is enabled. These libraries typically employ two idioms:</p>
+<ul>
+<li>
+<p>Calling <code>System::getSecurityManager</code> to check if a Security Manager is enabled and, if so, calling <code>SecurityManager::checkPermission</code> to check if an operation should be granted or denied:</p>
+<pre><code>SecurityManager sm = System.getSecurityManager();
+if (sm != null) {
+    sm.checkPermission(...);
+}</code></pre>
+</li>
+<li>
+<p>Calling <code>AccessController::doPrivileged</code> to execute code with different permissions from the calling code:</p>
+<pre><code>SomeReturnValue v = AccessController.doPrivileged(() -&gt; {
+    ...
+    return theResult;
+});</code></pre>
+</li>
+</ul>
+<p>In JDK 24, where a Security Manager is never enabled, the <code>System::getSecurityManager</code> and <code>AccessController::doPrivileged</code> methods behave as they did in JDK 17 when a Security Manager was not enabled:</p>
+<ul>
+<li><code>System::getSecurityManager</code> returns <code>null</code>, and</li>
+<li>The six <code>AccessController::doPrivileged</code> methods execute the given action immediately.</li>
+</ul>
+<p>Accordingly, the small number of libraries that call these methods will run on JDK 24 without change. However, we strongly recommend that new releases of these libraries do not call these methods, which we will remove in a future release.</p>
+<p><a id="check-methods"> A very small number of libraries use advanced parts of the Security Manager API to implement a custom execution environment. For example, a library might call <code>AccessController::checkPermission</code> to enforce its own permission model, or call <code>Policy::setPolicy</code> to make custom Security Managers treat certain resources as off-limits.</a></p><a id="check-methods">
+<p>In JDK 24, these methods always implement an execution environment that disallows access to all resources. As a result, the methods behave differently than they did in JDK 17:</p>
+<ul>
+<li><code>AccessController::checkPermission</code> always throws <code>AccessControlException</code>,</li>
+<li><code>Policy::setPolicy</code> always throws <code>UnsupportedOperationException</code>.</li>
+<li><code>Permission::checkGuard</code> always throws <code>SecurityException</code>, and</li>
+<li><code>SecurityManager::check*</code> methods always throw <code>SecurityException</code>,</li>
+</ul>
+</a><p><a id="check-methods">For complete information about behavioral changes in the Security Manager API, see </a><a href="https://bugs.openjdk.org/browse/JDK-8338412">here</a>.</p>
+<h2 id="Future-Work">Future Work</h2>
+<h3 id="Removing-related-APIs">Removing related APIs</h3>
+<p>We are not removing any classes or methods from the Java Platform API in Java&#160;24. In a future release we will remove the Security Manager APIs that we deprecated in Java&#160;17. In future releases we may, further, deprecate and remove additional classes and methods in the <code>java.lang</code> and <code>java.security</code> packages.</p>
+<ul>
+<li>
+<p>We are not deprecating <code>SecurityException</code> now because it is used elsewhere in the JDK in situations that are unrelated to the Security Manager, despite the fact that its specification says, "Thrown by the security manager to indicate a security violation". Here are examples of its (mis)use:</p>
+<ul>
+<li>
+<p><code>java.lang.ClassLoader::defineClass</code> throws <code>SecurityException</code> if the name of the class being defined starts with "<code>java.</code>".</p>
+</li>
+<li>
+<p><code>java.lang.reflect.Constructor::setAccessible</code> throws it if invoked on the <code>Constructor</code> object for a constructor of <code>java.lang.Class</code>.</p>
+</li>
+<li>
+<p><code>java.util.java.JarInputStream</code> throws it when signed JAR entries are signed incorrectly.</p>
+</li>
+</ul>
+<p>After reexamining these misuses, we may deprecate <code>SecurityException</code> in a future release.</p>
+</li>
+<li>
+<p>In a future release we will deprecate <code>Permission</code> and related classes such as <code>BasicPermission</code>, <code>PermissionCollection</code>, and <code>Permissions</code>, and also subclasses of <code>Permission</code> outside of the <code>java.security</code> package, such as <code>java.lang.RuntimePermission</code>, <code>java.net.NetPermission</code>, and <code>java.lang.reflect.ReflectPermission</code>.</p>
+</li>
+<li>
+<p>In a future release we will deprecate <code>PrivilegedAction</code>, <code>PrivilegedExceptionAction</code>, and <code>PrivilegedActionException</code>. We did not deprecate these classes in Java&#160;17 because they appear in method signatures of <code>javax.security.auth.Subject</code>, a class unrelated to the Security Manager. In Java&#160;18, we added replacement methods to <code>javax.security.auth.Subject</code> that do not use the <code>Privileged*</code> classes. We will eventually remove both the old methods and the <code>Privileged*</code> classes.</p>
+</li>
+</ul>
+<h3 id="Removing-or-revising-related-features">Removing or revising related features</h3>
+<p>Various early Java Platform features were designed around a vision of mobile objects. They used serialization to move code and data between JVMs, and assumed applications would enable the Security Manager to defend against maliciously serialized objects. This vision did not gain any traction. Given the <a href="https://openjdk.org/projects/amber/design-notes/towards-better-serialization">fundamental flaws in serialization</a> and the minimal use of the Security Manager, we have either already removed these features or else we plan to do so:</p>
+<ul>
+<li>
+<p>JMX Management Applets ("m-lets") were introduced in Java&#160;5 and allowed remote MBeans to be dynamically loaded and executed with the Security Manager enabled. M-lets saw essentially no use. We <a href="https://bugs.openjdk.org/browse/JDK-8297794">deprecated the m-let API for removal in Java&#160;20</a> and <a href="https://bugs.openjdk.org/browse/JDK-8318707">removed it in Java&#160;23</a>.</p>
+</li>
+<li>
+<p>JNDI has support for reconstructing objects that were serialized to an LDAP database (<a href="https://www.ietf.org/rfc/rfc2713.txt">RFC 2713</a>). This feature of JNDI has been disabled by default since <a href="https://www.oracle.com/java/technologies/javase/6u13.html">Java&#160;6</a> but can be enabled via system properties. Using this feature securely relies on enabling the Security Manager, so it will not be possible to use the feature securely once the Security Manager is removed. Accordingly, we will <a href="https://bugs.openjdk.org/browse/JDK-8338536">remove this feature</a>, along with the remote class loading feature of the JNDI RMI Registry service provider, in a future release.</p>
+</li>
+<li>
+<p>RMI supports <a href="https://docs.oracle.com/en/java/javase/23/docs/specs/rmi/arch.html#dynamic-class-loading">dynamic code loading</a>, but it is enabled only when the Security Manager is enabled. This feature of RMI has been disabled by default since 2013. With the removal of the Security Manager, it is no longer possible to use this feature. We may remove it in a future release.</p>
+</li>
+</ul>
+<p>Separately, the <code>javax.xml</code> APIs allow Java source code to be embedded directly in XSLT and XPath documents as extension functions. This feature is <a href="https://docs.oracle.com/en/java/javase/23/docs/api/java.xml/module-summary.html#jdk.xml.enableExtensionFunctions">enabled by default</a> but, historically, it was disabled when running with the Security Manager. We will disable this feature by default in a future release, as part of a broader effort toward stricter XML processing.</p>
+<h2 id="Testing">Testing</h2>
+<p>The breadth of the Security Manager API and the depth of its support in the JDK codebase is reflected in the approximately 4,000 tests developed for it since JDK&#160;1.0. They fall into three categories:</p>
+<ul>
+<li>
+<p>Tests that directly exercise functionality of the Security Manager, e.g., making sure that permissions are enforced correctly.</p>
+</li>
+<li>
+<p>Tests that address security vulnerabilities, which typically ensure that it is no longer possible for specific exploits that allowed untrusted code, such as applets, to escape the sandbox.</p>
+</li>
+<li>
+<p>Conformance tests which ensure that the Security Manager implementation complies with the specification of the Security Manager API.</p>
+</li>
+</ul>
+<p>Permanently disabling the Security Manager will make these tests irrelevant since the functionality will no longer be supported and the concept of a sandbox will no longer exist. Including tests, we will delete over 50,000 lines of code.</p>
+<h2 id="Alternatives">Alternatives</h2>
+<p>The numerous <code>check*</code> methods in the Security Manager API always <a href="#check-methods">throw an exception</a> so as to avoid unconditionally permitting operations that formerly required a permission check, and thus might not have been permitted. This may be inconvenient for application maintainers, who may have to take some corrective action. An alternative would be to have these methods always succeed, but that would allow an application to operate insecurely without notifying the maintainer.</p>
+<h2 id="Risks-and-Assumptions">Risks and Assumptions</h2>
+<ul>
+<li>
+<p>In JDK 24, attempting to enable the Security Manager on the command line will immediately result in an error message and the application will not start. If an application does not start then downstream systems might fail and business processes might be impacted. We assume that application maintainers can respond to the error by updating their <code>java</code> command lines to avoid giving the <code>-Djava.security.manager</code> option and by mitigating security concerns using other mechanisms.</p>
+<p>(When we remove a feature from the JDK, we conventionally reject any associated command line options. This includes the use of <code>java -D...</code> to set a system property such as <code>java.security.manager</code>. For example, setting the <a href="https://docs.oracle.com/javase/9/migrate/toc.htm#JSMIG-GUID-2C896CA8-927C-4381-A737-B1D81D964B7B"><code>java.ext.dirs</code> system property caused an error</a> when the Extension Mechanism was removed in JDK&#160;9. This forces application maintainers to swiftly remove outdated options, avoiding situations where the JDK is run with a confusing or misleading set of options.)</p>
+</li>
+<li>
+<p>There is a risk that frameworks which rely on the <code>javax.security.auth</code> API still use the deprecated methods in the <code>Subject</code> class, namely <a href="https://docs.oracle.com/en/java/javase/23/docs/api/java.base/javax/security/auth/Subject.html#doAs(javax.security.auth.Subject,java.security.PrivilegedAction)"><code>doAs</code></a> and <a href="https://docs.oracle.com/en/java/javase/23/docs/api/java.base/javax/security/auth/Subject.html#getSubject(java.security.AccessControlContext)"><code>getSubject</code></a>. We deprecated these methods in Java&#160;17 and 18 because their signatures use deprecated classes of the Security Manager API. We introduced replacements for <code>doAs</code> and <code>getSubject</code> in <a href="https://bugs.openjdk.org/browse/JDK-8267108">Java&#160;18</a>. Since <code>getSubject</code> has <a href="https://bugs.openjdk.org/browse/JDK-8328643">thrown an <code>UnsupportedOperationException</code> since Java&#160;23</a>, we assume that frameworks have become aware of the deprecation and are working to adopt the replacements, e.g., <a href="https://issues.apache.org/jira/browse/HADOOP-19212">HADOOP-19212</a>.</p>
+</li>
+</ul>
+<h2 id="Appendix">Appendix</h2>
+<p>An <a href="https://docs.oracle.com/en/java/javase/23/docs/api/java.instrument/java/lang/instrument/package-summary.html">agent</a> is a Java program that can alter the code of an application while the application is running. Agents achieve this by transforming the bytecodes of methods when classes are loaded, or by redefining classes after they have been loaded.</p>
+<p>Here is an agent that blocks code from calling <code>System::exit</code>. The agent declares a <code>premain</code> method that is run by the JVM before the <code>main</code> method of the application. This method registers a <em>transformer</em> that transforms class files as they are loaded from the class path or module path. The transformer rewrites every call to <code>System.exit(int)</code> into <code>throw new RuntimeException("System.exit not allowed")</code>.</p>
+<p>The transformer reads and writes bytecodes in class files using the <a href="https://openjdk.org/jeps/466">Class-File API</a>, which is a preview feature in JDK&#160;23. See the <a href="https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/lang/classfile/package-summary.html"><code>java.lang.classfile</code> package</a> for details. The agent's source code imports the Class-File API and other Java APIs with <a href="https://openjdk.org/jeps/476">module import declarations</a>, which are also a preview feature in JDK&#160;23.</p>
+<pre><code>import module java.base;
+import module java.instrument;
+
+public class BlockSystemExitAgent {
+    /*
+     * Before the application starts, register a transformer of class files.
+     */
+    public static void premain(String agentArgs, Instrumentation inst) {
+        var transformer = new ClassFileTransformer() {
+            @Override
+            public byte[] transform(ClassLoader      loader,
+                                    String           className,
+                                    Class&lt;?&gt;         classBeingRedefined,
+                                    ProtectionDomain protectionDomain,
+                                    byte[]           classBytes) {
+                if (loader != null &amp;&amp; loader != ClassLoader.getPlatformClassLoader()) {
+                    return blockSystemExit(classBytes);
+                } else {
+                    return null;
+                }
+            }
+        };
+        inst.addTransformer(transformer, true);
+    }
+
+    /*
+     * Rewrite every invokestatic of System::exit(int) to an athrow of RuntimeException.
+     */
+    private static byte[] blockSystemExit(byte[] classBytes) {
+        var modified = new AtomicBoolean();
+        ClassFile cf = ClassFile.of(ClassFile.DebugElementsOption.DROP_DEBUG);
+        ClassModel classModel = cf.parse(classBytes);
+
+        Predicate&lt;MethodModel&gt; invokesSystemExit =
+            methodModel -&gt; methodModel.code()
+                                      .map(codeModel -&gt;
+                                             codeModel.elementStream()
+                                                      .anyMatch(BlockSystemExitAgent::isInvocationOfSystemExit))
+                                      .orElse(false);
+
+        CodeTransform rewriteSystemExit =
+            (codeBuilder, codeElement) -&gt; {
+                if (isInvocationOfSystemExit(codeElement)) {
+                    var runtimeException = ClassDesc.of("java.lang.RuntimeException");
+                    codeBuilder.new_(runtimeException)                    
+                               .dup()
+                               .ldc("System.exit not allowed")
+                               .invokespecial(runtimeException,
+                                   "&lt;init&gt;",
+                                   MethodTypeDesc.ofDescriptor("(Ljava/lang/String;)V"),
+                                   false)
+                               .athrow();
+                    modified.set(true);
+                } else {
+                    codeBuilder.with(codeElement);
+                }
+            };
+
+        ClassTransform ct = ClassTransform.transformingMethodBodies(invokesSystemExit, rewriteSystemExit);
+        byte[] newClassBytes = cf.transform(classModel, ct);
+        if (modified.get()) {
+            return newClassBytes;
+        } else {
+            return null;
+        }
+    }
+
+    private static boolean isInvocationOfSystemExit(CodeElement codeElement) {
+        return codeElement instanceof InvokeInstruction i
+                &amp;&amp; i.opcode() == Opcode.INVOKESTATIC
+                &amp;&amp; "java/lang/System".equals(i.owner().asInternalName())
+                &amp;&amp; "exit".equals(i.name().stringValue())
+                &amp;&amp; "(I)V".equals(i.type().stringValue());
+    }
+}</code></pre>
+<p>You must package the agent in a JAR file and specify it via the <code>-javaagent</code> option when starting the application:</p>
+<pre><code># Compile the agent into the agentclasses directory, enabling preview features for JDK 23
+$ javac --enable-preview --release 23 -d agentclasses BlockSystemExitAgent.java
+
+# Create JAR file manifest in agent.mf
+$ cat &gt; agent.mf &lt;&lt; EOF
+Premain-Class: BlockSystemExitAgent
+Can-Retransform-Classes: true
+EOF
+
+# Create the agent JAR (Note there is a period after -C agentclasses)
+$ jar --create --file=BlockSystemExitAgent.jar --manifest=agent.mf -C agentclasses .
+
+# Run application with the agent JAR, enabling preview features for JDK 23
+$ java --enable-preview -javaagent:BlockSystemExitAgent.jar -jar app.jar</code></pre>
+</div></div><div id="sidebar"><div id="openjdk-sidebar-logo"><a href="/"><img alt="OpenJDK logo" width="91" height="25" src="/images/openjdk2.svg" /></a></div><div class="links"><div class="link"><a href="/install/">Installing</a></div><div class="link"><a href="/guide/#contributing-to-an-openjdk-project">Contributing</a></div><div class="link"><a href="/guide/#reviewing-and-sponsoring-a-change">Sponsoring</a></div><div class="link"><a href="/guide/">Developers' Guide</a></div><div class="link"><a href="/groups/vulnerability/report">Vulnerabilities</a></div><div class="link"><a href="https://jdk.java.net">JDK GA/EA Builds</a></div></div><div class="links"><div class="links"><a href="https://mail.openjdk.org">Mailing lists</a></div><div class="link"><a href="https://wiki.openjdk.org">Wiki</a>
+                      &#183; <a href="/irc">IRC</a></div><div class="link"><a href="https://mastodon.social/@openjdk" rel="me">Mastodon</a></div><div class="link"><a href="https://bsky.app/profile/openjdk.org">Bluesky</a></div></div><div class="links"><div class="links"><a href="/bylaws">Bylaws</a> &#183; <a href="/census">Census</a></div><div class="link"><a href="/legal/">Legal</a> &#183; <a href="/legal/ai">AI</a></div></div><div class="links"><div class="links"><a href="/workshop"><b>Workshop</b></a></div></div><div class="links"><div class="links"><a href="/jeps/0"><b>JEP Process</b></a></div></div><div class="links"><div class="about">Source code</div><div class="link"><a href="https://github.com/openjdk/">GitHub</a></div><div class="link"><a href="https://hg.openjdk.org">Mercurial</a></div></div><div class="links"><div class="about">Tools</div><div class="link"><a href="http://git-scm.org/">Git</a></div><div class="link"><a href="/jtreg/">jtreg harness</a></div></div><div class="links"><div class="about">Groups</div><div class="link"><a href="/groups/">(overview</a>,
+      <a href="/groups/archive">archive</a>)</div><div class="link"><a href="/groups/adoption">Adoption</a></div><div class="link"><a href="/groups/build">Build</a></div><div class="link"><a href="/groups/client-libs">Client Libraries</a></div><div class="link"><a href="/groups/csr">Compatibility &amp; Specification Review</a></div><div class="link"><a href="/groups/compiler">Compiler</a></div><div class="link"><a href="/groups/conformance">Conformance</a></div><div class="link"><a href="/groups/core-libs">Core Libraries</a></div><div class="link"><a href="/groups/gb">Governing Board</a></div><div class="link"><a href="/groups/hotspot">HotSpot</a></div><div class="link"><a href="/groups/ide-support">IDE Tooling &amp; Support</a></div><div class="link"><a href="/groups/i18n">Internationalization</a></div><div class="link"><a href="/groups/members">Members</a></div><div class="link"><a href="/groups/net">Networking</a></div><div class="link"><a href="/groups/porters">Porters</a></div><div class="link"><a href="/groups/quality">Quality</a></div><div class="link"><a href="/groups/security">Security</a></div><div class="link"><a href="/groups/serviceability">Serviceability</a></div><div class="link"><a href="/groups/vulnerability">Vulnerability</a></div><div class="link"><a href="/groups/web">Web</a></div></div><div class="links"><div class="about">Projects</div><div class="link">(<a href="/projects/">overview</a>,
+      <a href="/projects/archive">archive</a>)</div><div class="link"><a href="/projects/amber">Amber</a></div><div class="link"><a href="/projects/babylon">Babylon</a></div><div class="link"><a href="/projects/brisbane">Brisbane</a></div><div class="link"><a href="/projects/crac">CRaC</a></div><div class="link"><a href="/projects/code-tools">Code Tools</a></div><div class="link"><a href="/projects/coin">Coin</a></div><div class="link"><a href="/projects/cvmi">Common VM Interface</a></div><div class="link"><a href="/projects/detroit">Detroit</a></div><div class="link"><a href="/projects/guide">Developers' Guide</a></div><div class="link"><a href="/projects/duke">Duke</a></div><div class="link"><a href="/projects/graal">Graal</a></div><div class="link"><a href="/projects/icedtea">IcedTea</a></div><div class="link"><a href="/projects/jdk8u">JDK 8 Updates</a></div><div class="link"><a href="/projects/jdk9">JDK 9</a></div><div class="link"><a href="/projects/jdk">JDK</a>
+      (&#8230;,
+       <a href="/projects/jdk/25">25</a>,
+       <a href="/projects/jdk/26">26</a>,
+       <a href="/projects/jdk/27">27</a>)</div><div class="link"><a href="/projects/jdk-updates">JDK Updates</a></div><div class="link"><a href="/projects/jmc">JMC</a></div><div class="link"><a href="/projects/jigsaw">Jigsaw</a></div><div class="link"><a href="/projects/lanai">Lanai</a></div><div class="link"><a href="/projects/leyden">Leyden</a></div><div class="link"><a href="/projects/lilliput">Lilliput</a></div><div class="link"><a href="/projects/loom">Loom</a></div><div class="link"><a href="/projects/jmm">Memory Model Update</a></div><div class="link"><a href="/projects/metropolis">Metropolis</a></div><div class="link"><a href="/projects/mlvm">Multi-Language VM</a></div><div class="link"><a href="/projects/nashorn">Nashorn</a></div><div class="link"><a href="/projects/nio">New I/O</a></div><div class="link"><a href="/projects/openjfx">OpenJFX</a></div><div class="link"><a href="/projects/panama">Panama</a></div><div class="link"><a href="/projects/aarch32-port">Port: AArch32</a></div><div class="link"><a href="/projects/aarch64-port">Port: AArch64</a></div><div class="link"><a href="/projects/bsd-port">Port: BSD</a></div><div class="link"><a href="/projects/haiku-port">Port: Haiku</a></div><div class="link"><a href="/projects/mips-port">Port: MIPS</a></div><div class="link"><a href="/projects/mobile">Port: Mobile</a></div><div class="link"><a href="/projects/ppc-aix-port">Port: PowerPC/AIX</a></div><div class="link"><a href="/projects/riscv-port">Port: RISC-V</a></div><div class="link"><a href="/projects/s390x-port">Port: s390x</a></div><div class="link"><a href="/projects/sctp">SCTP</a></div><div class="link"><a href="/projects/shenandoah">Shenandoah</a></div><div class="link"><a href="/projects/skara">Skara</a></div><div class="link"><a href="/projects/sumatra">Sumatra</a></div><div class="link"><a href="/projects/tsan">Tsan</a></div><div class="link"><a href="/projects/valhalla">Valhalla</a></div><div class="link"><a href="/projects/wakefield">Wakefield</a></div><div class="link"><a href="/projects/zero">Zero</a></div><div class="link"><a href="/projects/zgc">ZGC</a></div></div><div class="buttons"><a href="https://oracle.com"><img alt="Oracle logo" width="100" height="13" src="/images/oracle.svg" /></a></div></div><div id="footer">
+
+        &#169; 2026 Oracle Corporation and/or its affiliates
+        <br /><a href="/legal/tou/">Terms of Use</a>
+        &#183;
+        
+            License: <a href="/legal/gplv2+ce.html">GPLv2</a>
+        &#183; <a href="https://www.oracle.com/us/legal/privacy/">Privacy</a>
+        &#183; <a href="https://openjdk.org/legal/openjdk-trademark-notice.html">Trademarks</a></div><script type="text/javascript"  src="/-9ys1EPi4/Ms9YCW4mX/wWttiMBSw/a1QuhGJwzOShzr1u/EhZlAQ/RVxcB/CBTJkUB"></script></body></html>

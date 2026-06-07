@@ -1,0 +1,231 @@
+@charset "UTF-8";
+
+/* mc-form */
+.mc-form {
+  max-width: 800px;
+  font-family: 'guardian-text-oreilly', Arial, sans-serif;
+  font-size: .875rem;
+  line-height: 1.5rem;
+  transition: opacity .2s;
+}
+.mc-form.hidden {
+  display: none !important;
+}
+.mc-form .mc-form-errorMessage p {
+  color: #ff0000;
+  margin-bottom: 20px;
+}
+.mc-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mc-form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.mc-form input,
+.mc-form label {
+  display: block;
+  font-family: inherit;
+}
+.mc-form label {
+  margin-bottom: 4px;
+  font-size: .875rem;
+  line-height: 1.5rem;
+}
+.mc-form p {
+  font-size: .875rem;
+  line-height: 1.5rem;
+  margin: 0;
+}
+.mc-form input[type="email"] {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+  width: 100%;
+  border: 1px solid #666;
+  border-radius: 8px;
+  padding: 7px 10px 7px;
+  color: #222;
+  font-size: .875rem;
+  line-height: 1.5rem;
+}
+.mc-form select {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+  width: 100%;
+  border: 1px solid #666;
+  border-radius: 8px;
+  padding: 7px 10px 7px;
+  background: #fff url(https://cdn.oreillystatic.com/oreilly/images/inbound-aisf-select-arrow.png) right center no-repeat;
+  color: #222;
+  font-size: .875rem;
+  line-height: 1.5rem;
+  cursor: pointer;
+}
+.mc-form .option-select input[type="radio"],
+.mc-form .option-select label {
+  display: inline-block;
+  margin-right: 8px;
+}
+.mc-form .consentGroup {
+  margin: 0;
+
+  fieldset {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    &.error {
+      padding: 10px;
+      border: 1px solid #ff0000;
+    }
+  }
+  input {
+    display: inline-block;
+    margin: 0 4px 0 0;
+    cursor: pointer;
+  }
+  label {
+    display: inline-block;
+    margin: 0 8px 0 0;
+    cursor: pointer;
+  }
+  p {
+    margin: 0;
+    width: 100%;
+    font-size: .875rem;
+    line-height: 1.5rem;
+  }
+}
+.mc-form button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  width: max-content;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 100px;
+  background-color: rgb(0,113,235);
+  font-size: 1rem;
+  line-height: 1em;
+  font-weight: 400;
+  color: rgb(255, 255, 255);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 400ms;
+
+  &:hover,
+  &:focus {
+    text-decoration: none;
+    background-color: rgb(0, 87, 187);
+
+    &:after,
+    &:after {
+      background-position-x: 4px;
+    }
+  }
+}
+.mc-form *:disabled {
+  pointer-events: none;
+  cursor: default;
+}
+.mc-form p.privacy {
+  font-size: .875rem;
+  line-height: 1.5em;
+  color: #222;
+}
+.mc-form p.privacy a {
+  color: #222;
+  text-decoration: underline;
+}
+.marketingCloudForm-thankyou h2 {
+  font-family: 'gilroy', Arial, sans-serif;
+  font-size: .875rem;
+  line-height: 1.5rem;
+  line-height: 1.2em;
+  font-weight: 600;
+}
+.marketingCloudForm-thankyou p {
+    font-size: .875rem;
+    line-height: 1.5rem;
+}
+@media (min-width: 50em) {
+  .marketingCloudForm-thankyou p {
+    font-size: .875rem;
+    line-height: 1.5rem;
+  }
+  .mc-form input[type="email"],
+  .mc-form select,
+  .mc-form button {
+    margin: 0;
+  }
+  .rightRailBlock .mc-form-item {
+    display: block;
+  }
+  .rightRailBlock .mc-form input[type="email"],
+  .rightRailBlock .mc-form select,
+  .rightRailBlock .mc-form button {
+    margin: 0;
+  }
+}
+
+
+/* mc-form error message styles */
+.mc-form input[type="text"].error,
+.mc-form input[type="email"].error,
+.mc-form select.error,
+.mc-form input[type="radio"].error,
+.mc-form .option-select.error {
+  border-width: 1px;
+  border-color: #ff0000;
+}
+.mc-form select.error,
+.mc-form .option-select.error {
+  background-color: #fae0de;
+}
+.mc-form label.error,
+.mc-form-errorMessage p,
+.mc-form .option-select.error legend {
+  padding-left: 28px;
+  color: #ff0000;
+  position: relative;
+}
+.mc-form select.error {
+  color: #d30000;
+}
+.mc-form noscript {
+  font-weight: 600;
+  color: #d30000;
+  position: relative;
+}
+.mc-form noscript p {
+  padding-left: 28px;
+}
+.mc-form label.error:before,
+.mc-form-errorMessage p:before,
+.mc-form noscript p:before,
+.mc-form .option-select.error legend:before {
+  content: url('https://cdn.oreillystatic.com/images/icons/baseline-error_outline-24px.svg');
+  position: absolute;
+  left: 0;
+}
+.mc-form button[disabled],
+.mc-form input[disabled],
+.mc-form textarea[disabled],
+.mc-form select[disabled] {
+  opacity: 0.5;
+}
+/* end mc-form */

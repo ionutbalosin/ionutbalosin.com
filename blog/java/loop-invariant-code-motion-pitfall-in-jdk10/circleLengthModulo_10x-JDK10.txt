@@ -1,0 +1,1281 @@
+Java home dir: jdk-10
+
+# {method} {0x000002af56a10550} 'circleLengthModulo_10x' '()D' in 'LoopInvariantCode'
+[Entry Point]
+0x000002af42ba3ce0: int3  ;   {no_reloc}
+0x000002af42ba3ce1: data16 data16 nop WORD PTR [rax+rax*1+0x0]
+0x000002af42ba3cec: data16 data16 xchg ax,ax
+0x000002af42ba3cf0: mov DWORD PTR [rsp-0x7000],eax
+0x000002af42ba3cf7: push rbp
+0x000002af42ba3cf8: sub rsp,0x50
+0x000002af42ba3cfc: mov r13,QWORD PTR [rdx+0x18]
+0x000002af42ba3d00: vmovsd xmm0,QWORD PTR [rdx+0x8]
+0x000002af42ba3d05: vmovsd QWORD PTR [rsp+0x28],xmm0
+0x000002af42ba3d0b: mov ebp,DWORD PTR [rdx]
+0x000002af42ba3d0d: mov rcx,rdx
+0x000002af42ba3d10: movabs r10,0x57e1ba30
+0x000002af42ba3d1a: call r10
+0x000002af42ba3d1d: mov r11d,DWORD PTR [r13+0x8]  ; implicit exception: dispatches to 0x000002af42ba4d5a
+0x000002af42ba3d21: cmp r11d,0xf800c006  ;   {metadata('LoopInvariantCode')}
+0x000002af42ba3d28: jne L001e  ;*goto {reexecute=0 rethrow=0 return_oop=0}
+                               ; - LoopInvariantCode::computePi@57 (line 39)
+                               ; - LoopInvariantCode::circleLengthModulo_10x@58 (line 25)
+0x000002af42ba3d2e: mov ebx,DWORD PTR [r13+0xc]  ;*getfield iterations {reexecute=0 rethrow=0 return_oop=0}
+                                                 ; - LoopInvariantCode::circleLengthModulo_10x@6 (line 14)
+0x000002af42ba3d32: mov r11d,DWORD PTR [r13+0x10]
+0x000002af42ba3d36: shl r11d,1
+0x000002af42ba3d39: vcvtsi2sd xmm2,xmm2,r11d  ;*goto {reexecute=0 rethrow=0 return_oop=0}
+                                              ; - LoopInvariantCode::computePi@57 (line 39)
+                                              ; - LoopInvariantCode::circleLengthModulo_10x@13 (line 16)
+0x000002af42ba3d3e: vmovsd xmm3,QWORD PTR [rip+0xffffffffffffff82]  # 0x000002af42ba3cc8
+                                                                    ;   {section_word}
+0x000002af42ba3d46: vmovsd xmm4,QWORD PTR [rip+0xffffffffffffff72]  # 0x000002af42ba3cc0
+                                                                    ;   {section_word}
+0x000002af42ba3d4e: jmp L0007
+0x000002af42ba3d53: nop WORD PTR [rax+rax*1+0x0]
+0x000002af42ba3d5c: data16 data16 xchg ax,ax
+
+
+             L0000: vaddsd xmm0,xmm1,xmm5  ;*dadd {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@29 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+             L0001: mov r10d,r8d
+0x000002af42ba3d67: add r10d,0x1e
+0x000002af42ba3d6b: mov r11d,r8d
+0x000002af42ba3d6e: add r11d,0x1c
+0x000002af42ba3d72: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba3d77: vdivsd xmm5,xmm4,xmm1
+0x000002af42ba3d7b: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba3d80: vdivsd xmm6,xmm4,xmm1
+0x000002af42ba3d84: mov r11d,r8d
+0x000002af42ba3d87: add r11d,0x2
+0x000002af42ba3d8b: mov r9d,r8d
+0x000002af42ba3d8e: add r9d,0x4
+0x000002af42ba3d92: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba3d97: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3d9b: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba3d9f: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba3da4: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3da8: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba3dac: mov r11d,r8d
+0x000002af42ba3daf: add r11d,0x6
+0x000002af42ba3db3: mov r9d,r8d
+0x000002af42ba3db6: add r9d,0x8
+0x000002af42ba3dba: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba3dbf: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3dc3: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba3dc7: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba3dcc: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3dd0: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba3dd4: mov r11d,r8d
+0x000002af42ba3dd7: add r11d,0xa
+0x000002af42ba3ddb: mov r9d,r8d
+0x000002af42ba3dde: add r9d,0xc
+0x000002af42ba3de2: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba3de7: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3deb: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba3def: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba3df4: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3df8: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba3dfc: mov r11d,r8d
+0x000002af42ba3dff: add r11d,0xe
+0x000002af42ba3e03: mov r9d,r8d
+0x000002af42ba3e06: add r9d,0x10
+0x000002af42ba3e0a: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba3e0f: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3e13: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba3e17: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba3e1c: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3e20: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba3e24: mov r11d,r8d
+0x000002af42ba3e27: add r11d,0x12
+0x000002af42ba3e2b: mov r9d,r8d
+0x000002af42ba3e2e: add r9d,0x14
+0x000002af42ba3e32: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba3e37: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3e3b: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba3e3f: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba3e44: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3e48: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba3e4c: mov r11d,r8d
+0x000002af42ba3e4f: add r11d,0x16
+0x000002af42ba3e53: mov r9d,r8d
+0x000002af42ba3e56: add r9d,0x18
+0x000002af42ba3e5a: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba3e5f: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3e63: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba3e67: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba3e6c: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3e70: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba3e74: mov r11d,r8d
+0x000002af42ba3e77: add r11d,0x1a
+0x000002af42ba3e7b: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba3e80: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3e84: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba3e88: vaddsd xmm0,xmm0,xmm6
+0x000002af42ba3e8c: vsubsd xmm1,xmm0,xmm5  ;*dsub {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@42 (line 43)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x000002af42ba3e90: add r8d,0x20  ;*iinc {reexecute=0 rethrow=0 return_oop=0}
+                                  ; - LoopInvariantCode::computePi@54 (line 39)
+                                  ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x000002af42ba3e94: vcvtsi2sd xmm0,xmm0,r8d
+0x000002af42ba3e99: vdivsd xmm5,xmm4,xmm0  ;*ddiv {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@28 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x000002af42ba3e9d: cmp r8d,0x3e2
+0x000002af42ba3ea4: jl L0000  ;*if_icmpge {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::computePi@14 (line 39)
+                              ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+							  
+							  
+0x000002af42ba3eaa: mov r10,QWORD PTR [r15+0x70]  ; ImmutableOopMap{r13=Oop }
+                                                  ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                  ; - LoopInvariantCode::computePi@57 (line 39)
+                                                  ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x000002af42ba3eae: test DWORD PTR [r10],eax  ;*goto {reexecute=0 rethrow=0 return_oop=0}
+                                              ; - LoopInvariantCode::computePi@57 (line 39)
+                                              ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+                                              ;   {poll} *** SAFEPOINT POLL ***
+											  
+0x000002af42ba3eb1: cmp r8d,0x3e8
+0x000002af42ba3eb8: jge L0008
+0x000002af42ba3ebe: mov r11d,0x1  ;*ddiv {reexecute=0 rethrow=0 return_oop=0}
+                                  ; - LoopInvariantCode::computePi@28 (line 41)
+                                  ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+             L0002: test r11d,r11d
+0x000002af42ba3ec7: je L0003  ;*ifeq {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::computePi@18 (line 40)
+                              ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x000002af42ba3ec9: vaddsd xmm1,xmm5,xmm1  ;*dadd {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@29 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x000002af42ba3ecd: jmp L0004
+             L0003: vsubsd xmm1,xmm1,xmm5  ;*iload_3 {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@44 (line 45)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+             L0004: add r8d,0x2  ;*iinc {reexecute=0 rethrow=0 return_oop=0}
+                                 ; - LoopInvariantCode::computePi@54 (line 39)
+                                 ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x000002af42ba3ed7: cmp r8d,0x3e8
+0x000002af42ba3ede: jge L0005  ;*if_icmpge {reexecute=0 rethrow=0 return_oop=0}
+                               ; - LoopInvariantCode::computePi@14 (line 39)
+                               ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x000002af42ba3ee0: vcvtsi2sd xmm0,xmm0,r8d
+0x000002af42ba3ee5: vdivsd xmm5,xmm4,xmm0  ;*ddiv {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@28 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x000002af42ba3ee9: xor r11d,0x1  ;*istore_3 {reexecute=0 rethrow=0 return_oop=0}
+                                  ; - LoopInvariantCode::computePi@53 (line 45)
+                                  ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x000002af42ba3eed: jmp L0002
+             L0005: vmovsd QWORD PTR [rsp+0x30],xmm3
+0x000002af42ba3ef5: vmovsd QWORD PTR [rsp+0x38],xmm4
+             L0006: vmovsd QWORD PTR [rsp+0x20],xmm2
+0x000002af42ba3f01: vmulsd xmm0,xmm1,xmm2  ;*dmul {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@74 (line 27)
+0x000002af42ba3f05: mov r14d,ebp
+0x000002af42ba3f08: inc r14d  ;*iinc {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::circleLengthModulo_10x@80 (line 14)
+0x000002af42ba3f0b: vcvtsi2sd xmm1,xmm1,ebp  ;*i2d {reexecute=0 rethrow=0 return_oop=0}
+                                             ; - LoopInvariantCode::circleLengthModulo_10x@76 (line 27)
+0x000002af42ba3f0f: movabs r10,0x58369180
+0x000002af42ba3f19: call r10  ;*drem {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::circleLengthModulo_10x@77 (line 27)
+0x000002af42ba3f1c: vmovsd xmm1,QWORD PTR [rsp+0x28]
+0x000002af42ba3f22: vaddsd xmm0,xmm1,xmm0  ;*dadd {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@78 (line 27)
+0x000002af42ba3f26: vmovsd QWORD PTR [rsp+0x28],xmm0
+0x000002af42ba3f2c: mov r10,QWORD PTR [r15+0x70]  ; ImmutableOopMap{r13=Oop }
+                                                  ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                  ; - LoopInvariantCode::circleLengthModulo_10x@83 (line 14)
+0x000002af42ba3f30: test DWORD PTR [r10],eax  ;*goto {reexecute=0 rethrow=0 return_oop=0}
+                                              ; - LoopInvariantCode::circleLengthModulo_10x@83 (line 14)
+                                              ;   {poll} *** SAFEPOINT POLL ***
+0x000002af42ba3f33: mov ebp,r14d
+0x000002af42ba3f36: vmovsd xmm2,QWORD PTR [rsp+0x20]
+0x000002af42ba3f3c: vmovsd xmm3,QWORD PTR [rsp+0x30]
+0x000002af42ba3f42: vmovsd xmm4,QWORD PTR [rsp+0x38]  ;*iload_3 {reexecute=0 rethrow=0 return_oop=0}
+                                                      ; - LoopInvariantCode::circleLengthModulo_10x@4 (line 14)
+             L0007: cmp ebp,ebx
+0x000002af42ba3f4a: jge L001d  ;*if_icmpge {reexecute=0 rethrow=0 return_oop=0}
+                               ; - LoopInvariantCode::circleLengthModulo_10x@9 (line 14)
+0x000002af42ba3f50: vmovapd xmm0,xmm3
+0x000002af42ba3f54: mov r8d,0x5
+0x000002af42ba3f5a: jmp L000a
+             L0008: vmovsd QWORD PTR [rsp+0x30],xmm3
+0x000002af42ba3f62: vmovsd QWORD PTR [rsp+0x38],xmm4
+0x000002af42ba3f68: jmp L0006
+0x000002af42ba3f6a: nop WORD PTR [rax+rax*1+0x0]
+             L0009: vcvtsi2sd xmm1,xmm1,r8d
+0x000002af42ba3f75: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3f79: vaddsd xmm0,xmm1,xmm0  ;*dadd {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@29 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@13 (line 16)
+             L000a: mov r10d,r8d
+0x000002af42ba3f80: add r10d,0x1e
+0x000002af42ba3f84: mov r11d,r8d
+0x000002af42ba3f87: add r11d,0x1c
+0x000002af42ba3f8b: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba3f90: vdivsd xmm5,xmm4,xmm1
+0x000002af42ba3f94: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba3f99: vdivsd xmm6,xmm4,xmm1
+0x000002af42ba3f9d: mov r10d,r8d
+0x000002af42ba3fa0: add r10d,0x2
+0x000002af42ba3fa4: mov r11d,r8d
+0x000002af42ba3fa7: add r11d,0x4
+0x000002af42ba3fab: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba3fb0: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3fb4: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba3fb8: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba3fbd: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3fc1: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba3fc5: mov r11d,r8d
+0x000002af42ba3fc8: add r11d,0x6
+0x000002af42ba3fcc: mov r9d,r8d
+0x000002af42ba3fcf: add r9d,0x8
+0x000002af42ba3fd3: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba3fd8: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3fdc: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba3fe0: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba3fe5: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba3fe9: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba3fed: mov r11d,r8d
+0x000002af42ba3ff0: add r11d,0xa
+0x000002af42ba3ff4: mov r9d,r8d
+0x000002af42ba3ff7: add r9d,0xc
+0x000002af42ba3ffb: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4000: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4004: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4008: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba400d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4011: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4015: mov r11d,r8d
+0x000002af42ba4018: add r11d,0xe
+0x000002af42ba401c: mov r9d,r8d
+0x000002af42ba401f: add r9d,0x10
+0x000002af42ba4023: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4028: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba402c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4030: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4035: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4039: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba403d: mov r11d,r8d
+0x000002af42ba4040: add r11d,0x12
+0x000002af42ba4044: mov r9d,r8d
+0x000002af42ba4047: add r9d,0x14
+0x000002af42ba404b: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4050: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4054: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4058: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba405d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4061: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4065: mov r11d,r8d
+0x000002af42ba4068: add r11d,0x16
+0x000002af42ba406c: mov r9d,r8d
+0x000002af42ba406f: add r9d,0x18
+0x000002af42ba4073: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4078: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba407c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4080: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4085: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4089: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba408d: mov r11d,r8d
+0x000002af42ba4090: add r11d,0x1a
+0x000002af42ba4094: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4099: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba409d: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba40a1: vaddsd xmm0,xmm0,xmm6
+0x000002af42ba40a5: vsubsd xmm0,xmm0,xmm5  ;*dsub {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@42 (line 43)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@13 (line 16)
+0x000002af42ba40a9: add r8d,0x20  ;*iinc {reexecute=0 rethrow=0 return_oop=0}
+                                  ; - LoopInvariantCode::computePi@54 (line 39)
+                                  ; - LoopInvariantCode::circleLengthModulo_10x@13 (line 16)
+0x000002af42ba40ad: cmp r8d,0x3e2
+0x000002af42ba40b4: jl L0009  ;*if_icmpge {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::computePi@14 (line 39)
+                              ; - LoopInvariantCode::circleLengthModulo_10x@13 (line 16)
+0x000002af42ba40ba: mov r10,QWORD PTR [r15+0x70]  ; ImmutableOopMap{r13=Oop }
+                                                  ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                  ; - LoopInvariantCode::computePi@57 (line 39)
+                                                  ; - LoopInvariantCode::circleLengthModulo_10x@13 (line 16)
+0x000002af42ba40be: test DWORD PTR [r10],eax  ;*goto {reexecute=0 rethrow=0 return_oop=0}
+                                              ; - LoopInvariantCode::computePi@57 (line 39)
+                                              ; - LoopInvariantCode::circleLengthModulo_10x@13 (line 16)
+                                              ;   {poll} *** SAFEPOINT POLL ***
+0x000002af42ba40c1: vmovapd xmm0,xmm3
+0x000002af42ba40c5: mov r8d,0x5
+0x000002af42ba40cb: jmp L000c
+0x000002af42ba40cd: data16 xchg ax,ax
+             L000b: vcvtsi2sd xmm1,xmm1,r8d
+0x000002af42ba40d5: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba40d9: vaddsd xmm0,xmm1,xmm0  ;*dadd {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@29 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@18 (line 17)
+             L000c: mov r10d,r8d
+0x000002af42ba40e0: add r10d,0x1e
+0x000002af42ba40e4: mov r11d,r8d
+0x000002af42ba40e7: add r11d,0x1c
+0x000002af42ba40eb: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba40f0: vdivsd xmm5,xmm4,xmm1
+0x000002af42ba40f4: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba40f9: vdivsd xmm6,xmm4,xmm1
+0x000002af42ba40fd: mov r10d,r8d
+0x000002af42ba4100: add r10d,0x2
+0x000002af42ba4104: mov r11d,r8d
+0x000002af42ba4107: add r11d,0x4
+0x000002af42ba410b: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba4110: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4114: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4118: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba411d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4121: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4125: mov r11d,r8d
+0x000002af42ba4128: add r11d,0x6
+0x000002af42ba412c: mov r9d,r8d
+0x000002af42ba412f: add r9d,0x8
+0x000002af42ba4133: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4138: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba413c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4140: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4145: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4149: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba414d: mov r11d,r8d
+0x000002af42ba4150: add r11d,0xa
+0x000002af42ba4154: mov r9d,r8d
+0x000002af42ba4157: add r9d,0xc
+0x000002af42ba415b: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4160: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4164: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4168: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba416d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4171: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4175: mov r11d,r8d
+0x000002af42ba4178: add r11d,0xe
+0x000002af42ba417c: mov r9d,r8d
+0x000002af42ba417f: add r9d,0x10
+0x000002af42ba4183: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4188: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba418c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4190: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4195: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4199: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba419d: mov r11d,r8d
+0x000002af42ba41a0: add r11d,0x12
+0x000002af42ba41a4: mov r9d,r8d
+0x000002af42ba41a7: add r9d,0x14
+0x000002af42ba41ab: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba41b0: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba41b4: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba41b8: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba41bd: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba41c1: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba41c5: mov r11d,r8d
+0x000002af42ba41c8: add r11d,0x16
+0x000002af42ba41cc: mov r9d,r8d
+0x000002af42ba41cf: add r9d,0x18
+0x000002af42ba41d3: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba41d8: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba41dc: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba41e0: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba41e5: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba41e9: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba41ed: mov r11d,r8d
+0x000002af42ba41f0: add r11d,0x1a
+0x000002af42ba41f4: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba41f9: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba41fd: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4201: vaddsd xmm0,xmm0,xmm6
+0x000002af42ba4205: vsubsd xmm0,xmm0,xmm5  ;*dsub {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@42 (line 43)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@18 (line 17)
+0x000002af42ba4209: add r8d,0x20  ;*iinc {reexecute=0 rethrow=0 return_oop=0}
+                                  ; - LoopInvariantCode::computePi@54 (line 39)
+                                  ; - LoopInvariantCode::circleLengthModulo_10x@18 (line 17)
+0x000002af42ba420d: cmp r8d,0x3e2
+0x000002af42ba4214: jl L000b  ;*if_icmpge {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::computePi@14 (line 39)
+                              ; - LoopInvariantCode::circleLengthModulo_10x@18 (line 17)
+0x000002af42ba421a: mov r10,QWORD PTR [r15+0x70]  ; ImmutableOopMap{r13=Oop }
+                                                  ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                  ; - LoopInvariantCode::computePi@57 (line 39)
+                                                  ; - LoopInvariantCode::circleLengthModulo_10x@18 (line 17)
+0x000002af42ba421e: test DWORD PTR [r10],eax  ;*goto {reexecute=0 rethrow=0 return_oop=0}
+                                              ; - LoopInvariantCode::computePi@57 (line 39)
+                                              ; - LoopInvariantCode::circleLengthModulo_10x@18 (line 17)
+                                              ;   {poll} *** SAFEPOINT POLL ***
+0x000002af42ba4221: vmovapd xmm0,xmm3
+0x000002af42ba4225: mov r8d,0x5
+0x000002af42ba422b: jmp L000e
+0x000002af42ba422d: data16 xchg ax,ax
+             L000d: vcvtsi2sd xmm1,xmm1,r8d
+0x000002af42ba4235: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4239: vaddsd xmm0,xmm1,xmm0  ;*dadd {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@29 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@23 (line 18)
+             L000e: mov r10d,r8d
+0x000002af42ba4240: add r10d,0x1e
+0x000002af42ba4244: mov r11d,r8d
+0x000002af42ba4247: add r11d,0x1c
+0x000002af42ba424b: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba4250: vdivsd xmm5,xmm4,xmm1
+0x000002af42ba4254: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4259: vdivsd xmm6,xmm4,xmm1
+0x000002af42ba425d: mov r10d,r8d
+0x000002af42ba4260: add r10d,0x2
+0x000002af42ba4264: mov r11d,r8d
+0x000002af42ba4267: add r11d,0x4
+0x000002af42ba426b: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba4270: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4274: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4278: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba427d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4281: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4285: mov r11d,r8d
+0x000002af42ba4288: add r11d,0x6
+0x000002af42ba428c: mov r9d,r8d
+0x000002af42ba428f: add r9d,0x8
+0x000002af42ba4293: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4298: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba429c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba42a0: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba42a5: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba42a9: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba42ad: mov r11d,r8d
+0x000002af42ba42b0: add r11d,0xa
+0x000002af42ba42b4: mov r9d,r8d
+0x000002af42ba42b7: add r9d,0xc
+0x000002af42ba42bb: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba42c0: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba42c4: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba42c8: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba42cd: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba42d1: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba42d5: mov r11d,r8d
+0x000002af42ba42d8: add r11d,0xe
+0x000002af42ba42dc: mov r9d,r8d
+0x000002af42ba42df: add r9d,0x10
+0x000002af42ba42e3: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba42e8: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba42ec: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba42f0: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba42f5: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba42f9: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba42fd: mov r11d,r8d
+0x000002af42ba4300: add r11d,0x12
+0x000002af42ba4304: mov r9d,r8d
+0x000002af42ba4307: add r9d,0x14
+0x000002af42ba430b: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4310: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4314: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4318: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba431d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4321: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4325: mov r11d,r8d
+0x000002af42ba4328: add r11d,0x16
+0x000002af42ba432c: mov r9d,r8d
+0x000002af42ba432f: add r9d,0x18
+0x000002af42ba4333: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4338: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba433c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4340: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4345: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4349: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba434d: mov r11d,r8d
+0x000002af42ba4350: add r11d,0x1a
+0x000002af42ba4354: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4359: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba435d: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4361: vaddsd xmm0,xmm0,xmm6
+0x000002af42ba4365: vsubsd xmm0,xmm0,xmm5  ;*dsub {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@42 (line 43)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@23 (line 18)
+0x000002af42ba4369: add r8d,0x20  ;*iinc {reexecute=0 rethrow=0 return_oop=0}
+                                  ; - LoopInvariantCode::computePi@54 (line 39)
+                                  ; - LoopInvariantCode::circleLengthModulo_10x@23 (line 18)
+0x000002af42ba436d: cmp r8d,0x3e2
+0x000002af42ba4374: jl L000d  ;*if_icmpge {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::computePi@14 (line 39)
+                              ; - LoopInvariantCode::circleLengthModulo_10x@23 (line 18)
+0x000002af42ba437a: mov r10,QWORD PTR [r15+0x70]  ; ImmutableOopMap{r13=Oop }
+                                                  ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                  ; - LoopInvariantCode::computePi@57 (line 39)
+                                                  ; - LoopInvariantCode::circleLengthModulo_10x@23 (line 18)
+0x000002af42ba437e: test DWORD PTR [r10],eax  ;*goto {reexecute=0 rethrow=0 return_oop=0}
+                                              ; - LoopInvariantCode::computePi@57 (line 39)
+                                              ; - LoopInvariantCode::circleLengthModulo_10x@23 (line 18)
+                                              ;   {poll} *** SAFEPOINT POLL ***
+0x000002af42ba4381: vmovapd xmm0,xmm3
+0x000002af42ba4385: mov r8d,0x5
+0x000002af42ba438b: jmp L0010
+0x000002af42ba438d: data16 xchg ax,ax
+             L000f: vcvtsi2sd xmm1,xmm1,r8d
+0x000002af42ba4395: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4399: vaddsd xmm0,xmm1,xmm0  ;*dadd {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@29 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@28 (line 19)
+             L0010: mov r10d,r8d
+0x000002af42ba43a0: add r10d,0x1e
+0x000002af42ba43a4: mov r11d,r8d
+0x000002af42ba43a7: add r11d,0x1c
+0x000002af42ba43ab: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba43b0: vdivsd xmm5,xmm4,xmm1
+0x000002af42ba43b4: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba43b9: vdivsd xmm6,xmm4,xmm1
+0x000002af42ba43bd: mov r10d,r8d
+0x000002af42ba43c0: add r10d,0x2
+0x000002af42ba43c4: mov r11d,r8d
+0x000002af42ba43c7: add r11d,0x4
+0x000002af42ba43cb: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba43d0: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba43d4: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba43d8: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba43dd: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba43e1: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba43e5: mov r11d,r8d
+0x000002af42ba43e8: add r11d,0x6
+0x000002af42ba43ec: mov r9d,r8d
+0x000002af42ba43ef: add r9d,0x8
+0x000002af42ba43f3: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba43f8: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba43fc: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4400: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4405: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4409: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba440d: mov r11d,r8d
+0x000002af42ba4410: add r11d,0xa
+0x000002af42ba4414: mov r9d,r8d
+0x000002af42ba4417: add r9d,0xc
+0x000002af42ba441b: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4420: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4424: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4428: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba442d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4431: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4435: mov r11d,r8d
+0x000002af42ba4438: add r11d,0xe
+0x000002af42ba443c: mov r9d,r8d
+0x000002af42ba443f: add r9d,0x10
+0x000002af42ba4443: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4448: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba444c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4450: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4455: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4459: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba445d: mov r11d,r8d
+0x000002af42ba4460: add r11d,0x12
+0x000002af42ba4464: mov r9d,r8d
+0x000002af42ba4467: add r9d,0x14
+0x000002af42ba446b: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4470: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4474: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4478: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba447d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4481: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4485: mov r11d,r8d
+0x000002af42ba4488: add r11d,0x16
+0x000002af42ba448c: mov r9d,r8d
+0x000002af42ba448f: add r9d,0x18
+0x000002af42ba4493: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4498: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba449c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba44a0: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba44a5: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba44a9: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba44ad: mov r11d,r8d
+0x000002af42ba44b0: add r11d,0x1a
+0x000002af42ba44b4: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba44b9: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba44bd: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba44c1: vaddsd xmm0,xmm0,xmm6
+0x000002af42ba44c5: vsubsd xmm0,xmm0,xmm5  ;*dsub {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@42 (line 43)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@28 (line 19)
+0x000002af42ba44c9: add r8d,0x20  ;*iinc {reexecute=0 rethrow=0 return_oop=0}
+                                  ; - LoopInvariantCode::computePi@54 (line 39)
+                                  ; - LoopInvariantCode::circleLengthModulo_10x@28 (line 19)
+0x000002af42ba44cd: cmp r8d,0x3e2
+0x000002af42ba44d4: jl L000f  ;*if_icmpge {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::computePi@14 (line 39)
+                              ; - LoopInvariantCode::circleLengthModulo_10x@28 (line 19)
+0x000002af42ba44da: mov r10,QWORD PTR [r15+0x70]  ; ImmutableOopMap{r13=Oop }
+                                                  ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                  ; - LoopInvariantCode::computePi@57 (line 39)
+                                                  ; - LoopInvariantCode::circleLengthModulo_10x@28 (line 19)
+0x000002af42ba44de: test DWORD PTR [r10],eax  ;*goto {reexecute=0 rethrow=0 return_oop=0}
+                                              ; - LoopInvariantCode::computePi@57 (line 39)
+                                              ; - LoopInvariantCode::circleLengthModulo_10x@28 (line 19)
+                                              ;   {poll} *** SAFEPOINT POLL ***
+0x000002af42ba44e1: vmovapd xmm0,xmm3
+0x000002af42ba44e5: mov r8d,0x5
+0x000002af42ba44eb: jmp L0012
+0x000002af42ba44ed: data16 xchg ax,ax
+             L0011: vcvtsi2sd xmm1,xmm1,r8d
+0x000002af42ba44f5: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba44f9: vaddsd xmm0,xmm1,xmm0  ;*dadd {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@29 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@33 (line 20)
+             L0012: mov r10d,r8d
+0x000002af42ba4500: add r10d,0x1e
+0x000002af42ba4504: mov r11d,r8d
+0x000002af42ba4507: add r11d,0x1c
+0x000002af42ba450b: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba4510: vdivsd xmm5,xmm4,xmm1
+0x000002af42ba4514: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4519: vdivsd xmm6,xmm4,xmm1
+0x000002af42ba451d: mov r10d,r8d
+0x000002af42ba4520: add r10d,0x2
+0x000002af42ba4524: mov r11d,r8d
+0x000002af42ba4527: add r11d,0x4
+0x000002af42ba452b: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba4530: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4534: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4538: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba453d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4541: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4545: mov r11d,r8d
+0x000002af42ba4548: add r11d,0x6
+0x000002af42ba454c: mov r9d,r8d
+0x000002af42ba454f: add r9d,0x8
+0x000002af42ba4553: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4558: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba455c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4560: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4565: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4569: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba456d: mov r11d,r8d
+0x000002af42ba4570: add r11d,0xa
+0x000002af42ba4574: mov r9d,r8d
+0x000002af42ba4577: add r9d,0xc
+0x000002af42ba457b: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4580: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4584: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4588: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba458d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4591: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4595: mov r11d,r8d
+0x000002af42ba4598: add r11d,0xe
+0x000002af42ba459c: mov r9d,r8d
+0x000002af42ba459f: add r9d,0x10
+0x000002af42ba45a3: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba45a8: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba45ac: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba45b0: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba45b5: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba45b9: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba45bd: mov r11d,r8d
+0x000002af42ba45c0: add r11d,0x12
+0x000002af42ba45c4: mov r9d,r8d
+0x000002af42ba45c7: add r9d,0x14
+0x000002af42ba45cb: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba45d0: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba45d4: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba45d8: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba45dd: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba45e1: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba45e5: mov r11d,r8d
+0x000002af42ba45e8: add r11d,0x16
+0x000002af42ba45ec: mov r9d,r8d
+0x000002af42ba45ef: add r9d,0x18
+0x000002af42ba45f3: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba45f8: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba45fc: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4600: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4605: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4609: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba460d: mov r11d,r8d
+0x000002af42ba4610: add r11d,0x1a
+0x000002af42ba4614: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4619: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba461d: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4621: vaddsd xmm0,xmm0,xmm6
+0x000002af42ba4625: vsubsd xmm0,xmm0,xmm5  ;*dsub {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@42 (line 43)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@33 (line 20)
+0x000002af42ba4629: add r8d,0x20  ;*iinc {reexecute=0 rethrow=0 return_oop=0}
+                                  ; - LoopInvariantCode::computePi@54 (line 39)
+                                  ; - LoopInvariantCode::circleLengthModulo_10x@33 (line 20)
+0x000002af42ba462d: cmp r8d,0x3e2
+0x000002af42ba4634: jl L0011  ;*if_icmpge {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::computePi@14 (line 39)
+                              ; - LoopInvariantCode::circleLengthModulo_10x@33 (line 20)
+0x000002af42ba463a: mov r10,QWORD PTR [r15+0x70]  ; ImmutableOopMap{r13=Oop }
+                                                  ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                  ; - LoopInvariantCode::computePi@57 (line 39)
+                                                  ; - LoopInvariantCode::circleLengthModulo_10x@33 (line 20)
+0x000002af42ba463e: test DWORD PTR [r10],eax  ;*goto {reexecute=0 rethrow=0 return_oop=0}
+                                              ; - LoopInvariantCode::computePi@57 (line 39)
+                                              ; - LoopInvariantCode::circleLengthModulo_10x@33 (line 20)
+                                              ;   {poll} *** SAFEPOINT POLL ***
+0x000002af42ba4641: vmovapd xmm0,xmm3
+0x000002af42ba4645: mov r8d,0x5
+0x000002af42ba464b: jmp L0014
+0x000002af42ba464d: data16 xchg ax,ax
+             L0013: vcvtsi2sd xmm1,xmm1,r8d
+0x000002af42ba4655: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4659: vaddsd xmm0,xmm1,xmm0  ;*dadd {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@29 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@38 (line 21)
+             L0014: mov r10d,r8d
+0x000002af42ba4660: add r10d,0x1e
+0x000002af42ba4664: mov r11d,r8d
+0x000002af42ba4667: add r11d,0x1c
+0x000002af42ba466b: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba4670: vdivsd xmm5,xmm4,xmm1
+0x000002af42ba4674: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4679: vdivsd xmm6,xmm4,xmm1
+0x000002af42ba467d: mov r10d,r8d
+0x000002af42ba4680: add r10d,0x2
+0x000002af42ba4684: mov r11d,r8d
+0x000002af42ba4687: add r11d,0x4
+0x000002af42ba468b: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba4690: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4694: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4698: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba469d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba46a1: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba46a5: mov r11d,r8d
+0x000002af42ba46a8: add r11d,0x6
+0x000002af42ba46ac: mov r9d,r8d
+0x000002af42ba46af: add r9d,0x8
+0x000002af42ba46b3: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba46b8: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba46bc: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba46c0: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba46c5: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba46c9: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba46cd: mov r11d,r8d
+0x000002af42ba46d0: add r11d,0xa
+0x000002af42ba46d4: mov r9d,r8d
+0x000002af42ba46d7: add r9d,0xc
+0x000002af42ba46db: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba46e0: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba46e4: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba46e8: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba46ed: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba46f1: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba46f5: mov r11d,r8d
+0x000002af42ba46f8: add r11d,0xe
+0x000002af42ba46fc: mov r9d,r8d
+0x000002af42ba46ff: add r9d,0x10
+0x000002af42ba4703: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4708: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba470c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4710: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4715: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4719: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba471d: mov r11d,r8d
+0x000002af42ba4720: add r11d,0x12
+0x000002af42ba4724: mov r9d,r8d
+0x000002af42ba4727: add r9d,0x14
+0x000002af42ba472b: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4730: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4734: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4738: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba473d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4741: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4745: mov r11d,r8d
+0x000002af42ba4748: add r11d,0x16
+0x000002af42ba474c: mov r9d,r8d
+0x000002af42ba474f: add r9d,0x18
+0x000002af42ba4753: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4758: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba475c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4760: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4765: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4769: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba476d: mov r11d,r8d
+0x000002af42ba4770: add r11d,0x1a
+0x000002af42ba4774: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4779: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba477d: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4781: vaddsd xmm0,xmm0,xmm6
+0x000002af42ba4785: vsubsd xmm0,xmm0,xmm5  ;*dsub {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@42 (line 43)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@38 (line 21)
+0x000002af42ba4789: add r8d,0x20  ;*iinc {reexecute=0 rethrow=0 return_oop=0}
+                                  ; - LoopInvariantCode::computePi@54 (line 39)
+                                  ; - LoopInvariantCode::circleLengthModulo_10x@38 (line 21)
+0x000002af42ba478d: cmp r8d,0x3e2
+0x000002af42ba4794: jl L0013  ;*if_icmpge {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::computePi@14 (line 39)
+                              ; - LoopInvariantCode::circleLengthModulo_10x@38 (line 21)
+0x000002af42ba479a: mov r10,QWORD PTR [r15+0x70]  ; ImmutableOopMap{r13=Oop }
+                                                  ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                  ; - LoopInvariantCode::computePi@57 (line 39)
+                                                  ; - LoopInvariantCode::circleLengthModulo_10x@38 (line 21)
+0x000002af42ba479e: test DWORD PTR [r10],eax  ;*goto {reexecute=0 rethrow=0 return_oop=0}
+                                              ; - LoopInvariantCode::computePi@57 (line 39)
+                                              ; - LoopInvariantCode::circleLengthModulo_10x@38 (line 21)
+                                              ;   {poll} *** SAFEPOINT POLL ***
+0x000002af42ba47a1: vmovapd xmm0,xmm3
+0x000002af42ba47a5: mov r8d,0x5
+0x000002af42ba47ab: jmp L0016
+0x000002af42ba47ad: data16 xchg ax,ax
+             L0015: vcvtsi2sd xmm1,xmm1,r8d
+0x000002af42ba47b5: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba47b9: vaddsd xmm0,xmm1,xmm0  ;*dadd {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@29 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@43 (line 22)
+             L0016: mov r10d,r8d
+0x000002af42ba47c0: add r10d,0x1e
+0x000002af42ba47c4: mov r11d,r8d
+0x000002af42ba47c7: add r11d,0x1c
+0x000002af42ba47cb: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba47d0: vdivsd xmm5,xmm4,xmm1
+0x000002af42ba47d4: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba47d9: vdivsd xmm6,xmm4,xmm1
+0x000002af42ba47dd: mov r10d,r8d
+0x000002af42ba47e0: add r10d,0x2
+0x000002af42ba47e4: mov r11d,r8d
+0x000002af42ba47e7: add r11d,0x4
+0x000002af42ba47eb: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba47f0: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba47f4: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba47f8: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba47fd: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4801: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4805: mov r11d,r8d
+0x000002af42ba4808: add r11d,0x6
+0x000002af42ba480c: mov r9d,r8d
+0x000002af42ba480f: add r9d,0x8
+0x000002af42ba4813: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4818: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba481c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4820: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4825: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4829: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba482d: mov r11d,r8d
+0x000002af42ba4830: add r11d,0xa
+0x000002af42ba4834: mov r9d,r8d
+0x000002af42ba4837: add r9d,0xc
+0x000002af42ba483b: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4840: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4844: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4848: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba484d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4851: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4855: mov r11d,r8d
+0x000002af42ba4858: add r11d,0xe
+0x000002af42ba485c: mov r9d,r8d
+0x000002af42ba485f: add r9d,0x10
+0x000002af42ba4863: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4868: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba486c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4870: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4875: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4879: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba487d: mov r11d,r8d
+0x000002af42ba4880: add r11d,0x12
+0x000002af42ba4884: mov r9d,r8d
+0x000002af42ba4887: add r9d,0x14
+0x000002af42ba488b: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4890: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4894: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4898: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba489d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba48a1: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba48a5: mov r11d,r8d
+0x000002af42ba48a8: add r11d,0x16
+0x000002af42ba48ac: mov r9d,r8d
+0x000002af42ba48af: add r9d,0x18
+0x000002af42ba48b3: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba48b8: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba48bc: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba48c0: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba48c5: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba48c9: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba48cd: mov r11d,r8d
+0x000002af42ba48d0: add r11d,0x1a
+0x000002af42ba48d4: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba48d9: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba48dd: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba48e1: vaddsd xmm0,xmm0,xmm6
+0x000002af42ba48e5: vsubsd xmm0,xmm0,xmm5  ;*dsub {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@42 (line 43)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@43 (line 22)
+0x000002af42ba48e9: add r8d,0x20  ;*iinc {reexecute=0 rethrow=0 return_oop=0}
+                                  ; - LoopInvariantCode::computePi@54 (line 39)
+                                  ; - LoopInvariantCode::circleLengthModulo_10x@43 (line 22)
+0x000002af42ba48ed: cmp r8d,0x3e2
+0x000002af42ba48f4: jl L0015  ;*if_icmpge {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::computePi@14 (line 39)
+                              ; - LoopInvariantCode::circleLengthModulo_10x@43 (line 22)
+0x000002af42ba48fa: mov r10,QWORD PTR [r15+0x70]  ; ImmutableOopMap{r13=Oop }
+                                                  ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                  ; - LoopInvariantCode::computePi@57 (line 39)
+                                                  ; - LoopInvariantCode::circleLengthModulo_10x@43 (line 22)
+0x000002af42ba48fe: test DWORD PTR [r10],eax  ;*goto {reexecute=0 rethrow=0 return_oop=0}
+                                              ; - LoopInvariantCode::computePi@57 (line 39)
+                                              ; - LoopInvariantCode::circleLengthModulo_10x@43 (line 22)
+                                              ;   {poll} *** SAFEPOINT POLL ***
+0x000002af42ba4901: vmovapd xmm0,xmm3
+0x000002af42ba4905: mov r8d,0x5
+0x000002af42ba490b: jmp L0018
+0x000002af42ba490d: data16 xchg ax,ax
+             L0017: vcvtsi2sd xmm1,xmm1,r8d
+0x000002af42ba4915: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4919: vaddsd xmm0,xmm1,xmm0  ;*dadd {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@29 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@48 (line 23)
+             L0018: mov r10d,r8d
+0x000002af42ba4920: add r10d,0x1e
+0x000002af42ba4924: mov r11d,r8d
+0x000002af42ba4927: add r11d,0x1c
+0x000002af42ba492b: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba4930: vdivsd xmm5,xmm4,xmm1
+0x000002af42ba4934: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4939: vdivsd xmm6,xmm4,xmm1
+0x000002af42ba493d: mov r10d,r8d
+0x000002af42ba4940: add r10d,0x2
+0x000002af42ba4944: mov r11d,r8d
+0x000002af42ba4947: add r11d,0x4
+0x000002af42ba494b: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba4950: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4954: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4958: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba495d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4961: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4965: mov r11d,r8d
+0x000002af42ba4968: add r11d,0x6
+0x000002af42ba496c: mov r9d,r8d
+0x000002af42ba496f: add r9d,0x8
+0x000002af42ba4973: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4978: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba497c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4980: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4985: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4989: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba498d: mov r11d,r8d
+0x000002af42ba4990: add r11d,0xa
+0x000002af42ba4994: mov r9d,r8d
+0x000002af42ba4997: add r9d,0xc
+0x000002af42ba499b: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba49a0: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba49a4: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba49a8: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba49ad: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba49b1: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba49b5: mov r11d,r8d
+0x000002af42ba49b8: add r11d,0xe
+0x000002af42ba49bc: mov r9d,r8d
+0x000002af42ba49bf: add r9d,0x10
+0x000002af42ba49c3: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba49c8: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba49cc: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba49d0: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba49d5: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba49d9: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba49dd: mov r11d,r8d
+0x000002af42ba49e0: add r11d,0x12
+0x000002af42ba49e4: mov r9d,r8d
+0x000002af42ba49e7: add r9d,0x14
+0x000002af42ba49eb: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba49f0: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba49f4: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba49f8: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba49fd: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4a01: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4a05: mov r11d,r8d
+0x000002af42ba4a08: add r11d,0x16
+0x000002af42ba4a0c: mov r9d,r8d
+0x000002af42ba4a0f: add r9d,0x18
+0x000002af42ba4a13: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4a18: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4a1c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4a20: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4a25: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4a29: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4a2d: mov r11d,r8d
+0x000002af42ba4a30: add r11d,0x1a
+0x000002af42ba4a34: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4a39: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4a3d: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4a41: vaddsd xmm0,xmm0,xmm6
+0x000002af42ba4a45: vsubsd xmm0,xmm0,xmm5  ;*dsub {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@42 (line 43)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@48 (line 23)
+0x000002af42ba4a49: add r8d,0x20  ;*iinc {reexecute=0 rethrow=0 return_oop=0}
+                                  ; - LoopInvariantCode::computePi@54 (line 39)
+                                  ; - LoopInvariantCode::circleLengthModulo_10x@48 (line 23)
+0x000002af42ba4a4d: cmp r8d,0x3e2
+0x000002af42ba4a54: jl L0017  ;*if_icmpge {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::computePi@14 (line 39)
+                              ; - LoopInvariantCode::circleLengthModulo_10x@48 (line 23)
+0x000002af42ba4a5a: mov r10,QWORD PTR [r15+0x70]  ; ImmutableOopMap{r13=Oop }
+                                                  ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                  ; - LoopInvariantCode::computePi@57 (line 39)
+                                                  ; - LoopInvariantCode::circleLengthModulo_10x@48 (line 23)
+0x000002af42ba4a5e: test DWORD PTR [r10],eax  ;*goto {reexecute=0 rethrow=0 return_oop=0}
+                                              ; - LoopInvariantCode::computePi@57 (line 39)
+                                              ; - LoopInvariantCode::circleLengthModulo_10x@48 (line 23)
+                                              ;   {poll} *** SAFEPOINT POLL ***
+0x000002af42ba4a61: vmovapd xmm0,xmm3
+0x000002af42ba4a65: mov r8d,0x5
+0x000002af42ba4a6b: jmp L001a
+0x000002af42ba4a6d: data16 xchg ax,ax
+             L0019: vcvtsi2sd xmm1,xmm1,r8d
+0x000002af42ba4a75: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4a79: vaddsd xmm0,xmm1,xmm0  ;*dadd {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@29 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@53 (line 24)
+             L001a: mov r10d,r8d
+0x000002af42ba4a80: add r10d,0x1e
+0x000002af42ba4a84: mov r11d,r8d
+0x000002af42ba4a87: add r11d,0x1c
+0x000002af42ba4a8b: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba4a90: vdivsd xmm5,xmm4,xmm1
+0x000002af42ba4a94: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4a99: vdivsd xmm6,xmm4,xmm1
+0x000002af42ba4a9d: mov r10d,r8d
+0x000002af42ba4aa0: add r10d,0x2
+0x000002af42ba4aa4: mov r11d,r8d
+0x000002af42ba4aa7: add r11d,0x4
+0x000002af42ba4aab: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba4ab0: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4ab4: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4ab8: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4abd: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4ac1: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4ac5: mov r11d,r8d
+0x000002af42ba4ac8: add r11d,0x6
+0x000002af42ba4acc: mov r9d,r8d
+0x000002af42ba4acf: add r9d,0x8
+0x000002af42ba4ad3: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4ad8: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4adc: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4ae0: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4ae5: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4ae9: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4aed: mov r11d,r8d
+0x000002af42ba4af0: add r11d,0xa
+0x000002af42ba4af4: mov r9d,r8d
+0x000002af42ba4af7: add r9d,0xc
+0x000002af42ba4afb: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4b00: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4b04: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4b08: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4b0d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4b11: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4b15: mov r11d,r8d
+0x000002af42ba4b18: add r11d,0xe
+0x000002af42ba4b1c: mov r9d,r8d
+0x000002af42ba4b1f: add r9d,0x10
+0x000002af42ba4b23: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4b28: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4b2c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4b30: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4b35: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4b39: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4b3d: mov r11d,r8d
+0x000002af42ba4b40: add r11d,0x12
+0x000002af42ba4b44: mov r9d,r8d
+0x000002af42ba4b47: add r9d,0x14
+0x000002af42ba4b4b: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4b50: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4b54: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4b58: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4b5d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4b61: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4b65: mov r11d,r8d
+0x000002af42ba4b68: add r11d,0x16
+0x000002af42ba4b6c: mov r9d,r8d
+0x000002af42ba4b6f: add r9d,0x18
+0x000002af42ba4b73: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4b78: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4b7c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4b80: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4b85: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4b89: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4b8d: mov r11d,r8d
+0x000002af42ba4b90: add r11d,0x1a
+0x000002af42ba4b94: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4b99: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4b9d: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4ba1: vaddsd xmm0,xmm0,xmm6
+0x000002af42ba4ba5: vsubsd xmm0,xmm0,xmm5  ;*dsub {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@42 (line 43)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@53 (line 24)
+0x000002af42ba4ba9: add r8d,0x20  ;*iinc {reexecute=0 rethrow=0 return_oop=0}
+                                  ; - LoopInvariantCode::computePi@54 (line 39)
+                                  ; - LoopInvariantCode::circleLengthModulo_10x@53 (line 24)
+0x000002af42ba4bad: cmp r8d,0x3e2
+0x000002af42ba4bb4: jl L0019  ;*if_icmpge {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::computePi@14 (line 39)
+                              ; - LoopInvariantCode::circleLengthModulo_10x@53 (line 24)
+0x000002af42ba4bba: mov r10,QWORD PTR [r15+0x70]  ; ImmutableOopMap{r13=Oop }
+                                                  ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                  ; - LoopInvariantCode::computePi@57 (line 39)
+                                                  ; - LoopInvariantCode::circleLengthModulo_10x@53 (line 24)
+0x000002af42ba4bbe: test DWORD PTR [r10],eax  ;*goto {reexecute=0 rethrow=0 return_oop=0}
+                                              ; - LoopInvariantCode::computePi@57 (line 39)
+                                              ; - LoopInvariantCode::circleLengthModulo_10x@53 (line 24)
+                                              ;   {poll} *** SAFEPOINT POLL ***
+0x000002af42ba4bc1: vmovapd xmm0,xmm3
+0x000002af42ba4bc5: mov r8d,0x5
+0x000002af42ba4bcb: jmp L001c
+0x000002af42ba4bcd: data16 xchg ax,ax
+             L001b: vcvtsi2sd xmm1,xmm1,r8d
+0x000002af42ba4bd5: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4bd9: vaddsd xmm0,xmm1,xmm0  ;*dadd {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@29 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@58 (line 25)
+             L001c: mov r10d,r8d
+0x000002af42ba4be0: add r10d,0x1e
+0x000002af42ba4be4: mov r11d,r8d
+0x000002af42ba4be7: add r11d,0x1c
+0x000002af42ba4beb: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba4bf0: vdivsd xmm5,xmm4,xmm1
+0x000002af42ba4bf4: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4bf9: vdivsd xmm6,xmm4,xmm1
+0x000002af42ba4bfd: mov r10d,r8d
+0x000002af42ba4c00: add r10d,0x2
+0x000002af42ba4c04: mov r11d,r8d
+0x000002af42ba4c07: add r11d,0x4
+0x000002af42ba4c0b: vcvtsi2sd xmm1,xmm1,r10d
+0x000002af42ba4c10: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4c14: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4c18: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4c1d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4c21: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4c25: mov r11d,r8d
+0x000002af42ba4c28: add r11d,0x6
+0x000002af42ba4c2c: mov r9d,r8d
+0x000002af42ba4c2f: add r9d,0x8
+0x000002af42ba4c33: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4c38: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4c3c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4c40: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4c45: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4c49: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4c4d: mov r11d,r8d
+0x000002af42ba4c50: add r11d,0xa
+0x000002af42ba4c54: mov r9d,r8d
+0x000002af42ba4c57: add r9d,0xc
+0x000002af42ba4c5b: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4c60: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4c64: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4c68: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4c6d: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4c71: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4c75: mov r11d,r8d
+0x000002af42ba4c78: add r11d,0xe
+0x000002af42ba4c7c: mov r9d,r8d
+0x000002af42ba4c7f: add r9d,0x10
+0x000002af42ba4c83: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4c88: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4c8c: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4c90: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4c95: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4c99: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4c9d: mov r11d,r8d
+0x000002af42ba4ca0: add r11d,0x12
+0x000002af42ba4ca4: mov r9d,r8d
+0x000002af42ba4ca7: add r9d,0x14
+0x000002af42ba4cab: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4cb0: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4cb4: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4cb8: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4cbd: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4cc1: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4cc5: mov r11d,r8d
+0x000002af42ba4cc8: add r11d,0x16
+0x000002af42ba4ccc: mov r9d,r8d
+0x000002af42ba4ccf: add r9d,0x18
+0x000002af42ba4cd3: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4cd8: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4cdc: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4ce0: vcvtsi2sd xmm1,xmm1,r9d
+0x000002af42ba4ce5: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4ce9: vaddsd xmm0,xmm0,xmm1
+0x000002af42ba4ced: mov r11d,r8d
+0x000002af42ba4cf0: add r11d,0x1a
+0x000002af42ba4cf4: vcvtsi2sd xmm1,xmm1,r11d
+0x000002af42ba4cf9: vdivsd xmm1,xmm4,xmm1
+0x000002af42ba4cfd: vsubsd xmm0,xmm0,xmm1
+0x000002af42ba4d01: vaddsd xmm0,xmm0,xmm6
+0x000002af42ba4d05: vsubsd xmm0,xmm0,xmm5  ;*dsub {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@42 (line 43)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@58 (line 25)
+0x000002af42ba4d09: add r8d,0x20  ;*iinc {reexecute=0 rethrow=0 return_oop=0}
+                                  ; - LoopInvariantCode::computePi@54 (line 39)
+                                  ; - LoopInvariantCode::circleLengthModulo_10x@58 (line 25)
+0x000002af42ba4d0d: cmp r8d,0x3e2
+0x000002af42ba4d14: jl L001b  ;*if_icmpge {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::computePi@14 (line 39)
+                              ; - LoopInvariantCode::circleLengthModulo_10x@58 (line 25)
+0x000002af42ba4d1a: mov r10,QWORD PTR [r15+0x70]  ; ImmutableOopMap{r13=Oop }
+                                                  ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                  ; - LoopInvariantCode::computePi@57 (line 39)
+                                                  ; - LoopInvariantCode::circleLengthModulo_10x@58 (line 25)
+0x000002af42ba4d1e: test DWORD PTR [r10],eax  ;*goto {reexecute=0 rethrow=0 return_oop=0}
+                                              ; - LoopInvariantCode::computePi@57 (line 39)
+                                              ; - LoopInvariantCode::circleLengthModulo_10x@58 (line 25)
+                                              ;   {poll} *** SAFEPOINT POLL ***
+0x000002af42ba4d21: vmovapd xmm0,xmm3
+0x000002af42ba4d25: mov r8d,0x5
+0x000002af42ba4d2b: jmp L0001  ;*if_icmpge {reexecute=0 rethrow=0 return_oop=0}
+                               ; - LoopInvariantCode::circleLengthModulo_10x@9 (line 14)
+             L001d: mov edx,0xffffff55
+0x000002af42ba4d35: mov QWORD PTR [rsp+0x20],r13
+0x000002af42ba4d3a: mov DWORD PTR [rsp+0x34],ebx
+0x000002af42ba4d3e: nop
+0x000002af42ba4d3f: call 0x000002af3b0f8a00  ; ImmutableOopMap{[32]=Oop }
+                                             ;*if_icmpge {reexecute=1 rethrow=0 return_oop=0}
+                                             ; - LoopInvariantCode::circleLengthModulo_10x@9 (line 14)
+                                             ;   {runtime_call UncommonTrapBlob}
+0x000002af42ba4d44: ud2
+             L001e: mov edx,0xffffff9d
+0x000002af42ba4d4b: mov QWORD PTR [rsp+0x20],r13
+0x000002af42ba4d50: data16 xchg ax,ax
+0x000002af42ba4d53: call 0x000002af3b0f8a00  ; ImmutableOopMap{[32]=Oop }
+                                             ;*iload_3 {reexecute=0 rethrow=0 return_oop=0}
+                                             ; - LoopInvariantCode::circleLengthModulo_10x@4 (line 14)
+                                             ;   {runtime_call UncommonTrapBlob}
+0x000002af42ba4d58: ud2
+0x000002af42ba4d5a: mov edx,0xffffff86
+0x000002af42ba4d5f: call 0x000002af3b0f8a00  ; ImmutableOopMap{}
+                                             ;*iload_3 {reexecute=0 rethrow=0 return_oop=0}
+                                             ; - LoopInvariantCode::circleLengthModulo_10x@4 (line 14)
+                                             ;   {runtime_call UncommonTrapBlob}
+0x000002af42ba4d64: ud2  ;*iload_3 {reexecute=0 rethrow=0 return_oop=0}
+                         ; - LoopInvariantCode::circleLengthModulo_10x@4 (line 14)
+0x000002af42ba4d66: hlt
+0x000002af42ba4d67: hlt
+0x000002af42ba4d68: hlt
+0x000002af42ba4d69: hlt
+0x000002af42ba4d6a: hlt
+0x000002af42ba4d6b: hlt
+0x000002af42ba4d6c: hlt
+0x000002af42ba4d6d: hlt
+0x000002af42ba4d6e: hlt
+0x000002af42ba4d6f: hlt
+0x000002af42ba4d70: hlt
+0x000002af42ba4d71: hlt
+0x000002af42ba4d72: hlt
+0x000002af42ba4d73: hlt
+0x000002af42ba4d74: hlt
+0x000002af42ba4d75: hlt
+0x000002af42ba4d76: hlt
+0x000002af42ba4d77: hlt
+0x000002af42ba4d78: hlt
+0x000002af42ba4d79: hlt
+0x000002af42ba4d7a: hlt
+0x000002af42ba4d7b: hlt
+0x000002af42ba4d7c: hlt
+0x000002af42ba4d7d: hlt
+0x000002af42ba4d7e: hlt
+0x000002af42ba4d7f: hlt
+[Exception Handler]
+[Stub Code]
+0x000002af42ba4d80: jmp 0x000002af3b12f000  ;   {no_reloc}
+[Deopt Handler Code]
+0x000002af42ba4d85: call 0x000002af42ba4d8a
+0x000002af42ba4d8a: sub QWORD PTR [rsp],0x5
+0x000002af42ba4d8f: jmp 0x000002af3b0f8620  ;   {runtime_call DeoptimizationBlob}
+0x000002af42ba4d94: hlt
+0x000002af42ba4d95: hlt
+0x000002af42ba4d96: hlt
+0x000002af42ba4d97: hlt ImmutableOopMap
+

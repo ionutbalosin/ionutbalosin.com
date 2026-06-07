@@ -1,0 +1,30 @@
+
+function piResponse() {
+		piSetCookie('visitor_id1009792', '436656980', 3650);
+			piSetCookie('visitor_id1009792-hash', '4084011ecded5cf6b1dc829fc17bb48c2687b35c739cbbbe2ab2048ea2a8e5de7ba922afe2c3e6f59f8424df7e18926e64b4fe3c', 3650);
+		
+		if (document.location.protocol != "https:" || (document.location.protocol == "https:" && true)) {
+		var analytics_link = document.location.protocol + "//" + "ae.oreilly.com/analytics?";
+		pi.tracker.visitor_id='436656980';
+
+				pi.tracker.visitor_id_sign='4084011ecded5cf6b1dc829fc17bb48c2687b35c739cbbbe2ab2048ea2a8e5de7ba922afe2c3e6f59f8424df7e18926e64b4fe3c';
+		
+				pi.tracker.campaign_id='27727';
+		
+		var variables = 'conly=true';
+		for (property in pi.tracker) {
+					variables += "&" + property + "=" + pi.tracker[property];
+				}
+		var headID = document.getElementsByTagName("head")[0];
+		piScriptObj[piScriptNum] = document.createElement('script');
+		piScriptObj[piScriptNum].type = 'text/javascript';
+		piScriptObj[piScriptNum].src = analytics_link + variables;
+		headID.appendChild(piScriptObj[piScriptNum]);
+		piScriptObj[piScriptNum].onload = function() { return; }
+	}
+	}
+piResponse();
+
+
+
+

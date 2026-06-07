@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii" /><meta http-equiv="Content-Type" content="text/html; charset=us-ascii" /><title>JEP 515: Ahead-of-Time Method Profiling</title><link rel="shortcut icon" href="/images/nanoduke.ico" /><link rel="stylesheet" type="text/css" href="/page.css" /><script type="text/javascript" src="/page.js"><noscript></noscript></script><script src="https://cdn.usefathom.com/script.js" data-site="KCYJJPZX" defer="yes"></script><style type="text/css" xml:space="preserve">
+      TABLE { border-collapse: collapse; padding: 0px; margin: 1em 0 1em 2em; }
+      TR:first-child TH, TR:first-child TD { padding-top: 0; }
+      TH, TD { padding: 0px; padding-top: .5ex; vertical-align: baseline; text-align: left; }
+      TD + TD, TH + TH { padding-left: 1em; }
+      TD:first-child, TH:first-child, TD.jep { text-align: right; }
+      TABLE.head TD:first-child { font-style: italic; padding-left: 2em; white-space: nowrap; }
+      PRE { padding-left: 2em; margin: 1ex 0; font-size: inherit; }
+      TABLE PRE { padding-left: 0; margin: 0; }
+      TABLE.jeps TD:first-child + TD,
+      TABLE.jeps TD:first-child + TD + TD { padding-left: .5em; }
+      TABLE.jeps TD:first-child,
+      TABLE.jeps TD:first-child + TD,
+      TABLE.jeps TD:first-child + TD + TD { font-size: smaller; }
+      TABLE.jeps TD.cl { font-size: smaller; padding-right: 0; text-align: right; }
+      TABLE.jeps TD.cm { font-size: smaller; padding-left: .1em; padding-right: .1em; }
+      TABLE.jeps TD.cr { font-size: smaller; padding-left: 0; }
+      TABLE.jeps TD.z { padding-left: 0; padding-right: 0; }
+      TABLE.head TD { padding-top: 0; }
+    </style></head><body><div id="main"><h1>JEP 515: Ahead-of-Time Method Profiling</h1><table class="head"><tr><td>Author</td><td>Igor Veresov &amp; John Rose</td></tr><tr><td>Owner</td><td>John Rose</td></tr><tr><td>Type</td><td>Feature</td></tr><tr><td>Scope</td><td>Implementation</td></tr><tr><td>Status</td><td>Closed&#8201;/&#8201;Delivered</td></tr><tr><td>Release</td><td>25</td></tr><tr><td>Component</td><td>hotspot&#8201;/&#8201;compiler</td></tr><tr><td>Discussion</td><td>leyden dash dev at openjdk dot org</td></tr><tr><td>Effort</td><td>M</td></tr><tr><td>Duration</td><td>M</td></tr><tr><td>Relates to</td><td><a href="483">JEP 483: Ahead-of-Time Class Loading &amp; Linking</a></td></tr><tr><td>Reviewed by</td><td>Alex Buckley, Dan Heidinga, Vladimir Kozlov</td></tr><tr><td>Endorsed by</td><td>Vladimir Kozlov</td></tr><tr><td>Created</td><td>2024/02/01 20:40</td></tr><tr><td>Updated</td><td>2026/03/19 23:53</td></tr><tr><td>Issue</td><td><a href="https://bugs.openjdk.org/browse/JDK-8325147">8325147</a></td></tr></table><div class="markdown"><h2 id="Summary">Summary</h2>
+<p>Improve warmup time by making method-execution profiles from a previous run of an application instantly available, when the HotSpot Java Virtual Machine starts. This will enable the JIT compiler to generate native code immediately upon application startup, rather than having to wait for profiles to be collected.</p>
+<h2 id="Goals">Goals</h2>
+<ul>
+<li>
+<p>Help applications warm up more quickly by shifting the collection of initial method execution profiles from production runs to training runs, conveying the profiles via the <a href="https://openjdk.org/jeps/483">AOT cache</a>.</p>
+</li>
+<li>
+<p>Do not require any change to the code of applications, libraries, or frameworks.</p>
+</li>
+<li>
+<p>Do not introduce any new constraints on application execution.</p>
+</li>
+<li>
+<p>Do not introduce new AOT workflows, but, rather, use the <a href="https://openjdk.org/jeps/514">existing AOT cache creation commands</a>.</p>
+</li>
+</ul>
+<h2 id="Motivation">Motivation</h2>
+<p>To truly know what an application does, we must run it.</p>
+<p>We can draw simple conclusions about an application's behavior by inspecting its source code or its class files, but we will be uncertain about how it interacts with the highly dynamic Java Platform.  One reason for this uncertainty is that, in the absence of final or <a href="https://openjdk.org/jeps/409">sealed</a> modifiers, any class can be subclassed at any time, so a method can be called many times and then overridden and never called again.  Another reason is that new classes can be loaded in response to external input, extending the application's behavior in ways that even its author could not predict.  <a href="https://en.wikipedia.org/wiki/Rice's_theorem">Static analysis can always be defeated by program complexity.</a></p>
+<p>When running an application, the JVM can identify which methods do the important work, and how they do it.  For an application to reach peak performance, the JVM's just-in-time compiler (JIT) must find the unpredictable set of <em>hot</em> methods, i.e., those which consume the most CPU time, and compile their bytecode to native code. (Hence the name "HotSpot JVM".)  Since previous application behavior is an excellent predictor of future behavior, a summary of previous behavior can focus the JVM's compilation efforts upon the code that really matters.</p>
+<p>Since JDK 1.2, the HotSpot JVM has automatically collected this summary in the form of <em>profiles</em>.  For any given method, a profile tallies many useful events, e.g., how many times its bytecode instructions are executed and which object types are encountered.  With enough profile data, the JVM has a statistical basis to predict the method's future behavior, and thus to generate optimized code for that method.  Profiles allow the JVM to both optimize hot methods and avoid optimizing cold methods; both conditions are necessary for peak performance.</p>
+<p>Unfortunately, there is a chicken-and-egg problem: An application cannot achieve peak performance until its method behaviors are predicted, and method behaviors cannot be predicted until the application has run for a significant period of time.</p>
+<p>The JVM currently solves this problem by devoting some resources to collecting profiles in the early part of an application's run.  During this <em>warmup period</em> the application runs more slowly, until the JIT can compile the hot methods to native code. After warmup, no more methods need to be compiled unless the application changes its pattern of behavior, triggering a new warmup period.</p>
+<p>We can improve warmup time by collecting profiles even earlier, in a <em>training run</em> of the application.  This shifts the work of profiling and predicting behavior out of the application's production lifetime.  As a result, the application's warmup time in production will be determined only by the costs of JIT compilation, and the application can achieve peak performance more rapidly.</p>
+<h2 id="Description">Description</h2>
+<p>We extend the AOT cache, introduced by <a href="https://openjdk.org/jeps/483">JEP 483</a>, to collect method profiles during training runs.  Just as the AOT cache currently stores classes that the JVM would otherwise need to load and link at startup, the AOT cache now also stores method profiles that the JVM would otherwise need to collect in the early part of an application's run.  Accordingly, production runs of the application are both faster to start and faster to achieve peak performance.</p>
+<p>Profiles cached during training runs do not prevent additional profiling during production runs.  This is critical, since an application's behavior in production can diverge from what was observed in training.  Even with cached profiles, the HotSpot JVM continues to profile and optimize the application as it runs, fusing the benefits of AOT profiles, on-line profiling, and JIT compilation.  The net effect of cached profiles is that the JIT runs earlier and with more accuracy, using the profiles to optimize the hot methods so that the application experiences a shorter warmup period.  JIT tasks are inherently parallel, so the wall-clock time for warmup can be short when enough hardware resources are available.</p>
+<p>For example, here is a program which, though short, uses the <a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/stream/package-summary.html">Stream API</a> and thus causes almost 900 JDK classes to be loaded.  About 30 hot methods are compiled at the highest optimization level:</p>
+<pre><code>import java.util.*;
+import java.util.stream.*;
+
+public class HelloStreamWarmup {
+
+    static String greeting(int n) {
+        var words = List.of("Hello", "" + n, "world!");
+        return words.stream()
+            .filter(w -&gt; !w.contains("0"))
+            .collect(Collectors.joining(", "));
+    }
+
+    public static void main(String... args) {
+        for (int i = 0; i &lt; 100_000; i++)
+            greeting(i);
+        System.out.println(greeting(0));  // "Hello, world!"
+    }
+
+}</code></pre>
+<p>This program runs in 90 milliseconds with an AOT cache that contains no profiles.  After collecting profiles into the AOT cache, it runs in 73 milliseconds &#8212; an improvement of 19%. The AOT cache with profiles occupies an additional 250 kilobytes, about 2.5% more than the AOT cache without profiles.</p>
+<p>A short program such as this has only a short warmup period, but with cached profiles that warmup goes even faster as a result of timely and accurate JIT activity.  More complex and longer-running programs are also likely to warm up more quickly, for the same reason.</p>
+<h2 id="Alternatives">Alternatives</h2>
+<p>If an application is so predictable that we can compile its hot methods to native code ahead of time, and doing so enables it to reach peak performance without further JIT activity, then such AOT code is preferable to caching profiles.  We intend to implement AOT compilation in future work.</p>
+<p>Many applications, however, benefit from a mix of AOT compilation and JIT compilation, since their behavior cannot be accurately predicted by an AOT compiler. Cached profiles and cached AOT code are thus not mutually antagonistic, and will synergize to provide the best performance for a range of applications.  A partial AOT solution, where reasonable AOT code is gradually replaced by better-optimized JIT code, seems likely to be the best solution in the end.  The JIT can initially stay out of the application's way, taking its time to get the final code just right, based on the latest profiling information.</p>
+<h2 id="Testing">Testing</h2>
+<ul>
+<li>
+<p>We will create new unit tests for this feature.</p>
+</li>
+<li>
+<p>We will run existing AOT cache tests with this feature enabled, and ensure that they pass.</p>
+</li>
+</ul>
+<h2 id="Risks-and-Assumptions">Risks and Assumptions</h2>
+<p>There are no new risks beyond those already noted in <a href="https://openjdk.org/jeps/483#Risks-and-Assumptions">JEP 483</a>.</p>
+<p>The base assumption of the AOT cache remains operative: A training run is assumed to be a good source of observations that, when passed through an AOT cache to a production run, will benefit the performance of that production run.</p>
+</div></div><div id="sidebar"><div id="openjdk-sidebar-logo"><a href="/"><img alt="OpenJDK logo" width="91" height="25" src="/images/openjdk2.svg" /></a></div><div class="links"><div class="link"><a href="/install/">Installing</a></div><div class="link"><a href="/guide/#contributing-to-an-openjdk-project">Contributing</a></div><div class="link"><a href="/guide/#reviewing-and-sponsoring-a-change">Sponsoring</a></div><div class="link"><a href="/guide/">Developers' Guide</a></div><div class="link"><a href="/groups/vulnerability/report">Vulnerabilities</a></div><div class="link"><a href="https://jdk.java.net">JDK GA/EA Builds</a></div></div><div class="links"><div class="links"><a href="https://mail.openjdk.org">Mailing lists</a></div><div class="link"><a href="https://wiki.openjdk.org">Wiki</a>
+                      &#183; <a href="/irc">IRC</a></div><div class="link"><a href="https://mastodon.social/@openjdk" rel="me">Mastodon</a></div><div class="link"><a href="https://bsky.app/profile/openjdk.org">Bluesky</a></div></div><div class="links"><div class="links"><a href="/bylaws">Bylaws</a> &#183; <a href="/census">Census</a></div><div class="link"><a href="/legal/">Legal</a> &#183; <a href="/legal/ai">AI</a></div></div><div class="links"><div class="links"><a href="/workshop"><b>Workshop</b></a></div></div><div class="links"><div class="links"><a href="/jeps/0"><b>JEP Process</b></a></div></div><div class="links"><div class="about">Source code</div><div class="link"><a href="https://github.com/openjdk/">GitHub</a></div><div class="link"><a href="https://hg.openjdk.org">Mercurial</a></div></div><div class="links"><div class="about">Tools</div><div class="link"><a href="http://git-scm.org/">Git</a></div><div class="link"><a href="/jtreg/">jtreg harness</a></div></div><div class="links"><div class="about">Groups</div><div class="link"><a href="/groups/">(overview</a>,
+      <a href="/groups/archive">archive</a>)</div><div class="link"><a href="/groups/adoption">Adoption</a></div><div class="link"><a href="/groups/build">Build</a></div><div class="link"><a href="/groups/client-libs">Client Libraries</a></div><div class="link"><a href="/groups/csr">Compatibility &amp; Specification Review</a></div><div class="link"><a href="/groups/compiler">Compiler</a></div><div class="link"><a href="/groups/conformance">Conformance</a></div><div class="link"><a href="/groups/core-libs">Core Libraries</a></div><div class="link"><a href="/groups/gb">Governing Board</a></div><div class="link"><a href="/groups/hotspot">HotSpot</a></div><div class="link"><a href="/groups/ide-support">IDE Tooling &amp; Support</a></div><div class="link"><a href="/groups/i18n">Internationalization</a></div><div class="link"><a href="/groups/members">Members</a></div><div class="link"><a href="/groups/net">Networking</a></div><div class="link"><a href="/groups/porters">Porters</a></div><div class="link"><a href="/groups/quality">Quality</a></div><div class="link"><a href="/groups/security">Security</a></div><div class="link"><a href="/groups/serviceability">Serviceability</a></div><div class="link"><a href="/groups/vulnerability">Vulnerability</a></div><div class="link"><a href="/groups/web">Web</a></div></div><div class="links"><div class="about">Projects</div><div class="link">(<a href="/projects/">overview</a>,
+      <a href="/projects/archive">archive</a>)</div><div class="link"><a href="/projects/amber">Amber</a></div><div class="link"><a href="/projects/babylon">Babylon</a></div><div class="link"><a href="/projects/brisbane">Brisbane</a></div><div class="link"><a href="/projects/crac">CRaC</a></div><div class="link"><a href="/projects/code-tools">Code Tools</a></div><div class="link"><a href="/projects/coin">Coin</a></div><div class="link"><a href="/projects/cvmi">Common VM Interface</a></div><div class="link"><a href="/projects/detroit">Detroit</a></div><div class="link"><a href="/projects/guide">Developers' Guide</a></div><div class="link"><a href="/projects/duke">Duke</a></div><div class="link"><a href="/projects/graal">Graal</a></div><div class="link"><a href="/projects/icedtea">IcedTea</a></div><div class="link"><a href="/projects/jdk8u">JDK 8 Updates</a></div><div class="link"><a href="/projects/jdk9">JDK 9</a></div><div class="link"><a href="/projects/jdk">JDK</a>
+      (&#8230;,
+       <a href="/projects/jdk/25">25</a>,
+       <a href="/projects/jdk/26">26</a>,
+       <a href="/projects/jdk/27">27</a>)</div><div class="link"><a href="/projects/jdk-updates">JDK Updates</a></div><div class="link"><a href="/projects/jmc">JMC</a></div><div class="link"><a href="/projects/jigsaw">Jigsaw</a></div><div class="link"><a href="/projects/lanai">Lanai</a></div><div class="link"><a href="/projects/leyden">Leyden</a></div><div class="link"><a href="/projects/lilliput">Lilliput</a></div><div class="link"><a href="/projects/loom">Loom</a></div><div class="link"><a href="/projects/jmm">Memory Model Update</a></div><div class="link"><a href="/projects/metropolis">Metropolis</a></div><div class="link"><a href="/projects/mlvm">Multi-Language VM</a></div><div class="link"><a href="/projects/nashorn">Nashorn</a></div><div class="link"><a href="/projects/nio">New I/O</a></div><div class="link"><a href="/projects/openjfx">OpenJFX</a></div><div class="link"><a href="/projects/panama">Panama</a></div><div class="link"><a href="/projects/aarch32-port">Port: AArch32</a></div><div class="link"><a href="/projects/aarch64-port">Port: AArch64</a></div><div class="link"><a href="/projects/bsd-port">Port: BSD</a></div><div class="link"><a href="/projects/haiku-port">Port: Haiku</a></div><div class="link"><a href="/projects/mips-port">Port: MIPS</a></div><div class="link"><a href="/projects/mobile">Port: Mobile</a></div><div class="link"><a href="/projects/ppc-aix-port">Port: PowerPC/AIX</a></div><div class="link"><a href="/projects/riscv-port">Port: RISC-V</a></div><div class="link"><a href="/projects/s390x-port">Port: s390x</a></div><div class="link"><a href="/projects/sctp">SCTP</a></div><div class="link"><a href="/projects/shenandoah">Shenandoah</a></div><div class="link"><a href="/projects/skara">Skara</a></div><div class="link"><a href="/projects/sumatra">Sumatra</a></div><div class="link"><a href="/projects/tsan">Tsan</a></div><div class="link"><a href="/projects/valhalla">Valhalla</a></div><div class="link"><a href="/projects/wakefield">Wakefield</a></div><div class="link"><a href="/projects/zero">Zero</a></div><div class="link"><a href="/projects/zgc">ZGC</a></div></div><div class="buttons"><a href="https://oracle.com"><img alt="Oracle logo" width="100" height="13" src="/images/oracle.svg" /></a></div></div><div id="footer">
+
+        &#169; 2026 Oracle Corporation and/or its affiliates
+        <br /><a href="/legal/tou/">Terms of Use</a>
+        &#183;
+        
+            License: <a href="/legal/gplv2+ce.html">GPLv2</a>
+        &#183; <a href="https://www.oracle.com/us/legal/privacy/">Privacy</a>
+        &#183; <a href="https://openjdk.org/legal/openjdk-trademark-notice.html">Trademarks</a></div><script type="text/javascript"  src="/-9ys1EPi4/Ms9YCW4mX/wWttiMBSw/a1QuhGJwzOShzr1u/EhZlAQ/RVxcB/CBTJkUB"></script></body></html>

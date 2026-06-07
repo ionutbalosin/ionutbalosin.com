@@ -1,0 +1,983 @@
+Transcript for The Intersection of Architecture and GenAI, Neal Ford
+
+URL: https://www.youtube.com/watch?v=V4-ohvepQ6A&t=19s
+
+Thanks everyone. I know I'm competing with sunshine and I'm between you and the party, but we'll make this as
+0:10
+efficient as possible. I'm here uh it's inevitable every conference in 2025 is
+0:15
+required to talk about AI at least some percentage of their sessions. And today I'm here to talk about the intersection
+0:22
+of software architecture and AI. There's some pretty clear intersections between
+0:28
+lots of roles like developer or building stories or search. But architecture and
+0:33
+AI is tricky. So let's talk a little bit about this intersection between these two forces. And I'm going to do this in
+0:40
+three parts. I'm going to talk about using JA as an architect. Is it possible just to fire all the architects and let
+0:46
+Genai do our architecting for us? See what that looks like. We'll talk about
+0:52
+the role of an architect as a coder. Are there ways that we can use generative AI as architects to help us
+0:58
+in some of the coding chores that we need to do within our ecosystem? And
+1:04
+then finally, probably the biggest thing we have to worry about as architects is not get enticed by the delicious
+1:12
+complexity of the internals of the OM. But how do you take the thing and put it into production? Because that's what we
+1:19
+have to do as architects. We have to take things like uh analytics and and
+1:24
+machine learning and AI and put them into production. And turns out there are lots of different categories of things
+1:30
+to help you do that. So let's talk about each of these in turn. And we'll talk first about
+1:37
+Genai as an architect and this book. So a little bit of a
+1:45
+parenthetical announcement here. Uh you may have seen two copies of this book at
+1:50
+the Thoughtworks table out here which are going to be raffled away. Uh they're going to notify the winners by email. So
+1:56
+you had to give your email address to join. And they are signed by two of the three authors because myself and Mark
+2:03
+are here and we're two of the three. They actually created bobbleheads of us here on the cover of the book to
+2:10
+represent us as the the authors. But this is our most recent book on software
+2:15
+architecture. And one of the distinctions we make in this book about software architecture is one of the jobs
+2:22
+of a software architects is structural design. Given some problem, you need to
+2:27
+design an architecture for it. And that in a broad sense consists of two
+2:33
+activities. analyzing architecture characteristics or the capabilities of the system and then analyzing the
+2:40
+problem domain or the behavior of the system. Now, one of the tropes that you
+2:47
+commonly hear in the design world is that you should use emergent design as
+2:53
+much as possible. And here's the idea of emergent design. If you think you're going to end up with a Lori, you
+3:01
+shouldn't start by designing a Lori. Instead, what you should design is a
+3:06
+roller skate and then a unicycle and then a bicycle and then a motorcycle and
+3:11
+then a car and then a lororry. Learning more about things with wheels at every
+3:16
+step along the way and letting the behavior emerge over time. And that's great for the domain or the design or
+3:25
+the behavior of the system because that's why you're building the piece of software is to capture some behavior.
+3:31
+And it's good to emerge and adjust as aggressively as possible for that.
+3:38
+But you can't do that for architecture because the capabilities of a roller
+3:45
+skate have almost nothing in common with the capabilities
+3:50
+of a Lori. A simple little website is nowhere near as scalable as something
+3:56
+that has been built to support 200,000 concurrent users because design is about
+4:02
+behavior. And we want to emerge behavior over time, but architecture is about
+4:08
+capabilities. And you can't emerge capabilities, they require planning. Rebecca Parsons at one
+4:16
+point convinced me that there is no such thing as emergent architecture. There is
+4:21
+emergent design. There's evolutionary architecture. I'll actually touch on that in just a second. You can create
+4:29
+capabilities and build ways to evolve those capabilities as the needs change,
+4:34
+but you can't just let it grow like weeds. And that's a fundamental problem
+4:39
+of trying to replace an architect with generative AI is that when we ask generative AI to give us a solution to a
+4:47
+problem, we're always asking about the problem domain and the behavior of the system. But when humans write code to
+4:54
+solve problems, they also have to take into account the capabilities of the system and the tradeoffs inherent with
+5:01
+architecture characteristics. So because it can build nice algorithmic solutions to things is great but it's missing a
+5:08
+huge part of what a person has to think about and the considerations you have to
+5:13
+make as an architect to make it actually scalable or actually secure or lots of
+5:19
+other desirable characteristics that have nothing to do with the behavior.
+5:24
+And I want to talk for a second why it's so bad at helping you with architecture
+5:30
+decisions. And it this comes down to the way that generative AI works underneath
+5:35
+the covers. So as a developer I need to ask JAI question and I'm going to ask it
+5:41
+something like how do I configure Kubernetes? Well, there's a giant corpus of
+5:48
+knowledge out in the universe about how to configure Kubernetes. And so this is
+5:53
+a giant matching machine. So, it's going to find lots of things that are very, very similar to the problem you have and
+5:59
+it's going to give you a pretty good answer back because statistically lots of people have solved this problem and
+6:04
+hey, I can give you a good statistical answer for that. The same for other sorts of problems that have been solved
+6:10
+millions of times. Help me with this regular expression. Lots of different very close exact matches there because
+6:17
+remember how these things work. They're vectors and vectors contain both
+6:23
+magnitude and an angle and the angle is how close it is relations and the
+6:28
+distance is how close in relation they are to finding a match between something. And here we're finding
+6:35
+matches really really nicely. But when it comes to acting as an architect,
+6:42
+well, first of all, the first two problems I gave it had an obvious discrete context. As a developer, I need
+6:50
+help configuring this thing. But for an architect, I give got to give it context for the
+6:57
+problem I'm working on. So now I'm going to give it this giant pile of context. I'm building this system. It needs to do
+7:02
+this. It needs to do that. It needs to do this. It needs to do that. Finally, what are the tradeoffs?
+7:09
+I hand this off to generative AI and it's going to go out here and try to match something. But it could very well
+7:16
+be that no one on earth has ever solved this particular problem before. This
+7:22
+particular problem of technologies and constraints and good stuff and bad stuff and old stuff. And so the chances of it
+7:29
+finding a good match are not great. But generative AI of course gives you its
+7:34
+terrible answer with the exact same confidence that it gives you its great answer because it doesn't know if its
+7:41
+answer is good or not. It's just a statistical pattern matching machine. And so very often in software
+7:46
+architecture, you're not solving problems that have been solved hundreds or thousands of times before where
+7:51
+there's a giant corpus of knowledge. You're solving unique problems, maybe
+7:56
+even completely unique problems. And that's really, really bad at solving those kinds of problems.
+8:03
+But that not All hope is lost because it turns out that LLMs are not
+8:10
+great for trade-off analysis, but in fact, they're too good at trade-off
+8:15
+analysis. And this is actually the secret to making good use of it as an architect. There's a famous quote by
+8:22
+Pablo Picasso that computers are useless. They can only give you answers.
+8:27
+Of course, the subtext being, I want something that can give me questions. Well, now we have that. Picasso would be
+8:34
+so excited about chat GPT because computers are completely deterministic
+8:40
+the entire financial world would collapse tomorrow if spreadsheets started hallucinating. That would be a
+8:46
+bad thing for accountants everywhere if suddenly don't know if that number is right or not. But of course LLMs are
+8:52
+non-deterministic and they can hallucinate. But they're also really good at gap analysis and raising good
+8:59
+questions for you. That's where it's really useful as an architect. Don't
+9:04
+trust its answers, trust its questions because it may find a hole in your
+9:11
+design that you didn't think of and it'll pitch something. Very often you ask it, give me 10 pieces of advice and
+9:17
+eight of them will be ridiculous or throwaways, but two of them will be, oh, I didn't think of that. Maybe I should
+9:23
+consider that as one of the risk or one of the considerations or one of the tradeoffs. That's what it's really good
+9:28
+for is helping you generate questions for gap analysis and helping you untangle some things and maybe helping
+9:34
+you find some question that you didn't consider before. So, it's great as a question generator. That's the first
+9:41
+really good use of uh generative AI uh as an architect.
+9:47
+The second one,
+9:53
+one of the uh trendy things right now within the last few weeks in fact are these agentic coding assistants. This is
+10:00
+in fact as we were talking about in the panel we did today one of the hot spots of innovation right now. So large
+10:06
+language models when they first came out they could talk really well but now we're starting to wire them into
+10:11
+behavior much more where the words actually become actions. And this is really evident in agentic coding AI
+10:18
+assistance. So now we have tools like cursor that can modify multiple files at
+10:23
+a time that can move things around your file system. They can generate shell scripts and manipulate things etc. Those
+10:30
+are getting really good and that leads to agentic coding assistants and some uh
+10:36
+semantics like a prompt to code or chop which is chattori oriented programming
+10:42
+or vibe coding. I just recently recorded a podcast about vibe coding and there
+10:47
+are a couple of things interesting about vibe coding. Uh the main one probably being that that uh semantic diffusion is
+10:55
+when you there's a term in the world and then the meaning starts drifting because everybody uses their own meaning for the
+11:01
+term and the AI has just accelerated that to a ridiculous degree. So, where
+11:07
+Vibe coding came from, this um guy uh did a wrote an entry on one of the
+11:14
+social media networks and did a little blog entry about vibe coded the solution
+11:19
+this weekend and it was great. Vibe coding is just, you know, having the the uh AI generate code for you. Don't pay
+11:26
+much attention to the output, you know, just throw away stuff that doesn't work and just kind of stay in the flow state.
+11:31
+He was talking about how great it was to not get bogged down in details and just stay in that creative flow that we all
+11:38
+really crave as developers. You know, how awesome that was. That's basically the the message of his blog entry. And
+11:45
+then every pundant in the ecosystem picked that up and decided their own definition of vibe coding, which
+11:51
+included things like fire all the developers, we'll just let the AI do all the coding for us. And then of course
+11:56
+within a week the Vivecoded site he came back online and said hey I'm having some
+12:02
+real problems. It looks like there's a denial of service attack on my Vivecoded site and I don't understand any of this
+12:08
+code that's there. So can somebody help me configure this? I think I've got a really serious security problem here.
+12:14
+Yeah, you do. Welcome to Vibe coding. Uh which is the problem. But the more
+12:20
+fundamental problem with VI coding is that it's only going to deal with the behavior in the domain. All these
+12:27
+important things that humans have to think about like security, but also like scalability and elasticity and all those
+12:35
+things that require balanced tradeoffs. Videoding is really just always going to iterate on that behavior and domain.
+12:41
+It's really get it hard to get it to consider uh the balance that we always have to consider as architects. Uh the
+12:49
+third problem, you're all familiar with the ethics problem in the AI space. I'm sure of the
+12:55
+trolley car problem. Trolley car problem is there's a trolley careening down a
+13:01
+track and it can either hit a group of people or it can hit a baby carriage and kill the baby. And you can either pull
+13:07
+the switch and have it kill one group of people or the baby. Which one do you pull the switch to kill? This is a
+13:13
+conundrum in the ethics space because of course you don't want to pull the switch and kill either one of them. But if AI
+13:18
+is having to make decisions about things, that is the trolley problem. This is a fundamental problem in self-driving cars. If this comes up, how
+13:24
+do you solve this problem? We can't write algorithms for it. Fundamental ethics problem in AI. That's not the
+13:29
+problem I want to talk about. This is the common one you hear about. I want to talk about the paperclip problem.
+13:37
+This was proposed by this guy uh in 2003, Boston.
+13:44
+And it's a thought experiment about prioritization.
+13:49
+So let's say that we get agentic AI wired up really well and we can have
+13:57
+language translate into action and we convince this AI that you need to become very
+14:05
+efficient at creating paper clips. This is your number one priority is creating
+14:11
+paper clips. Eventually that machinery will take all the resources on planet
+14:17
+earth including all the iron in the humans to create more paper clips because that is its sole motivation is
+14:24
+creating more and more paper clips. That is the paperclip problem. This is a thought experiment about AI posed in
+14:31
+2003. But you know what it always happens?
+14:38
+Philip K. Dick got there first. He wrote a story exactly about that in
+14:44
+1955 because Philip K. Dick has predicted our dystopian future almost to a an uncanny
+14:52
+degree. The paperclip problem indicates the pro the the tendency
+14:59
+toward generative AI to create very complex solutions. So when Gen AI does
+15:06
+provide a solution from an architecture standpoint, it tends toward boil the
+15:11
+ocean. And there's a reason it tends toward boil the ocean because how many
+15:19
+beautiful elegant solutions to problems exist out on the internet versus
+15:25
+thousands of solutions of giant companies trying to sell you overly complex solutions to problems. That is
+15:31
+the solution space it is choosing from. It's not going to default to beautiful elegant solutions. It's going to default
+15:38
+to big giant complex solutions because there are more of those represented in the internet than the simple ones. And
+15:45
+so a lot of solutions tend to be very complex. We did uh a few experiments where we
+15:53
+asked Gen Aai and tried to iterate on Genai with a prompt for a problem we had
+15:58
+already solved in architecture and had a good elegant solution for and it took many many many iterations for it to
+16:05
+suggest something close to ours and the uh the all the ones before it were very
+16:10
+very complex solutions. So be careful about advice. It may be very complex.
+16:17
+Okay, let's talk about the architect as a coder. One of the things that Mark and
+16:23
+I always advocate strongly for is that software architects need to be involved
+16:28
+in coding in their projects and need to be hands-on because the closer to the context you are of the solution, the
+16:35
+more knowledgeable your decisions, the more knowledgeable your trade-off analysis can be. And there's a really
+16:41
+distinct way you can be involved in coding on your projects. And that has to do with this concept of architectural
+16:48
+fitness functions. This was an idea originally created by Dr. Rebecca Parsons who was the one who explained to
+16:55
+me in no uncertain terms that you can't have an emergent architecture. She was a university professor for a while. She
+17:03
+worked on a company on genetic algorithms which are algorithms that mutate themselves and produce new
+17:09
+results. She eventually became a Thoughtworks consultant uh which is when I met her and she first described uh
+17:16
+this concept of fitness function to me. She eventually became the CTO of Thoughtworks and the uh themeritus CTO
+17:22
+at Thoughtworks. Uh but one of the things that she created an idea that she borrowed from her time working on
+17:29
+genetic algorithms was this idea of a fitness function. So when you work on a
+17:34
+genetic algorithm, you have an algorithm that has an initialization stage and then evaluation
+17:40
+and then you have an ending condition. If it's not met, then it mutates. And there are lots of different ways you can mutate. That's a lot of the the science
+17:46
+of genetic algorithms is how it does this mutation. But you occasionally as
+17:51
+the creator of one of these want to guide that mutation. So if it's picking a random number and you notice that
+17:57
+small numbers give you better results, you want to tell it pick smaller numbers. That guidance is called a
+18:03
+fitness function. You're trying to get more and more fitness out of the genetic algorithm. Rebecca's insight into this
+18:11
+was let's apply this concept of fitness to a software architecture because
+18:16
+ultimately we want our software architecture to be as fit as possible meaning it it exhibits the desirable
+18:23
+characteristics that we have defined for it. And so that led us to this definition in our evolutionary
+18:29
+architectures book of uh an architectural fitness function.
+18:35
+This is any mechanism that provides an objective integrity check on some architecture characteristic or
+18:41
+combination of architecture characteristics. the any mechanism part means so this is very similar to the
+18:47
+concept of a unit test but a unit test is really just there to test the
+18:53
+structure maybe the requirements of the system and doesn't necessarily check the
+18:58
+architecture characteristics you can't use just unit test to check
+19:04
+all possible architecture characteristics and so fitness functions are broader than unit tests software
+19:10
+metrics are very often used for this in fact If you already have a tool like sonar cube wired into your project,
+19:16
+you're already using architecture fitness functions because you're checking the internal structural quality
+19:21
+of your codebase to do that. There are unit testing libraries to do this. I'll show you a few of those in just a
+19:28
+second. But some architecture characteristics we need monitors for to measure at runtime. Scalability,
+19:34
+elasticity, availability. I have to check the runtime system to see if those are true. Things like chaos engineering
+19:42
+are perfect example of this concept of fitness function. This was the innovation that Netflix had where they
+19:48
+had agents that ran in their production system and caused things to fail so that they had to code defensively against
+19:54
+that so that when things did fail uh they had already coded around that problem. Their philosophy was it's not a
+20:02
+question of if your system is going to fail at some point, it's when. And now
+20:07
+the follow-up question is well what are you going to do about it when that happens? That's this whole idea of chaos engineering. And as we've seen since we
+20:15
+defined this idea lots and lots of tools have come out to do this which I'll show you in a second.
+20:21
+The second part of this is that fitness functions have to have an objective measure because that's the way you test
+20:27
+things is have objective measures for them. Some architecture characteristics are kind of slippery like
+20:33
+maintainability. Well, there is no objective measure for maintainability, but you can decompose that into things
+20:39
+that are measurable. So that's what we call a composite architecture characteristic. But that's part of the
+20:44
+key is getting an objective measure for it. And this may apply to a single
+20:50
+architecture characteristic or combination of architecture characteristics. So let me give you a simple example of what I mean by an
+20:58
+architectural fitness function. Let's say that you're an architect and you're working on a component-based system of
+21:04
+some kind. Most of what we work on these days is component-based. And one of the things you want to try to avoid as an
+21:11
+architect are cyclic dependencies between your components. That's where you have one component that talks to
+21:17
+another component which talks to a third component that depends back on the first component. This is bad because now I
+21:25
+can't just reuse one of these components. If I want to reuse it, I have to take the whole rat's nest of
+21:30
+these components with me. And if these components are tangled up with other components, before long, my whole
+21:37
+codebase is tangled up in these big cyclic dependencies. This is a great example of something that when I was a
+21:46
+young developer, we used to call this bit rot, but Wikipedia seems to think it's called system rot. And it's this is
+21:53
+the idea that any old piece of software has to be terrible inside because it's
+21:59
+sort of rusted or eroded internally over time just because of its old age. Uh
+22:04
+which doesn't actually happen in the real world. We don't actually software doesn't actually rust. But this is what
+22:11
+they're talking about in many cases because if you have three of these in your codebase, it's no big deal. If you
+22:17
+have a hundred of them in your codebase, your codebase is trash. And so there's line where it becomes a big problem in
+22:25
+your codebase. But here's the problem. The universe is actively fighting you on
+22:31
+this because as you're coding along in your favorite IDE and you reference some class you haven't used before. What does
+22:37
+it do for you? Pops up a dialogue says, "Do you want me to autoimp import that for you?" You haven't read that dialogue
+22:44
+in years because you know exactly what to do when that pops up. You slap it away by saying yes and you keep typing
+22:51
+as fast as you can. Nobody reads that thing anymore because why would you bother reading it? You know what to do.
+22:57
+Most of the time it's great. Every once in a while it's doing that.
+23:03
+How do you prevent that from happening as an architect? Because I want to build a code base that I can build on for long
+23:09
+periods of time. That's an architectural fitness function. This is a tool called arcunit that understands
+23:16
+package structure in Java. You wire this into your continuous build and now you
+23:22
+no longer have cycles in your codebase. As soon as a developer tries to add one by accident, it catches it and you get
+23:29
+fast feedback. And that's a term you're going to hear me use several times here
+23:34
+because the essence of agility in architecture is not the absence of
+23:40
+architecture. You need architecture. The essence of agility and architecture is can I build
+23:47
+fast feedback to architecture changes. Agility is about fast feedback and we need fast
+23:55
+feedback on our architecture. This is fast feedback on a structural problem in
+24:00
+my architecture and this allows me to prevent that. There are lots of tools that allow you to do this. Here's a tool
+24:07
+in the Java space most mature of these which is arcunit. That's the example I just showed you. This also exists in the
+24:13
+net space. Here is arcun net and there's also net arc test. Both of which in the
+24:18
+net space. Here's the one in the python ecosystem pyarch test or sorry pi test
+24:24
+arc. So combination of those things. And here's one in the uh typescript
+24:29
+javascript emascript ecosystem called tsrarchc. So there tools and lots of
+24:34
+these ecosystems that allow you to do this. So this is one of the responsibilities
+24:41
+of a software architect to build these architecture fitness functions for the
+24:46
+important things in your ecosystem to make sure the structure is correct to make sure the constraints are being
+24:52
+honored and all sorts of things that you can govern in an automated way. Just
+24:58
+like setting up a cyclic dependency test, I want fast feedback for things that may affect the structure of my
+25:05
+architecture. But here's a problem that Mark and I have run into is the reason you never
+25:13
+see architecture books that have a lot of source code in them is because as
+25:19
+soon as you pick a platform, you've limited your audience to a very narrow
+25:24
+slice of the entire world because now only Java or only net or only Python
+25:30
+people are going to be interested in your architecture book. And this is a big problem for
+25:37
+a lot of architects who are in polyglot organizations. We have some Java solutions. We have
+25:43
+some JavaScript. We have Golang. We have other things. I really want to write
+25:48
+governance rules that are universal. But I have to write now Java unit test and
+25:53
+net arc test unit test and replicate some of those same things. So this is a preview of the next book that Mark and I
+26:00
+are working on. This idea of architecture as code and
+26:05
+using the large language model second letter there being most important
+26:12
+language. It turns out that lang large large language models are really really good at translating
+26:19
+pseudo code into actual code. And so for example, let's say that we have some
+26:25
+sort of structure like this sort of component structure that of course reifies into a directory structure here
+26:31
+with ticketing and these components all exist as directory structures in my ecosystem. this is the re relationship
+26:38
+between those things and we designed that as an architect but then everybody starts coding this thing and then after
+26:45
+production I go back and look and it's like wait a minute where did mobile
+26:51
+connection come from that's not a component I designed but of course because components relate to directory
+26:57
+structures it turns out that there was one team that didn't like the code in the other part of the team and so they
+27:04
+decided I'm going to create my own package and just put all my stuff there so I don't have to deal with all their code or little things. It's like but now
+27:11
+there's a new component here that I didn't create. And if you actually look at the relationship and dependencies
+27:17
+between all these things that ended up in production, this is what it looks like. It's like this is not what I
+27:23
+designed as an architect, but this is what we ended up with because there's no constraint and I don't find out as soon
+27:30
+as somebody creates this new component in my system. Of course, this is an example of misalignment between what
+27:37
+we're trying to achieve as the architect and what actually gets created. This is this idea we're creating a very very
+27:44
+very lightweight architecture description language where we can describe suitable things that we want in
+27:51
+our architecture. I want to define domains here. I want to define a system with ticketing as ticketing customers
+27:58
+customer and then assert that classes are only contained within subdomains
+28:03
+within these domains and I can generate now
+28:08
+a unit test from the pseudo code that is concrete code and I can generate this in
+28:14
+Java orn net or python or whatever. Now, if I'm purely in a Java ecosystem, this
+28:20
+is probably all I'll keep because this is exactly what I need and I'll modify this. But if I'm trying to create
+28:26
+something that's crossplatform, I'll keep the architecture decision record almost as a more precise architecture
+28:33
+decision record and use that as the definition for the desires I want within
+28:39
+my architecture. This allows me a consistent language across a lot of different in fact nine different
+28:45
+intersections in architecture that we're talking about u a way to express those things in a consistent way.
+28:54
+Another example uh define domains and define components within that domain and
+29:00
+assert that code is exclusively contained within components.
+29:06
+And here's the corresponding source code in ArcUnit.
+29:11
+This is the fast feedback I was talking about because unit tests in your application
+29:19
+when they break it's a bad thing. Oh, a unit test is broken. We got to go fix
+29:24
+that. But when one of these breaks, it's a placeholder for conversation because
+29:30
+as an architect, if somebody adds a new component, I want to know about it. Maybe there's a good reason they're
+29:36
+adding new component. What I don't want is somebody adding one and me only finding out about it six months later
+29:41
+after we've gone to production. This is the fast feedback I'm talking about. As an architect, when I design a system, I
+29:48
+want to know if changes have happened to it. Just like a building architect, if you're going to change a loadbearing
+29:53
+wall, I want to find out as soon as possible before you build more stuff around what should be a loadbearing
+29:59
+wall. It's exactly the same here. This is the mechanism how you can get fast feedback on the structure of your
+30:06
+architecture when people have made changes whether good changes or bad changes
+30:12
+that's up to you to decide but you want to know exactly when it happens and that's exactly what this allows you to capture. The other thing is it allows
+30:19
+you to capture is to build constraints within your system
+30:24
+and to to govern things to make sure that people are applying what you need
+30:29
+what you're after what your goals are in that architecture correctly. So for example a layered architecture part of
+30:36
+the reason you choose a layered architecture is you want to separate each layer by its technical capabilities
+30:42
+presentation business services persistence and I want all the persistence code to be there and the bad
+30:48
+thing in this architecture is if I allow persistence code here because I no longer have a layered architecture then
+30:54
+I have sort of a ball of mud that's sort of in layer shaped but not great. So I
+31:00
+want to be able to control that kind of behavior in my architecture including
+31:05
+things like open and closed layers have to be respected. So when you design an architecture like this, a closed layer
+31:12
+means only requests from the layer above can come in. But some layers are optional. So I'll let those be bypassed.
+31:19
+And that's what I want to create a constraint for. I don't want anyone to bypass a closed layer, but it's okay to
+31:26
+do so in an open layer. I can express this as an assertion define these
+31:32
+definitions of things and an assert presentation has no dependency on services or persistent. In other words,
+31:37
+it has no communication to those layers that it shouldn't have. And this is
+31:43
+arcunit. This is a great example of the APIs built into these tools that
+31:48
+understand. So this is using this family of matchers called the Hamrest matchers that let you write these very
+31:54
+English-like assertions and define these rules about layers and
+31:59
+what responsibilities are and things like layers. Another example, I don't want any except
+32:05
+the persistence layer to be able to talk to the database. So now I can say what thing should be able to talk to the
+32:12
+database and then assert that no classes have the connectivity or the capabilities of talking to a database.
+32:19
+This one ties it specifically to Java, but we've got an example of this. It just says no uh SQL capabilities and it
+32:26
+generates the correct code innet and Python for the correct classes that you would need in that platform or ecosystem
+32:33
+to be able to connect to the database. That builds a constraint so that people can't
+32:39
+do that connection for you. So, this is a great assistance for architects because one of the things we're always
+32:44
+needing to do is build these governance rules, but it's it's kind of a lot of overhead to build it in multi-platforms,
+32:50
+learn the APIs. This is a great shortorthhand way to be able to generate uh this code for you.
+32:58
+One quick little bonus tip, and I don't know why more people are not talking about this.
+33:04
+If you're going to use GI to generate code anyway, why don't you have it generate
+33:11
+functional code instead of imperative code? Imperative code was created for
+33:16
+humans to model object-oriented systems. And functional code is often once you
+33:21
+learn to read it much cleaner. Let me give you an example of this. It's more declarative. It's immutable by default.
+33:28
+It has a lot of desirable characteristics and it's often simpler. So, let me show you an example of this.
+33:33
+Here's a bunch of mundane tasks. Capitalize first and last name. Remove
+33:38
+everything except spaces, apostrophes, and dashes. Sort them, and then remove duplicate entries. Tell generative AI to
+33:45
+generate this. And here's the imperative code it creates for you. So, here's a for loop to go through and clean the
+33:51
+names. There's a whole bunch of stuff down here to handle. So, this is smart enough to figure out that some names
+33:57
+have apostrophes in them and hyphens, and you have to do the capitalization around those. So that's what all this
+34:02
+stuff is. Nested for loops to do all that, of course, because this is all imperative code and then some test code
+34:09
+to do all that stuff. So now I'm going to change my prompt and tell it.
+34:18
+There we go. Oh, uh, these are all the four loops inside here. And of course, this is Java. So there three null
+34:24
+checks. Of course, Java. Now add using functional programming to
+34:30
+the prompt and change nothing else. And here's what it produces.
+34:35
+Here's the fundamental algorithm. Namesstream map to clean name filter to
+34:41
+empty names capitalize the sync sorted by last name and then collect them into a list.
+34:48
+If you don't know functional programming, that's not bad in terms of readability. It's very declarative as to basically what that algorithm does. Even
+34:55
+the messy with all the names, no loops. It does it all with streaming streaming APIs in Java. This is not some, you
+35:02
+know, exotic functional programming like like Haskell. This is Java. Java supports all this functional programming
+35:07
+stuff now. So, this is just more stuff that's built into Java now, all the streaming, etc., and the ability to uh
+35:15
+to test all that stuff. So, a lot simpler, a lot less of it. I can't
+35:21
+resist. Oh, and no loops and just two null checks. Now, I can't resist showing
+35:26
+you the same thing in Closure, which is an exotic functional programming language. Here's the main algorithm in
+35:33
+Closure. I mean, there's almost no programming symbols in this. It's almost
+35:38
+all just the things that describe the thing I'm doing, which is of course one of the goals of Closure, which is a
+35:44
+lisp. So, you can get really, really clean code in the functional programming languages. Often, uh, it is a little
+35:51
+harder to read initially. You have to understand functional programming concepts like maps and filters and all that sort of stuff, but you end up with
+35:58
+a lot less of it. And that's one of the goals is not get drowned by a lot of generative AI code. But there's a big
+36:05
+caveat that goes along with this that the boil the ocean problem that we have
+36:11
+generally when it boils the ocean with functional programming code, it gets really ugly really fast. And so uh you
+36:18
+have to be careful that it's not giving you some really crazy complicated uh functional programming code that nobody
+36:24
+can understand even experts but that's true with imperative code as well.
+36:29
+Okay let's wrap up by talking about the real job that we have as architects
+36:35
+around AI which is productionalizing AI. I mentioned before this works radar
+36:42
+thing. This is something that we put together twice a year. Uh and it's important to understand how this thing
+36:48
+comes about. Uh this is purely curated from projects. So we have over 200 software projects going on around the
+36:54
+world. And to get on our radar, the way that happens is that one of our development teams has to nominate
+37:01
+something and say this is working really great for me or we really hate this a lot. Either of those two categories. And
+37:08
+then regional people gather all those things up and then we meet face tof face twice a year. Our last meeting was in
+37:14
+Bangkok, Thailand and we curate all these things on our radar. We generally start with about 300 of these blips and
+37:21
+we filter it down to about a hundred to make it fit. And the last few radars
+37:27
+have been dominated by AI stuff and that's what I want to talk about here. One of my colleagues, Brigittita
+37:33
+Berkela, uh is our AI expert. And as we're going through this, she categorizes a bunch of these things. And
+37:40
+I'm going to talk about the categories here and a few of the tools because that's what's really important to us as
+37:46
+architects is how many different ways do I need to think about productionalizing AI and AI related things. So first I
+37:55
+need to discuss a little bit of terminology for our radar. Oh, by the
+38:00
+way, our next radar, we're going to put together in September of this year, and it's going to be done here in Bucharest.
+38:06
+So, all the the people who put together the radar coming from all over the world to meet here in our ThoughtWorks offices in Bucharest to put together the next
+38:13
+edition of our radar in September. uh we had for AI about 80 proposals and for
+38:20
+things on our radar things that we end up in assess means that those are in active research and development on our
+38:26
+teams which means that we're using it looks promising but it hasn't proved itself yet. Something that's in trial
+38:32
+means that we've used it a long and we've put it in production and it's working as we expect in production. So
+38:38
+that's one of the milestones to get into trial. Adopt means it's really really good at what it does and we really love
+38:44
+it. And hold is we hate this and it's really not stop using instantly but
+38:49
+don't start anything new in it because we think we've got a better alternative than that. There are some things that
+38:55
+get kicked out during the meeting. That's that category in gray there. And then finally there's some things move
+39:00
+from the last radar onto the new radar uh if they are still relevant. So with
+39:06
+that key in mind, let's look at a few of the categories of tools that came up on
+39:12
+volume 32 of our radar. And one big category of course is the one I was just talking about, which is
+39:18
+AI assisted software development. And you'll see a lot of blue cards there, which means these are all things that
+39:23
+have moved into trial in our projects. We're actively using in productionbased systems and finding good uses out of
+39:29
+them. These are things like continue and cursor incline which are all these agentic coding assistants that we've
+39:35
+seen. Uh there's uh prompt driven development which is in and trial in in
+39:41
+minor cases. That's the vibe coding or chop oriented programming. There's a whole category of things down here for
+39:48
+things that are coding related tasks but beyond coding including synthesized.
+39:54
+This is a common problem we had forever, which is I need realistic production-like data for testing. But
+40:01
+what synthesize does is go through your production data and filter it and create realistic production-like data only a
+40:08
+small subset of it. Humans have to do this now AI the filtering capabilities of AI really good at at getting
+40:15
+representative data without you know exposing things that shouldn't expose etc. So synthesizers is another tool
+40:22
+called tonic AI that didn't make our radar. It's in that same category of
+40:28
+tools, models, models, there's not a lot of innovation and things that we have to
+40:33
+look at in those. Uh we did look at all the deepseek stuff and those are now all in evaluation. Uh but models are all
+40:40
+things that are kind of continuously in a sort of slow motion uh evaluation.
+40:46
+Uh building LLMbacked applications and in particular rag and information
+40:51
+retrieval. This is a giant hot spot right now. And in fact, a a kind of an
+40:57
+interesting long-term trend we see is that uh at each edition of our radar,
+41:04
+different little parts of the ecosystem are going to get these hot spots around it. In fact, one of our themes for our
+41:10
+recent radar was the the R in Rag because there were all these tools and frameworks and libraries supporting the
+41:17
+retrieval part of Rag. And we expect that different parts of the ecosystem will see these bursts of innovation as
+41:23
+people figure out clever things and then people build clever things on top of that which is of course the way an
+41:29
+ecosystem like this grows and uh evolves. uh things like fusion rag which
+41:34
+combines data from many sources not just the rag database but from external sources and also other databases and
+41:40
+tries to fuse all that together to make more coherent results out of it. U corrective rag which uses uristics to
+41:47
+fine-tune data so you build rules in it almost like guard rails where you're building rules that will pre or pro post
+41:54
+post-process the data to correct things in it that you know are incorrect. So that's particularly true if you're
+42:00
+trying to capture highly accurate results. One of the things that's always confusing is how did we reach this
+42:08
+conclusion? And so there are more and more of these tools that let you see a little bit of the thought process and
+42:14
+the processing process that went on. Uh graph rag gets user navigable graphs as
+42:21
+to how it reach conclusions for things. So you can get some insight in the observability of LMS. We use that in
+42:27
+production. It's quite effective. Agents are also very popular and we're seeing a
+42:32
+rise in this because this is the kind of the next step of translating language into action and that's exactly what's
+42:39
+happening with these things building AI search. That's the only one only one of
+42:44
+three of our AI in an adopt. But this is a really obvious use of AI. I've never
+42:52
+seen a large organization whose documentation wasn't scattered in a half
+42:58
+a dozen different random places. Some in a wiki somewhere, some in a confluence, somewhere in some in who knows where in
+43:05
+the Lotus Notes database somewhere. There are a bunch of these tools now. They're taking all those disperate
+43:10
+things and slurping them all up and making them navigable. And that's a fantastic use for AI because somebody
+43:17
+needs to go through all that. and the pattern matching in AI is a great way to do that. So there's a whole category of
+43:24
+tools that allow you to do that kind of stuff around enterprise and work AI.
+43:31
+These things are important to us. The categories are important to us because as tempting as it is for us to try to
+43:38
+crack inside the LLM, the thing that we really care about is this supporting
+43:43
+ecosystem. things like uh patterns for use of LLMs. Things like, well, can we
+43:50
+use a cheaper LLM most of the time, but then spot check its results with a more expensive LLM? It's a common pattern
+43:56
+that has emerged to keep the cost down for LLM. So, we're seeing patterns and antiatterns emerge here. I mentioned
+44:03
+observability, things like eval guard rails and coding assistance. And in fact
+44:09
+when you look at specific problems one of the problems we have in our upcoming
+44:14
+book is this medical monitoring system monitor me this micros service ecosystem
+44:19
+where have lots of different sensors all of which may need the access for LM
+44:26
+capabilities because part of the medical sensor is when people wake up in the morning we want them to describe how
+44:32
+they felt overnight. We're going to try to correlate what they talked about with their physical condition. So, we need
+44:38
+pattern matching and language to be able to do that. And so, to be able to do that, we need a vector database and some
+44:45
+some rag stuff. And we're going to need some context setting. And we're going to need guard rails to make sure that
+44:50
+medical information doesn't leak out into an ecosystem where it shouldn't leak out. And we need eval to evaluate
+44:57
+how well is this uh performing its task. This is sort of the the measurement
+45:03
+function for uh generative AI. We see a near-term future where this is
+45:10
+going to become a really common sort of side capability for a lot of operational
+45:17
+services. And there's already an architectural pattern that's quite common for this. If you look at the way
+45:23
+a service mesh works in a a microservices architecture, distributed
+45:29
+architecture, each service has a sidecar component that connects to the service
+45:34
+pane. And if I know every one of my microservices has that sidecar component
+45:39
+in it, then I can build a service mesh and control monitoring and logging and
+45:45
+observability all directly through that. So that's a way of building a crosscutting capability on top of my
+45:52
+existing uh ecosystem. Another example of that is data mesh.
+45:58
+And in data mesh, we're trying to separate operational data and analytical data. So can we do the same trick we did
+46:05
+with a service mesh, which is create an analytic sidecar and just use the same database for analytics?
+46:13
+Turns out we can't do that because analytics data is often in a different shape. Analytics are things like uh
+46:20
+yearly sales and rollups and aggregations and graphs, things like that. Whereas operational data are
+46:26
+things like catalog items and inventory and sales. And I don't want to have an impact on my operational data. And so
+46:33
+the data mesh pattern says that you basically have two services that represent your domain. The
+46:39
+operational service and the data product. The data product has all the analytical stuff in it. The code inside
+46:45
+it does the transformations and other stuff from your operational data and there's an asynchronous data pump that
+46:52
+takes the operational data and pushes it into that analytical piece of your ecosystem. So that's your domain and now
+47:00
+this uh data product can communicate with the other parts of the analytics
+47:06
+part of your architecture and you can use that to either create uh outputs for
+47:11
+things like direct reports or something like that or to cooperate with another part of the ecosystem. The data in the
+47:18
+data product could be the same as the operational data but it could be several different data bases because I need to
+47:23
+store data in a different way. Uh so now if every one of my services looks like
+47:29
+this, I can produce analytics report directly from my analytics part of my architecture. But it can also cooperate
+47:37
+in a larger architecture. And basically what I have in a data mesh is two
+47:43
+different architectures that are overlaid on top of one another. I have the analytics architecture
+47:50
+which is connected through the analytics services and I have the operational
+47:55
+architecture and the only way they're joined together is the asynchronous data pump from the operational data to the
+48:01
+analytical data. That's this idea of a data mesh. This is basically two
+48:06
+different architectures overlaid on each other with a really well-defined connecting point which is that data pump
+48:12
+between operational and analytical data. We can see the exact same pattern
+48:18
+applying in the AI space because that's yet another crosscutting concern in
+48:24
+architecture. Analytical data, operational data, AI.
+48:29
+And so this ecosystem we can easily see becoming a sort of a sidecar for
+48:35
+operational services talking to the shared LLM but each with its own set of
+48:40
+rags set of rules its own guard rails its own evals its own customizations
+48:46
+that doesn't necessarily need to be global to the entire system and this is what we're referring to and a lot of a
+48:51
+lot of people referring to as an agentic mesh and so a data mesh has operational
+48:57
+services and analytical services. What an agentic mesh says is that we also
+49:03
+need the ability to have global resources like large language models, guardrails, eval rag databases and state
+49:11
+for our queries. And so that will fit into this uh overall idea of a mesh
+49:17
+architecture. And of course the analytics may need access to the OM and
+49:23
+so does the operational data. But this now allows me to basically have three
+49:28
+different parallel architectures, an operational architecture, an analytical
+49:34
+architecture and an AI based architecture all coupled together in very very specific ways.
+49:40
+This is the way I think we're going to apply a lot of this AI stuff to the distributed architectures like
+49:46
+microservices. We have preserving the same kind of structure that we have in
+49:51
+microservices being able to overlay these AI capabilities.
+49:58
+That I think is where the architecture piece of AI is at least in the near
+50:03
+term. So to summarize what I've been talking about today, it's a great
+50:09
+resource for solved problems. So any problem you have that's been solved hundreds or thousands of times, it's
+50:15
+great to use this. It's a terrible resource for trusted solutions. Uh but
+50:20
+really good for gap analysis and for generating questions for you. Uh in terms of architect as coder uh LMS make
+50:29
+great fitness function code generators which we use it for all the time but watch out for maximum complexity rather
+50:37
+than simplicity. And finally for productionalizing AI uh the mundane but
+50:43
+necessarily real world impact on architects. Uh but architecture patterns
+50:48
+still apply things like mesh is going to apply to AI just like it did to analytical data. And so just because
+50:55
+we're using this fancy new AI thing doesn't mean we're throwing everything we learned about distributed architectures out the window. So I'm now
+51:02
+officially standing between you and the afterparty. So, thank you very much for coming and I hope you enjoy

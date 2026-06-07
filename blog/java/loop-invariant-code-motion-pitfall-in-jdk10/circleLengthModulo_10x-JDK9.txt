@@ -1,0 +1,241 @@
+Java home dir: jdk-9.0.4
+
+# {method} {0x0000027c379a0518} 'circleLengthModulo_10x' '()D' in 'LoopInvariantCode'
+[Entry Point]
+0x0000027c22be2b40: int3  ;   {no_reloc}
+0x0000027c22be2b41: data16 data16 nop WORD PTR [rax+rax*1+0x0]
+0x0000027c22be2b4c: data16 data16 xchg ax,ax
+0x0000027c22be2b50: mov DWORD PTR [rsp-0x7000],eax
+0x0000027c22be2b57: push rbp
+0x0000027c22be2b58: sub rsp,0x50
+0x0000027c22be2b5c: mov r13,QWORD PTR [rdx+0x18]
+0x0000027c22be2b60: vmovsd xmm0,QWORD PTR [rdx+0x8]
+0x0000027c22be2b65: vmovsd QWORD PTR [rsp+0x28],xmm0
+0x0000027c22be2b6b: mov ebp,DWORD PTR [rdx]
+0x0000027c22be2b6d: mov rcx,rdx
+0x0000027c22be2b70: movabs r10,0x570caf00
+0x0000027c22be2b7a: call r10
+0x0000027c22be2b7d: mov r11d,DWORD PTR [r13+0x8]  ; implicit exception: dispatches to 0x0000027c22be2de5
+0x0000027c22be2b81: cmp r11d,0xf800c005  ;   {metadata('LoopInvariantCode')}
+0x0000027c22be2b88: jne L000a  ;*invokespecial computePi {reexecute=0 rethrow=0 return_oop=0}
+                               ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x0000027c22be2b8e: mov ebx,DWORD PTR [r13+0xc]  ;*getfield iterations {reexecute=0 rethrow=0 return_oop=0}
+                                                 ; - LoopInvariantCode::circleLengthModulo_10x@6 (line 14)
+0x0000027c22be2b92: mov r11d,DWORD PTR [r13+0x10] ; radius
+0x0000027c22be2b96: shl r11d,1                    ; 2 * radius 
+0x0000027c22be2b99: vcvtsi2sd xmm3,xmm3,r11d      ; xmm3 <- radius
+0x0000027c22be2b9e: vmovsd xmm2,QWORD PTR [rip+0xffffffffffffff82]  # 0x0000027c22be2b28
+                                                                    ;   {section_word}
+0x0000027c22be2ba6: vmovsd xmm4,QWORD PTR [rip+0xffffffffffffff72]  # 0x0000027c22be2b20
+                                                                    ;   {section_word}
+0x0000027c22be2bae: jmp L0007
+0x0000027c22be2bb3: nop WORD PTR [rax+rax*1+0x0]
+0x0000027c22be2bbc: data16 data16 xchg ax,ax
+             L0000: vaddsd xmm0,xmm1,xmm0  ;*dadd {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@29 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+             L0001: mov r10d,r8d
+0x0000027c22be2bc7: add r10d,0x1e
+0x0000027c22be2bcb: mov r11d,r8d
+0x0000027c22be2bce: add r11d,0x1c
+0x0000027c22be2bd2: vcvtsi2sd xmm1,xmm1,r10d
+0x0000027c22be2bd7: vdivsd xmm5,xmm4,xmm1
+0x0000027c22be2bdb: vcvtsi2sd xmm1,xmm1,r11d
+0x0000027c22be2be0: vdivsd xmm6,xmm4,xmm1
+0x0000027c22be2be4: mov r10d,r8d
+0x0000027c22be2be7: add r10d,0x2
+0x0000027c22be2beb: mov r11d,r8d
+0x0000027c22be2bee: add r11d,0x4
+0x0000027c22be2bf2: vcvtsi2sd xmm1,xmm1,r10d
+0x0000027c22be2bf7: vdivsd xmm1,xmm4,xmm1
+0x0000027c22be2bfb: vsubsd xmm0,xmm0,xmm1
+0x0000027c22be2bff: vcvtsi2sd xmm1,xmm1,r11d
+0x0000027c22be2c04: vdivsd xmm1,xmm4,xmm1
+0x0000027c22be2c08: vaddsd xmm0,xmm0,xmm1
+0x0000027c22be2c0c: mov r10d,r8d
+0x0000027c22be2c0f: add r10d,0x6
+0x0000027c22be2c13: mov r11d,r8d
+0x0000027c22be2c16: add r11d,0x8
+0x0000027c22be2c1a: vcvtsi2sd xmm1,xmm1,r10d
+0x0000027c22be2c1f: vdivsd xmm1,xmm4,xmm1
+0x0000027c22be2c23: vsubsd xmm0,xmm0,xmm1
+0x0000027c22be2c27: vcvtsi2sd xmm1,xmm1,r11d
+0x0000027c22be2c2c: vdivsd xmm1,xmm4,xmm1
+0x0000027c22be2c30: vaddsd xmm0,xmm0,xmm1
+0x0000027c22be2c34: mov r11d,r8d
+0x0000027c22be2c37: add r11d,0xa
+0x0000027c22be2c3b: mov r9d,r8d
+0x0000027c22be2c3e: add r9d,0xc
+0x0000027c22be2c42: vcvtsi2sd xmm1,xmm1,r11d
+0x0000027c22be2c47: vdivsd xmm1,xmm4,xmm1
+0x0000027c22be2c4b: vsubsd xmm0,xmm0,xmm1
+0x0000027c22be2c4f: vcvtsi2sd xmm1,xmm1,r9d
+0x0000027c22be2c54: vdivsd xmm1,xmm4,xmm1
+0x0000027c22be2c58: vaddsd xmm0,xmm0,xmm1
+0x0000027c22be2c5c: mov r11d,r8d
+0x0000027c22be2c5f: add r11d,0xe
+0x0000027c22be2c63: mov r9d,r8d
+0x0000027c22be2c66: add r9d,0x10
+0x0000027c22be2c6a: vcvtsi2sd xmm1,xmm1,r11d
+0x0000027c22be2c6f: vdivsd xmm1,xmm4,xmm1
+0x0000027c22be2c73: vsubsd xmm0,xmm0,xmm1
+0x0000027c22be2c77: vcvtsi2sd xmm1,xmm1,r9d
+0x0000027c22be2c7c: vdivsd xmm1,xmm4,xmm1
+0x0000027c22be2c80: vaddsd xmm0,xmm0,xmm1
+0x0000027c22be2c84: mov r11d,r8d
+0x0000027c22be2c87: add r11d,0x12
+0x0000027c22be2c8b: mov r9d,r8d
+0x0000027c22be2c8e: add r9d,0x14
+0x0000027c22be2c92: vcvtsi2sd xmm1,xmm1,r11d
+0x0000027c22be2c97: vdivsd xmm1,xmm4,xmm1
+0x0000027c22be2c9b: vsubsd xmm0,xmm0,xmm1
+0x0000027c22be2c9f: vcvtsi2sd xmm1,xmm1,r9d
+0x0000027c22be2ca4: vdivsd xmm1,xmm4,xmm1
+0x0000027c22be2ca8: vaddsd xmm0,xmm0,xmm1
+0x0000027c22be2cac: mov r11d,r8d
+0x0000027c22be2caf: add r11d,0x16
+0x0000027c22be2cb3: mov r9d,r8d
+0x0000027c22be2cb6: add r9d,0x18
+0x0000027c22be2cba: vcvtsi2sd xmm1,xmm1,r11d
+0x0000027c22be2cbf: vdivsd xmm1,xmm4,xmm1
+0x0000027c22be2cc3: vsubsd xmm0,xmm0,xmm1
+0x0000027c22be2cc7: vcvtsi2sd xmm1,xmm1,r9d
+0x0000027c22be2ccc: vdivsd xmm1,xmm4,xmm1
+0x0000027c22be2cd0: vaddsd xmm0,xmm0,xmm1
+0x0000027c22be2cd4: mov r11d,r8d
+0x0000027c22be2cd7: add r11d,0x1a
+0x0000027c22be2cdb: vcvtsi2sd xmm1,xmm1,r11d
+0x0000027c22be2ce0: vdivsd xmm1,xmm4,xmm1
+0x0000027c22be2ce4: vsubsd xmm0,xmm0,xmm1
+0x0000027c22be2ce8: vaddsd xmm0,xmm0,xmm6
+0x0000027c22be2cec: vsubsd xmm1,xmm0,xmm5  ;*dsub {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@42 (line 43)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x0000027c22be2cf0: add r8d,0x20  ;*iinc {reexecute=0 rethrow=0 return_oop=0}
+                                  ; - LoopInvariantCode::computePi@54 (line 39)
+                                  ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x0000027c22be2cf4: vcvtsi2sd xmm0,xmm0,r8d
+0x0000027c22be2cf9: vdivsd xmm0,xmm4,xmm0  ;*ddiv {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@28 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x0000027c22be2cfd: cmp r8d,0x3e2
+0x0000027c22be2d04: jl L0000  ;*if_icmpge {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::computePi@14 (line 39)
+                              ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x0000027c22be2d0a: cmp r8d,0x3e8
+0x0000027c22be2d11: jge L0008
+0x0000027c22be2d17: mov r10d,0x1  ;*ddiv {reexecute=0 rethrow=0 return_oop=0}
+                                  ; - LoopInvariantCode::computePi@28 (line 41)
+                                  ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+             L0002: test r10d,r10d
+0x0000027c22be2d20: je L0003  ;*ifeq {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::computePi@18 (line 40)
+                              ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x0000027c22be2d22: vaddsd xmm1,xmm0,xmm1  ;*dadd {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@29 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x0000027c22be2d26: jmp L0004
+             L0003: vsubsd xmm1,xmm1,xmm0  ;*iload_3 {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@44 (line 45)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+             L0004: add r8d,0x2  ;*iinc {reexecute=0 rethrow=0 return_oop=0}
+                                 ; - LoopInvariantCode::computePi@54 (line 39)
+                                 ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x0000027c22be2d30: cmp r8d,0x3e8
+0x0000027c22be2d37: jge L0005  ;*if_icmpge {reexecute=0 rethrow=0 return_oop=0}
+                               ; - LoopInvariantCode::computePi@14 (line 39)
+                               ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x0000027c22be2d39: vcvtsi2sd xmm0,xmm0,r8d
+0x0000027c22be2d3e: vdivsd xmm0,xmm4,xmm0  ;*ddiv {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::computePi@28 (line 41)
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x0000027c22be2d42: xor r10d,0x1  ;*istore_3 {reexecute=0 rethrow=0 return_oop=0}
+                                  ; - LoopInvariantCode::computePi@53 (line 45)
+                                  ; - LoopInvariantCode::circleLengthModulo_10x@71 (line 27)
+0x0000027c22be2d46: jmp L0002
+             L0005: vmovsd QWORD PTR [rsp+0x30],xmm2
+0x0000027c22be2d4e: vmovsd QWORD PTR [rsp+0x38],xmm4
+             L0006: vmovsd QWORD PTR [rsp+0x20],xmm3
+0x0000027c22be2d5a: vmulsd xmm0,xmm1,xmm3  ;*dmul {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@74 (line 27)
+0x0000027c22be2d5e: mov r14d,ebp
+0x0000027c22be2d61: inc r14d  ;*iinc {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::circleLengthModulo_10x@80 (line 14)
+0x0000027c22be2d64: vcvtsi2sd xmm1,xmm1,ebp  ;*i2d {reexecute=0 rethrow=0 return_oop=0}
+                                             ; - LoopInvariantCode::circleLengthModulo_10x@76 (line 27)
+0x0000027c22be2d68: movabs r10,0x570cc260
+0x0000027c22be2d72: call r10  ;*drem {reexecute=0 rethrow=0 return_oop=0}
+                              ; - LoopInvariantCode::circleLengthModulo_10x@77 (line 27)
+0x0000027c22be2d75: vmovsd xmm1,QWORD PTR [rsp+0x28]
+0x0000027c22be2d7b: vaddsd xmm0,xmm1,xmm0  ;*dadd {reexecute=0 rethrow=0 return_oop=0}
+                                           ; - LoopInvariantCode::circleLengthModulo_10x@78 (line 27)
+0x0000027c22be2d7f: vmovsd QWORD PTR [rsp+0x28],xmm0  ; ImmutableOopMap{r13=Oop }
+                                                      ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                      ; - LoopInvariantCode::circleLengthModulo_10x@83 (line 14)
+0x0000027c22be2d85: test DWORD PTR [rip+0xffffffffec4ed275],eax  # 0x0000027c0f0d0000
+                                                                 ;*goto {reexecute=0 rethrow=0 return_oop=0}
+                                                                 ; - LoopInvariantCode::circleLengthModulo_10x@83 (line 14)
+                                                                 ;   {poll} *** SAFEPOINT POLL ***
+0x0000027c22be2d8b: mov ebp,r14d
+0x0000027c22be2d8e: vmovsd xmm3,QWORD PTR [rsp+0x20]
+0x0000027c22be2d94: vmovsd xmm2,QWORD PTR [rsp+0x30]
+0x0000027c22be2d9a: vmovsd xmm4,QWORD PTR [rsp+0x38]  ;*iload_3 {reexecute=0 rethrow=0 return_oop=0}
+                                                      ; - LoopInvariantCode::circleLengthModulo_10x@4 (line 14)
+             L0007: cmp ebp,ebx
+0x0000027c22be2da2: jge L0009
+0x0000027c22be2da4: vmovapd xmm0,xmm2
+0x0000027c22be2da8: mov r8d,0x5
+0x0000027c22be2dae: jmp L0001
+             L0008: vmovsd QWORD PTR [rsp+0x30],xmm2
+0x0000027c22be2db9: vmovsd QWORD PTR [rsp+0x38],xmm4
+0x0000027c22be2dbf: jmp L0006  ;*if_icmpge {reexecute=0 rethrow=0 return_oop=0}
+                               ; - LoopInvariantCode::circleLengthModulo_10x@9 (line 14)
+             L0009: mov edx,0xffffff5d
+0x0000027c22be2dc6: mov QWORD PTR [rsp+0x20],r13
+0x0000027c22be2dcb: mov DWORD PTR [rsp+0x34],ebx
+0x0000027c22be2dcf: call 0x0000027c1b15de80  ; ImmutableOopMap{[32]=Oop }
+                                             ;*if_icmpge {reexecute=1 rethrow=0 return_oop=0}
+                                             ; - LoopInvariantCode::circleLengthModulo_10x@9 (line 14)
+                                             ;   {runtime_call UncommonTrapBlob}
+0x0000027c22be2dd4: int3
+             L000a: mov edx,0xffffff9d
+0x0000027c22be2dda: mov QWORD PTR [rsp+0x20],r13
+0x0000027c22be2ddf: call 0x0000027c1b15de80  ; ImmutableOopMap{[32]=Oop }
+                                             ;*iload_3 {reexecute=0 rethrow=0 return_oop=0}
+                                             ; - LoopInvariantCode::circleLengthModulo_10x@4 (line 14)
+                                             ;   {runtime_call UncommonTrapBlob}
+0x0000027c22be2de4: int3
+0x0000027c22be2de5: mov edx,0xffffff86
+0x0000027c22be2dea: nop
+0x0000027c22be2deb: call 0x0000027c1b15de80  ; ImmutableOopMap{}
+                                             ;*iload_3 {reexecute=0 rethrow=0 return_oop=0}
+                                             ; - LoopInvariantCode::circleLengthModulo_10x@4 (line 14)
+                                             ;   {runtime_call UncommonTrapBlob}
+0x0000027c22be2df0: int3  ;*iload_3 {reexecute=0 rethrow=0 return_oop=0}
+                          ; - LoopInvariantCode::circleLengthModulo_10x@4 (line 14)
+0x0000027c22be2df1: hlt
+0x0000027c22be2df2: hlt
+0x0000027c22be2df3: hlt
+0x0000027c22be2df4: hlt
+0x0000027c22be2df5: hlt
+0x0000027c22be2df6: hlt
+0x0000027c22be2df7: hlt
+0x0000027c22be2df8: hlt
+0x0000027c22be2df9: hlt
+0x0000027c22be2dfa: hlt
+0x0000027c22be2dfb: hlt
+0x0000027c22be2dfc: hlt
+0x0000027c22be2dfd: hlt
+0x0000027c22be2dfe: hlt
+0x0000027c22be2dff: hlt
+[Exception Handler]
+[Stub Code]
+0x0000027c22be2e00: jmp 0x0000027c1b222b80  ;   {no_reloc}
+[Deopt Handler Code]
+0x0000027c22be2e05: call 0x0000027c22be2e0a
+0x0000027c22be2e0a: sub QWORD PTR [rsp],0x5
+0x0000027c22be2e0f: jmp 0x0000027c1b15daa0  ;   {runtime_call DeoptimizationBlob}
+0x0000027c22be2e14: hlt
+0x0000027c22be2e15: hlt
+0x0000027c22be2e16: hlt
+0x0000027c22be2e17: hlt ImmutableOopMap

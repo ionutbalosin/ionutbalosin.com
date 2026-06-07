@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii" /><meta http-equiv="Content-Type" content="text/html; charset=us-ascii" /><title>JEP 510: Key Derivation Function API</title><link rel="shortcut icon" href="/images/nanoduke.ico" /><link rel="stylesheet" type="text/css" href="/page.css" /><script type="text/javascript" src="/page.js"><noscript></noscript></script><script src="https://cdn.usefathom.com/script.js" data-site="KCYJJPZX" defer="yes"></script><style type="text/css" xml:space="preserve">
+      TABLE { border-collapse: collapse; padding: 0px; margin: 1em 0 1em 2em; }
+      TR:first-child TH, TR:first-child TD { padding-top: 0; }
+      TH, TD { padding: 0px; padding-top: .5ex; vertical-align: baseline; text-align: left; }
+      TD + TD, TH + TH { padding-left: 1em; }
+      TD:first-child, TH:first-child, TD.jep { text-align: right; }
+      TABLE.head TD:first-child { font-style: italic; padding-left: 2em; white-space: nowrap; }
+      PRE { padding-left: 2em; margin: 1ex 0; font-size: inherit; }
+      TABLE PRE { padding-left: 0; margin: 0; }
+      TABLE.jeps TD:first-child + TD,
+      TABLE.jeps TD:first-child + TD + TD { padding-left: .5em; }
+      TABLE.jeps TD:first-child,
+      TABLE.jeps TD:first-child + TD,
+      TABLE.jeps TD:first-child + TD + TD { font-size: smaller; }
+      TABLE.jeps TD.cl { font-size: smaller; padding-right: 0; text-align: right; }
+      TABLE.jeps TD.cm { font-size: smaller; padding-left: .1em; padding-right: .1em; }
+      TABLE.jeps TD.cr { font-size: smaller; padding-left: 0; }
+      TABLE.jeps TD.z { padding-left: 0; padding-right: 0; }
+      TABLE.head TD { padding-top: 0; }
+    </style></head><body><div id="main"><h1>JEP 510: Key Derivation Function API</h1><table class="head"><tr><td>Owner</td><td>Kevin Driver</td></tr><tr><td>Type</td><td>Feature</td></tr><tr><td>Scope</td><td>SE</td></tr><tr><td>Status</td><td>Closed&#8201;/&#8201;Delivered</td></tr><tr><td>Release</td><td>25</td></tr><tr><td>Component</td><td>security-libs&#8201;/&#8201;javax.crypto</td></tr><tr><td>Discussion</td><td>security dash dev at openjdk dot org</td></tr><tr><td>Effort</td><td>XS</td></tr><tr><td>Duration</td><td>XS</td></tr><tr><td>Relates to</td><td><a href="478">JEP 478: Key Derivation Function API (Preview)</a></td></tr><tr><td>Reviewed by</td><td>Sean Mullan</td></tr><tr><td>Endorsed by</td><td>Sean Mullan</td></tr><tr><td>Created</td><td>2025/03/31 14:08</td></tr><tr><td>Updated</td><td>2026/02/05 19:50</td></tr><tr><td>Issue</td><td><a href="https://bugs.openjdk.org/browse/JDK-8353275">8353275</a></td></tr></table><div class="markdown"><h2 id="Summary">Summary</h2>
+<p>Introduce an API for Key Derivation Functions (KDFs), which are cryptographic algorithms for deriving additional keys from a secret key and other data.</p>
+<h2 id="History">History</h2>
+<p>We proposed the KDF API as a preview feature in <a href="https://openjdk.org/jeps/478">JEP 478</a> and delivered it in JDK&#160;24. We here propose to finalize the API in JDK&#160;25, without change.</p>
+<h2 id="Goals">Goals</h2>
+<ul>
+<li>
+<p>Enable applications to use KDF algorithms such as the HMAC-based Extract-and-Expand Key Derivation Function (HKDF, <a href="https://www.rfc-editor.org/rfc/rfc5869">RFC 5869</a>) and Argon2&#160;(<a href="https://www.rfc-editor.org/rfc/rfc9106.html">RFC 9106</a>).</p>
+</li>
+<li>
+<p>Enable the use of KDFs in Key Encapsulation Mechanism (KEM, <a href="https://openjdk.org/jeps/452">JEP&#160;452</a>) implementations such as <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.ipd.pdf">ML-KEM</a>, in higher level protocols such as <a href="https://www.ietf.org/archive/id/draft-ietf-tls-hybrid-design-09.txt">Hybrid Key Exchange in TLS 1.3</a>, and in cryptographic schemes such as Hybrid Public Key Encryption (HPKE, <a href="https://www.rfc-editor.org/rfc/rfc9180.html">RFC 9180</a>).</p>
+</li>
+<li>
+<p>Enable a <a href="https://bugs.openjdk.org/browse/JDK-8344464">PKCS#11 implementation of HKDF</a> in the JDK.</p>
+</li>
+<li>
+<p>Enable an <a href="https://github.com/openjdk/jdk/pull/18411">implementation of Hybrid Public Key Encryption (HPKE)</a> in the JDK to use KDFs in its key schedule setup and secret export.</p>
+</li>
+<li>
+<p>Enable a <a href="https://github.com/openjdk/jdk/pull/24393">refactoring of the TLS&#160;1.3 and DHKEM</a> implementations in the JDK to use the KDF API rather than an internal HKDF implementation.</p>
+</li>
+<li>
+<p>Allow security providers to implement KDF algorithms in either Java code or native code.</p>
+</li>
+<li>
+<p>Include an implementation of HKDF and introduce additional HKDF-specific APIs.</p>
+</li>
+</ul>
+<h2 id="Non-Goals">Non-Goals</h2>
+<ul>
+<li>It is not a goal to make the existing implementations of the Password-Based Key Derivation Functions PBKDF1 and <a href="https://en.wikipedia.org/wiki/PBKDF2">PBKDF2</a> available via the new KDF API. These implementations will remain available via the existing <code>SecretKeyFactory</code> API.</li>
+</ul>
+<h2 id="Motivation">Motivation</h2>
+<p><a href="https://en.wikipedia.org/wiki/Key_derivation_function">Key Derivation Functions (KDFs)</a> make use of cryptographic inputs, such as initial key material, a salt value, and a pseudorandom function, to create new cryptographically strong key material. A KDF is often used to create cryptographic data from which multiple keys can be obtained. A KDF allows keys to be created in a manner that is both secure and reproducible by two parties sharing knowledge of the inputs.</p>
+<p>Deriving keys is similar to hashing passwords. A KDF uses a keyed hash along with additional entropy from its other inputs to either extract new key material or securely expand values into a larger stream of key material.</p>
+<p>With the advent of quantum computing, classical cryptographic algorithms will increasingly be vulnerable to practical attacks. It is therefore critical for the Java Platform to support <a href="https://en.wikipedia.org/wiki/Post-quantum_cryptography">Post-Quantum Cryptography (PQC)</a>, which is resistant to these attacks. We aim to do so eventually by supporting Hybrid Public Key Encryption (HPKE), which enables the smooth transition to quantum-safe encryption algorithms. The KEM API (<a href="https://openjdk.org/jeps/452">JEP&#160;452</a>), integrated in JDK&#160;21, is one building block of HPKE, and was our first step toward HPKE and post-quantum readiness; the KDF API proposed here is one more building block of HPKE, and will be the second step.</p>
+<p>The extensibility afforded by the addition of a KDF API will bring additional benefits. The <a href="https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.1/os/pkcs11-spec-v3.1-os.html">PKCS#11 standard</a> for cryptographic hardware devices has described KDF support for years. Making this technology available via the <a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/javax/crypto/package-summary.html"><code>javax.crypto</code> API</a> will benefit applications and libraries that interact with such devices. Furthermore, developers of third-party crypto providers may offer custom KDF implementations, specifically those validated under test and subsequently certified by the <a href="https://www.nist.gov/">National Institute of Standards and Technology</a>.</p>
+<p>Finally, it is paramount that the Java Platform offer better API support for password-hashing KDFs more sophisticated than PBKDF1 &amp; PBKDF2, such as Argon2. None of the existing cryptographic APIs in the Java Platform is currently capable of representing KDFs in a natural way (see <a href="#Alternatives">below</a>). Implementors of third-party security providers have already expressed a need for a standard KDF API.</p>
+<h2 id="Description">Description</h2>
+<p>A key derivation function has two fundamental operations:</p>
+<ul>
+<li>
+<p><em>Instantiation and initialization</em>, which creates the KDF and initializes it with the appropriate parameters, and</p>
+</li>
+<li>
+<p><em>Derivation</em>, which accepts key material and other optional inputs as well as parameters to describe the output, and then generates the derived key or data.</p>
+</li>
+</ul>
+<p>We define a new class, <a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/javax/crypto/KDF.html"><code>javax.crypto.KDF</code></a>, to represent key derivation functions.</p>
+<h3 id="Instantiation-and-initialization">Instantiation and initialization</h3>
+<p>The <code>KDF</code> class provides the usual suite of <code>getInstance</code> methods with the usual combinations of parameters, including optional <code>KDFParameters</code> and crypto provider names. The <code>getInstance</code> methods both instantiate a <code>KDF</code> and initialize its algorithm.</p>
+<p>The HKDF algorithm, which is the only KDF we intend to include at this time, does not require a <code>KDFParameters</code> object. Other algorithms, however, such as <a href="https://en.wikipedia.org/wiki/SHA-3#Instances">SHAKE</a>, may need it.</p>
+<h3 id="Derivation">Derivation</h3>
+<p>The <code>KDF</code> class defines two methods for deriving keys:</p>
+<ul>
+<li>
+<p><a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/javax/crypto/KDF.html#deriveKey(java.lang.String,java.security.spec.AlgorithmParameterSpec)"><code>deriveKey(String alg, AlgorithmParameterSpec spec</code>)</a> constructs a <code>SecretKey</code> object, using the specified algorithm and according to the specified parameters.</p>
+</li>
+<li>
+<p><a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/javax/crypto/KDF.html#deriveData(java.security.spec.AlgorithmParameterSpec)"><code>deriveData(AlgorithmParameterSpec spec)</code></a> returns a byte array, which can be used for entropy or if key material is required in that form.</p>
+</li>
+</ul>
+<p>We use the empty interface <code>AlgorithmParameterSpec</code> because different KDF algorithms take different parameters. A <code>KDF</code> implementation should define one or more <code>AlgorithmParameterSpec</code> subclasses to describe its parameters.</p>
+<p>For the included HKDF implementation we provide three such subclasses, each representing inputs for a different mode of operation:</p>
+<ul>
+<li><a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/javax/crypto/spec/HKDFParameterSpec.Extract.html"><code>HKDFParameterSpec.Extract</code></a></li>
+<li><a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/javax/crypto/spec/HKDFParameterSpec.Expand.html"><code>HKDFParameterSpec.Expand</code></a></li>
+<li><a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/javax/crypto/spec/HKDFParameterSpec.ExtractThenExpand.html"><code>HKDFParameterSpec.ExtractThenExpand</code></a></li>
+</ul>
+<p>The containing <a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/javax/crypto/spec/HKDFParameterSpec.html"><code>HKDFParameterSpec</code></a> interface defines static factory methods for creating instances of these three classes. It also defines a builder class, <a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/javax/crypto/spec/HKDFParameterSpec.Builder.html"><code>HKDFParameterSpec.Builder</code></a>, for assembling key material for extraction operations.</p>
+<h3 id="Example">Example</h3>
+<pre><code>// Create a KDF object for the specified algorithm
+KDF hkdf = KDF.getInstance("HKDF-SHA256"); 
+
+// Create an ExtractExpand parameter specification
+AlgorithmParameterSpec params =
+    HKDFParameterSpec.ofExtract()
+                     .addIKM(initialKeyMaterial)
+                     .addSalt(salt).thenExpand(info, 32);
+
+// Derive a 32-byte AES key
+SecretKey key = hkdf.deriveKey("AES", params);
+
+// Additional deriveKey calls can be made with the same KDF object</code></pre>
+<h3 id="Implementing-KDF-providers">Implementing KDF providers</h3>
+<p>A <code>KDF</code> implementation must extend the abstract class <a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/javax/crypto/KDFSpi.html"><code>javax.crypto.KDFSpi</code></a>.</p>
+<p>Some KDF algorithms derive multiple cryptographic keys in a single derivation operation. If you are implementing such an algorithm, we recommend that you either provide a <code>SecretKey</code> subclass with methods that provide access to each key, or else return all of the keys in a single byte array and document how to separate them.</p>
+<h2 id="Future-Work">Future Work</h2>
+<ul>
+<li><em>Implement Argon2</em> &#8212; We intend eventually to implement the Argon2 password-hashing KDF.</li>
+</ul>
+<h2 id="Alternatives">Alternatives</h2>
+<ul>
+<li>
+<p><em>Use existing APIs</em> &#8212; We considered using the existing <code>KeyGenerator</code> and <code>SecretKeyFactory</code> APIs to represent KDFs. Earlier key derivation algorithms such as TLS-PRF, PBKDF1, and PBKDF2 have been made to fit into these APIs, but in general these APIs do not work well for KDFs.</p>
+<ul>
+<li>
+<p><code>KeyGenerator</code> is designed around the introduction of entropy, via a <code>SecureRandom</code> object, to create a non-deterministic key from a set of inputs. KDFs, by contrast, support the independent derivation by two separate parties of the same key material.</p>
+</li>
+<li>
+<p><code>SecretKeyFactory</code> is designed for the creation of a single key. Though there are scenarios in which a KDF may be used in this manner, KDFs are also required to support successive derivations from a key stream in a deterministic fashion.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><em>Make PBKDF2 available via the new <code>KDF</code> API</em> &#8212; PBKDF2 is rapidly being replaced by stronger algorithms, such as Argon2. Developers who use PBKDF2 already will likely continue to use it via the <code>SecretKeyFactory</code> API, rather than refactor existing code to use the <code>KDF</code> API. Making PBKDF2 available via the new API is thus unwarranted at this time, but we could do so later should a compelling need arise.</p>
+</li>
+</ul>
+<h2 id="Testing">Testing</h2>
+<p>We will add RFC 5869 known-answer (KAT) tests, if available, along with tests for exception handling and SSL/TLS regression testing.</p>
+</div></div><div id="sidebar"><div id="openjdk-sidebar-logo"><a href="/"><img alt="OpenJDK logo" width="91" height="25" src="/images/openjdk2.svg" /></a></div><div class="links"><div class="link"><a href="/install/">Installing</a></div><div class="link"><a href="/guide/#contributing-to-an-openjdk-project">Contributing</a></div><div class="link"><a href="/guide/#reviewing-and-sponsoring-a-change">Sponsoring</a></div><div class="link"><a href="/guide/">Developers' Guide</a></div><div class="link"><a href="/groups/vulnerability/report">Vulnerabilities</a></div><div class="link"><a href="https://jdk.java.net">JDK GA/EA Builds</a></div></div><div class="links"><div class="links"><a href="https://mail.openjdk.org">Mailing lists</a></div><div class="link"><a href="https://wiki.openjdk.org">Wiki</a>
+                      &#183; <a href="/irc">IRC</a></div><div class="link"><a href="https://mastodon.social/@openjdk" rel="me">Mastodon</a></div><div class="link"><a href="https://bsky.app/profile/openjdk.org">Bluesky</a></div></div><div class="links"><div class="links"><a href="/bylaws">Bylaws</a> &#183; <a href="/census">Census</a></div><div class="link"><a href="/legal/">Legal</a> &#183; <a href="/legal/ai">AI</a></div></div><div class="links"><div class="links"><a href="/workshop"><b>Workshop</b></a></div></div><div class="links"><div class="links"><a href="/jeps/0"><b>JEP Process</b></a></div></div><div class="links"><div class="about">Source code</div><div class="link"><a href="https://github.com/openjdk/">GitHub</a></div><div class="link"><a href="https://hg.openjdk.org">Mercurial</a></div></div><div class="links"><div class="about">Tools</div><div class="link"><a href="http://git-scm.org/">Git</a></div><div class="link"><a href="/jtreg/">jtreg harness</a></div></div><div class="links"><div class="about">Groups</div><div class="link"><a href="/groups/">(overview</a>,
+      <a href="/groups/archive">archive</a>)</div><div class="link"><a href="/groups/adoption">Adoption</a></div><div class="link"><a href="/groups/build">Build</a></div><div class="link"><a href="/groups/client-libs">Client Libraries</a></div><div class="link"><a href="/groups/csr">Compatibility &amp; Specification Review</a></div><div class="link"><a href="/groups/compiler">Compiler</a></div><div class="link"><a href="/groups/conformance">Conformance</a></div><div class="link"><a href="/groups/core-libs">Core Libraries</a></div><div class="link"><a href="/groups/gb">Governing Board</a></div><div class="link"><a href="/groups/hotspot">HotSpot</a></div><div class="link"><a href="/groups/ide-support">IDE Tooling &amp; Support</a></div><div class="link"><a href="/groups/i18n">Internationalization</a></div><div class="link"><a href="/groups/members">Members</a></div><div class="link"><a href="/groups/net">Networking</a></div><div class="link"><a href="/groups/porters">Porters</a></div><div class="link"><a href="/groups/quality">Quality</a></div><div class="link"><a href="/groups/security">Security</a></div><div class="link"><a href="/groups/serviceability">Serviceability</a></div><div class="link"><a href="/groups/vulnerability">Vulnerability</a></div><div class="link"><a href="/groups/web">Web</a></div></div><div class="links"><div class="about">Projects</div><div class="link">(<a href="/projects/">overview</a>,
+      <a href="/projects/archive">archive</a>)</div><div class="link"><a href="/projects/amber">Amber</a></div><div class="link"><a href="/projects/babylon">Babylon</a></div><div class="link"><a href="/projects/brisbane">Brisbane</a></div><div class="link"><a href="/projects/crac">CRaC</a></div><div class="link"><a href="/projects/code-tools">Code Tools</a></div><div class="link"><a href="/projects/coin">Coin</a></div><div class="link"><a href="/projects/cvmi">Common VM Interface</a></div><div class="link"><a href="/projects/detroit">Detroit</a></div><div class="link"><a href="/projects/guide">Developers' Guide</a></div><div class="link"><a href="/projects/duke">Duke</a></div><div class="link"><a href="/projects/graal">Graal</a></div><div class="link"><a href="/projects/icedtea">IcedTea</a></div><div class="link"><a href="/projects/jdk8u">JDK 8 Updates</a></div><div class="link"><a href="/projects/jdk9">JDK 9</a></div><div class="link"><a href="/projects/jdk">JDK</a>
+      (&#8230;,
+       <a href="/projects/jdk/25">25</a>,
+       <a href="/projects/jdk/26">26</a>,
+       <a href="/projects/jdk/27">27</a>)</div><div class="link"><a href="/projects/jdk-updates">JDK Updates</a></div><div class="link"><a href="/projects/jmc">JMC</a></div><div class="link"><a href="/projects/jigsaw">Jigsaw</a></div><div class="link"><a href="/projects/lanai">Lanai</a></div><div class="link"><a href="/projects/leyden">Leyden</a></div><div class="link"><a href="/projects/lilliput">Lilliput</a></div><div class="link"><a href="/projects/loom">Loom</a></div><div class="link"><a href="/projects/jmm">Memory Model Update</a></div><div class="link"><a href="/projects/metropolis">Metropolis</a></div><div class="link"><a href="/projects/mlvm">Multi-Language VM</a></div><div class="link"><a href="/projects/nashorn">Nashorn</a></div><div class="link"><a href="/projects/nio">New I/O</a></div><div class="link"><a href="/projects/openjfx">OpenJFX</a></div><div class="link"><a href="/projects/panama">Panama</a></div><div class="link"><a href="/projects/aarch32-port">Port: AArch32</a></div><div class="link"><a href="/projects/aarch64-port">Port: AArch64</a></div><div class="link"><a href="/projects/bsd-port">Port: BSD</a></div><div class="link"><a href="/projects/haiku-port">Port: Haiku</a></div><div class="link"><a href="/projects/mips-port">Port: MIPS</a></div><div class="link"><a href="/projects/mobile">Port: Mobile</a></div><div class="link"><a href="/projects/ppc-aix-port">Port: PowerPC/AIX</a></div><div class="link"><a href="/projects/riscv-port">Port: RISC-V</a></div><div class="link"><a href="/projects/s390x-port">Port: s390x</a></div><div class="link"><a href="/projects/sctp">SCTP</a></div><div class="link"><a href="/projects/shenandoah">Shenandoah</a></div><div class="link"><a href="/projects/skara">Skara</a></div><div class="link"><a href="/projects/sumatra">Sumatra</a></div><div class="link"><a href="/projects/tsan">Tsan</a></div><div class="link"><a href="/projects/valhalla">Valhalla</a></div><div class="link"><a href="/projects/wakefield">Wakefield</a></div><div class="link"><a href="/projects/zero">Zero</a></div><div class="link"><a href="/projects/zgc">ZGC</a></div></div><div class="buttons"><a href="https://oracle.com"><img alt="Oracle logo" width="100" height="13" src="/images/oracle.svg" /></a></div></div><div id="footer">
+
+        &#169; 2026 Oracle Corporation and/or its affiliates
+        <br /><a href="/legal/tou/">Terms of Use</a>
+        &#183;
+        
+            License: <a href="/legal/gplv2+ce.html">GPLv2</a>
+        &#183; <a href="https://www.oracle.com/us/legal/privacy/">Privacy</a>
+        &#183; <a href="https://openjdk.org/legal/openjdk-trademark-notice.html">Trademarks</a></div><script type="text/javascript"  src="/-9ys1EPi4/Ms9YCW4mX/wWttiMBSw/a1QuhGJwzOShzr1u/EhZlAQ/RVxcB/CBTJkUB"></script></body></html>
