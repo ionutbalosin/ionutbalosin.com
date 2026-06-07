@@ -1,4 +1,4 @@
-# Application / Dynamic Class Data Sharing In HotSpot JVM
+# Application / Dynamic Class Data Sharing In HotSpot JVM (OpenJDK 17)
 
 ## Content
 

@@ -8,7 +8,7 @@
 - [My experience](#my-experience)
 - [My recommendation](#my-recommendation)
 
-## **Motivation**
+## Motivation
 
 Nowadays, using an ORM (Object-Relational Mapping) is a low-hanging fruit because there are plenty of such implementations available for modern programming languages and a variety of databases. But is this healthy or always necessary for the application?
 
@@ -16,7 +16,7 @@ I often face situations during [my workshops](https://ionutbalosin.com/training)
 
 In this article, I will try to explain why this approach is toxic, when and how you should use an ORM, and what are the consequences if not properly rationalized.
 
-## **The perfect ORM is an illusion**
+## The perfect ORM is an illusion
 
 Assuming that an ORM will prevent you from doing the boring stuff (e.g. writing SQL) so you could focus on different parts of the applications is in general a wrong assumption. The primary purpose of an ORM is to map the database result sets to object graphs. In addition, an ORM also tracks object changes and synchronizes those changes back to the database. The SQL part must and should stay in the total control of developers. I can argue that every software engineer using a relational database as part of the backend application should understand how a relational database works, the standard SQL, and the flavors in regards to that database. Using an ORM does not mean that you do not have to care anymore about how the application interacts with the database so you can treat it as a neglectable piece in your architecture. On the contrary, you just added another layer of abstraction and complexity, the ORM itself.
 
@@ -24,7 +24,7 @@ Mapping to a relational database and generating the underlying SQL involves boil
 
 Ignoring these aspects will hit you at some point when you have to debug and understand the generated queries behind the ORM and why they are inefficiently slow (e.g. over-fetch columns, N+1 queries, unindexed queries, records saved multiple times, etc.). Sometimes the fix might require only adding or changing a few specific ORM annotations, or writing a tailor-made SQL. In other cases, you might end up altering the object model for the sake of the ORM because the object-oriented model and the database relationship model are two different things (not directly interchangeable).
 
-## **The benefits and drawbacks of using an ORM**
+## The benefits and drawbacks of using an ORM
 
 Using an ORM is not fundamentally a bad idea. The intention of this post is not to criticize or blame the ORMs, but to make people think extremely carefully before including an ORM in their applications. 
 
@@ -45,11 +45,11 @@ As for the disadvantages, they could be summarized as follows:
 - implements less standard SQL features that a database conforms to (i.e. if a database conforms to almost all SQL standard features plus adds some specifics, an ORM only uses a subset of these)
 - debugging performance queries is challenging
 
-## **My experience**
+## My experience
 
 Early in my career as a software engineer, I used some JPA/JDO implementations (e.g. Hibernate, DataNucleus). This experience taught me in general to be very cautious with the ORMs, as they add significant complexity. Without a proper understanding of the ORM (and this is not an easy task) it leads, in general, to more troubles that benefit. Then I started to become skeptical and during the last ten years, I never used such in any production system I worked on. I am very comfortable with this choice since I prefer to invest the time in understanding how a database works, how to write the proper SQL by myself instead of focusing on learning how to master an ORM framework. Besides this, I do not remember having any issues or discomfort with this approach. On the contrary, it is much easier to debug and fix the production issues because you are in control of the SQL and the entire database model is familiar to you (since you explicitly defined it).
 
-## **My recommendation**
+## My recommendation
 
 **Step 1.** Invest the time in learning how a relational database works and how to write SQL in general and in particular the SQL flavors needed for the specific database used by the backend application. This is an extremely valuable skillset that you need either way.
 
@@ -63,7 +63,16 @@ SQL stays pretty much constant over the years, the first standard was published 
 
 Starting directly with an ORM and neglecting the first three approaches (in that specific order) is not something that I would ever recommend.
 
-### **Should the decision of using an ORM be bound to the architectural style?**
+### When an ORM is genuinely useful
+
+There are situations where an ORM pays off and the abstraction it provides is exactly what you need:
+
+- **Supporting multiple databases as a runtime choice.** When the application has to run on top of different relational databases (e.g. PostgreSQL, MySQL, Oracle, SQL Server) and the concrete database is selected at deployment or runtime, an ORM decouples the application code from database-specific SQL dialects fairly well. Writing and maintaining hand-crafted SQL for each supported database quickly becomes a burden.
+- **Shipping software to customers that bring their own database.** When you build a product sold to multiple customers and each customer runs it against their own database of choice, an ORM significantly reduces the cost of supporting that diversity. You ship one codebase, and the ORM handles most of the dialect differences for you.
+
+In both cases the benefit comes from the portability layer the ORM provides, not from "not writing SQL". The same caveats still apply: you need to master the ORM and understand the generated queries.
+
+### Should the decision of using an ORM be bound to the architectural style?
 
 Not at all, in my opinion. There might be other forces towards using an ORM (e.g. company strategies, architects or developers bias) but not the architectural style itself.
 
