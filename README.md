@@ -27,16 +27,26 @@ supporting material it needs.
 ```
 ionutbalosin.com/
 ├── blog/
-│   └── <category>/
-│       ├── README.md               # Category-specific scope, structure, conventions
-│       └── <article-slug>/
-│           ├── article.md          # The article (Markdown)
-│           ├── sources/            # Original inputs (HTML, transcripts, PDFs, ...)
-│           ├── assets/             # Images, diagrams (optional)
-│           └── code/               # Code snippets, benchmarks (optional)
+│   ├── ai-llm/                     # Practical AI/LLM engineering
+│   ├── architecture/               # System design and architectural patterns
+│   ├── energy/                     # JVM energy consumption studies
+│   ├── java/                       # JVM internals, JDK features, JEP analyses
+│   └── security/                   # Application security for Java developers
 ├── courses/                        # Course descriptions and agendas
 ├── talks/                          # Conference talks index and slides
 └── welcome/                        # Site welcome page
+```
+
+Each `blog/<category>/` folder follows the same internal layout:
+
+```
+blog/<category>/
+├── README.md                       # Category-specific scope, structure, conventions
+└── <article-slug>/
+    ├── article.md                  # The article (Markdown)
+    ├── sources/                    # Original inputs (HTML, transcripts, PDFs, ...)
+    ├── assets/                     # Images, diagrams (optional)
+    └── code/                       # Code snippets, benchmarks (optional)
 ```
 
 ## License
