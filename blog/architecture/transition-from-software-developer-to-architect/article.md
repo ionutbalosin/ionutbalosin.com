@@ -1,21 +1,63 @@
 # Transition from Software Developer to Architect
 
+## Content
+
+- [Motivation](#motivation)
+- [Communication Skills](#communication-skills)
+- [Technical Breadth vs. Technical Depth](#technical-breadth-vs-technical-depth)
+- [Coding Time Allocation](#coding-time-allocation)
+- [Risk and Cost Analysis](#risk-and-cost-analysis)
+- [Avoiding Framework Imposition](#avoiding-framework-imposition)
+- [Influencing Development Processes](#influencing-development-processes)
+- [Developer vs. Architect Mindset](#developer-vs-architect-mindset)
+- [Summary](#summary)
+
 ## Motivation
 
 After several years of software development we tend to ask ourselves which way to go next, should we embrace a management position because we want to be in ours manager’s boots being the team’s boss, to decide everything in the project, or we should follow a carrier in software architecture because “being an Architect sounds great” and we want to be the guys imposing technical solutions, choosing frameworks and playing with interesting and challenging technical things. In fact none of these assumptions is totally right because neither the Project Manager should decide everything nor the Architect should impose technical solutions and frameworks. They are pure naive and superficial criteria some of developers might think of before embracing the right career path decision. In the current article I will share, based on my experience, the challenges I had and different things I faced when I was promoted from Technical Leader to Software Architect position.
 
 In my case the decision was simpler, I did not want to become a Project Manager just for the fact I still want to stay in touch with technologies and I still want to code. Probably this is related to my background and my experience, since I spent a lot of years codding and I never feel better than writing code and being involved in technical things. But when I slightly moved towards the Architect role, few things I found different. As an Architect, I should step away a bit from a code designer approach I used to (e.g. from that code magician perspective able to write a class by following all best practices and technical guidelines) to a higher level, to think in abstractions and to be able to paint the end to end software components solution, relationships among them, environment that governs and to worry about their quality attributes in order to satisfy all stakeholders.
 
-## Guidelines
+## Communication Skills
 
-Below I am going to describe aspects that are a bit different from an architectural perspective than a Software Developer approach.
+The Architect should have really good communication skills because he is always in the position of interacting and chatting with all stakeholders (e.g. project managers, business sponsors, business analysts, quality engineers, developers, end users, etc), convincing the business why it is important to invest in some technologies over others or making new acquisitions (e.g. new trainings, new software licenses, new hardware). An Architect needs also to discuss with technical stakeholders (e.g. developers, quality engineers) trying to present his vision and his technical ideas in regards to the project evolution. As for a Software Developer the communication skills are less important, there are extremely good developers with lack in communication skills or developers preferring just to stay in front of the computer to code all the time.
 
-1. The Architect should have really good communication skills because he is always in the position of interacting and chatting with all stakeholders (e.g. project managers, business sponsors, business analysts, quality engineers, developers, end users, etc), convincing the business why it is important to invest in some technologies over others or making new acquisitions (e.g. new trainings, new software licenses, new hardware). An Architect needs also to discuss with technical stakeholders (e.g. developers, quality engineers) trying to present his vision and his technical ideas in regards to the project evolution. As for a Software Developer the communication skills are less important, there are extremely good developers with lack in communication skills or developers preferring just to stay in front of the computer to code all the time.
-2. For an Architect is more important to focus on “*technical breadth*”, to be aware of more and more technologies and frameworks which in fact could lead to multiple approaches to choose from, so when facing a specific problem there would be more possibilities to analyze and design the architecture. An Architect should not study all of these in depth, because it needs time and it is difficult to maintain the knowledge over time, but at least to have an idea about what exists on the market for a broader vision. In comparison, a Software Developer is mainly interested in getting and maintaining a good “*technical depth*”, to become proficient in one or limited programming languages in order to write better and fast code.
-3. The Architect should definitely keep writing code, because only by writing code he stays closer to developers and understands better their problems. But here is a difference: if in case of a Developer the coding percentage tends towards maximum, in case of an Architect this percentage should be lower, I would say around 25%-30% of his total time. Apart this 25%-30% of time there are additional architectural activities like creating and maintaining architectural blueprints (e.g. development guidelines and patterns), implementing proof-of-concepts based on architecturally significant requirements, creating and maintaining a technology radar inside project, reviewing the code and ensuring technical documentation is up to date. In other words the Architect must guarantee the integrity, correctness, completeness and buildability of the product.
-4. There are also architectural activities closer to project management, like risk and cost analysis. An Architect should be involved in team’s risk strategy plan to be able to identify eventual project risks, from both technical and organizational perspective. Since the cost is always a key factor in all projects, the Architect should be able to balance the possible added value against the total cost in order to contribute to best technical decisions. As from a Software Developer perspective, these activities are not interfering with his main duties.
-5. An Architect should never impose frameworks and should never think in terms of technologies. All of these are just tools or options that shapes the architecture. A good Architect should find a way to automatically guide or lead to some particular technologies based on deep analysis, but not the other way around. A good Architect should be mainly interested in the internal quality of the project, about its systemic qualities (e.g. performance, scalability, availability, security, etc) and not about the auxiliary things as tools and frameworks. A good Architect should also delay as many decisions to later on in the project lifecycle, because later is always better since there is more context that might guide to better solutions.
-6. The Architect should have an input and contribute to development processes. He needs to be continuously involved in monitoring them, discover what is going well and is a subject of improvement. For example, if the waterfall methodology seems to be inefficient, the Architect should suggest changing it. Or, if the continuous deployment strategy does not offer fast enough delivery speed the Architect must invest in switching it probably to continuous delivery.
+## Technical Breadth vs. Technical Depth
+
+For an Architect is more important to focus on “*technical breadth*”, to be aware of more and more technologies and frameworks which in fact could lead to multiple approaches to choose from, so when facing a specific problem there would be more possibilities to analyze and design the architecture. An Architect should not study all of these in depth, because it needs time and it is difficult to maintain the knowledge over time, but at least to have an idea about what exists on the market for a broader vision. In comparison, a Software Developer is mainly interested in getting and maintaining a good “*technical depth*”, to become proficient in one or limited programming languages in order to write better and fast code.
+
+## Coding Time Allocation
+
+The Architect should definitely keep writing code, because only by writing code he stays closer to developers and understands better their problems. But here is a difference: if in case of a Developer the coding percentage tends towards maximum, in case of an Architect this percentage should be lower, I would say around 25%-30% of his total time. Apart this 25%-30% of time there are additional architectural activities like creating and maintaining architectural blueprints (e.g. development guidelines and patterns), implementing proof-of-concepts based on architecturally significant requirements, creating and maintaining a technology radar inside project, reviewing the code and ensuring technical documentation is up to date. In other words the Architect must guarantee the integrity, correctness, completeness and buildability of the product.
+
+## Risk and Cost Analysis
+
+There are also architectural activities closer to project management, like risk and cost analysis. An Architect should be involved in team’s risk strategy plan to be able to identify eventual project risks, from both technical and organizational perspective. Since the cost is always a key factor in all projects, the Architect should be able to balance the possible added value against the total cost in order to contribute to best technical decisions. As from a Software Developer perspective, these activities are not interfering with his main duties.
+
+## Avoiding Framework Imposition
+
+An Architect should never impose frameworks and should never think in terms of technologies. All of these are just tools or options that shapes the architecture. A good Architect should find a way to automatically guide or lead to some particular technologies based on deep analysis, but not the other way around. A good Architect should be mainly interested in the internal quality of the project, about its systemic qualities (e.g. performance, scalability, availability, security, etc) and not about the auxiliary things as tools and frameworks. A good Architect should also delay as many decisions to later on in the project lifecycle, because later is always better since there is more context that might guide to better solutions.
+
+## Influencing Development Processes
+
+The Architect should have an input and contribute to development processes. He needs to be continuously involved in monitoring them, discover what is going well and is a subject of improvement. For example, if the waterfall methodology seems to be inefficient, the Architect should suggest changing it. Or, if the continuous deployment strategy does not offer fast enough delivery speed the Architect must invest in switching it probably to continuous delivery.
+
+## Developer vs. Architect Mindset
+
+The differences above can be summarized in the table below. It is not a binary split, since most engineers stand somewhere on each spectrum, but the table captures where the centre of gravity shifts when moving into the Architect role.
+
+| Aspect                  | Software Developer                                       | Software Architect                                                          |
+|-------------------------|----------------------------------------------------------|-----------------------------------------------------------------------------|
+| Communication           | Optional; many strong developers prefer focused coding   | Mandatory; constant interaction with business and technical stakeholders    |
+| Technical knowledge     | Technical *depth* in one or a few languages              | Technical *breadth* across technologies, frameworks, and patterns           |
+| Time spent coding       | Close to 100%                                            | Around 25–30%; the rest on architectural activities                         |
+| Risk and cost analysis  | Not part of main duties                                  | Active contributor to risk strategy and cost vs. value decisions            |
+| Relation to frameworks  | Picks the right tool for the task at hand                | Avoids imposing frameworks; derives them from quality attributes            |
+| Primary focus           | Writing correct and performant code                      | Systemic qualities (performance, scalability, availability, security, etc.) |
+| Influence on process    | Mostly follows the team’s process                        | Continuously evaluates and proposes process improvements                    |
+| Decision timing         | Decisions are mostly local and immediate                 | Tends to delay decisions until enough context exists                        |
+
+## Summary
 
 To summarize, an Architect should be a visionary person, always up to date in terms of latest technologies and frameworks, an open minded guy able to bring and discuss new ideas in the project, having excellent communication skills and keen on technology and innovation.
 
