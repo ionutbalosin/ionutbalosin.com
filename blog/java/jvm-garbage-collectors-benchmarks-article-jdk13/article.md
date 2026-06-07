@@ -1,4 +1,4 @@
-# JVM Garbage Collectors Benchmarks Report 19.12 (OpenJDK 13)
+# JVM Garbage Collectors Benchmarks for JDK 13
 
 ## Content
 
@@ -46,7 +46,7 @@ UPDATE: I am also very thankful to [Aleksey Shipilëv](https://twitter.com/shipi
   - OS: Ubuntu 19.04 / 5.0.0-37-generic
 - To eliminate the effects of dynamic frequency scaling, I disabled the *intel\_pstate* driver and I set the CPU governor to *performance*.
 - Please bear in mind current benchmarks might be influenced by other factors like Just-In-Time Compiler optimizations, the underlying libraries (e.g. JMH), the CPU caching and branch prediction effect, memory allocator subsystem, etc.
-- All benchmark results (including the throughput, gc.alloc.rate.norm, gc.count, gc.time, etc.) are merged in a dedicated [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/report/jmh_visualizer_gc/index.html) on my GitHub account. For better charts quality I would recommend opening the [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/report/jmh_visualizer_gc/index.html) since the current post contains only print screens out of it (usually for the throughput measurements). You can also find the [raw benchmarks results](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/report) (i.e. JSON test results) under the same repository, on GitHub.
+- All benchmark results (including the throughput, gc.alloc.rate.norm, gc.count, gc.time, etc.) are merged in a dedicated [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/report/jmh_visualizer_gc/index.html) on my GitHub account. For better charts quality I would recommend opening the [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/report/jmh_visualizer_gc/index.html) since the current post contains only print screens out of it (usually for the throughput measurements). You can also find the [raw benchmarks results](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/report) (i.e. JSON test results) under the same repository, on GitHub.
 
 ## A Bit of Theory
 
@@ -137,7 +137,7 @@ Where:
   - \_4\_MB
 - **numberOfObjects** is automatically calculated to consume up only 60% of the available Heap memory
 
-[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/BurstHeapMemoryAllocatorBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/BurstHeapMemoryAllocatorBenchmark.png)<< click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/report/jmh_visualizer_gc/index.html) from GitHub >>
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/BurstHeapMemoryAllocatorBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/BurstHeapMemoryAllocatorBenchmark.png)<< click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/report/jmh_visualizer_gc/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -156,8 +156,8 @@ void test(Blackhole blackhole) {
 }
 ```
 
-[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/ConstantHeapMemoryOccupancyBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/ConstantHeapMemoryOccupancyBenchmark.png)  
-<< click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/report/jmh_visualizer_gc/index.html) from GitHub >>
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/ConstantHeapMemoryOccupancyBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/ConstantHeapMemoryOccupancyBenchmark.png)  
+<< click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/report/jmh_visualizer_gc/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -186,9 +186,9 @@ Where:
   - \_4\_KB
   - \_4\_MB
 
-[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/HeapMemoryBandwidthAllocatorBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/HeapMemoryBandwidthAllocatorBenchmark.png)
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/HeapMemoryBandwidthAllocatorBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/HeapMemoryBandwidthAllocatorBenchmark.png)
 
-<< click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/report/jmh_visualizer_gc/index.html) from GitHub >>
+<< click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/report/jmh_visualizer_gc/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -214,8 +214,8 @@ void test() {
 }
 ```
 
-[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/ReadWriteBarriersBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/ReadWriteBarriersBenchmark.png)  
-<< click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/report/jmh_visualizer_gc/index.html) from GitHub >>
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/ReadWriteBarriersBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/ReadWriteBarriersBenchmark.png)  
+<< click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/report/jmh_visualizer_gc/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -237,7 +237,7 @@ void test(Integer lRefInteger) {
 }
 ```
 
-[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/WriteBarriersLoopingOverArrayBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/WriteBarriersLoopingOverArrayBenchmark.png)<< click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/report/jmh_visualizer_gc/index.html) from GitHub >>
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/WriteBarriersLoopingOverArrayBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/WriteBarriersLoopingOverArrayBenchmark.png)<< click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/report/jmh_visualizer_gc/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -266,7 +266,7 @@ int test() {
 }
 ```
 
-[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/ReadBarriersLoopingOverArrayBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/ReadBarriersLoopingOverArrayBenchmark.png)<< click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/report/jmh_visualizer_gc/index.html) from GitHub >>
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/ReadBarriersLoopingOverArrayBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/ReadBarriersLoopingOverArrayBenchmark.png)<< click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/report/jmh_visualizer_gc/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -307,7 +307,7 @@ class H32 {
 }
 ```
 
-[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/ReadBarriersChainOfClassesBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/ReadBarriersChainOfClassesBenchmark.png)<< click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/report/jmh_visualizer_gc/index.html) from GitHub >>
+[![](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/ReadBarriersChainOfClassesBenchmark.png)](https://raw.githubusercontent.com/ionutbalosin/ionutbalosin.com/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/ReadBarriersChainOfClassesBenchmark.png)<< click on the picture to enlarge or open the full [HTML report](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/report/jmh_visualizer_gc/index.html) from GitHub >>
 
 #### Conclusions
 
@@ -380,7 +380,7 @@ Below is the aggregated output for all runs:
 (malloc=29KB)
 ```
 
-<< click [here](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-report-19-12/report/NMTMeasurementsMain.out) to open the full NMT summary report from GitHub >>
+<< click [here](https://github.com/ionutbalosin/ionutbalosin.com/blob/main/blog/java/jvm-garbage-collectors-benchmarks-article-jdk13/report/NMTMeasurementsMain.out) to open the full NMT summary report from GitHub >>
 
 Legend:
 
