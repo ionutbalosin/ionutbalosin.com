@@ -14,7 +14,7 @@
 
 ## Introduction
 
-🌐 This article covers the HTTP/3 support added to the `java.net.http.HttpClient` API in JDK 26 by JEP 517. It is addressed to Java developers who already use the HTTP Client API (introduced by JEP 321 in JDK 11) and want to understand what changes when a request is carried over HTTP/3, how the client decides which protocol version to use, and how the QUIC transport is implemented inside the JDK.
+The `java.net.http.HttpClient` API (JEP 321, JDK 11) has spoken HTTP/1.1 and HTTP/2 for years. With JEP 517, JDK 26 adds HTTP/3. In this article I look at what changes when a request goes over HTTP/3, how the client picks the protocol version, and how the QUIC transport is implemented inside the JDK.
 
 HTTP/3 (RFC 9114) is the successor of HTTP/2, standardized by the IETF in 2022. The main difference compared to its predecessors is the transport layer: instead of TCP, HTTP/3 runs on top of QUIC (RFC 9000), a multiplexed and encrypted transport built on UDP datagrams, with TLS 1.3 integrated directly into the handshake (RFC 9001). According to the JEP, HTTP/3 is already supported by most web browsers and deployed on about a third of all web sites.
 
@@ -50,7 +50,7 @@ The second API addition is the sealed interface `java.net.http.HttpOption<T>`, t
 - **`ALT_SVC`**: Requests are sent over HTTP/1.1 or HTTP/2 until the server advertises an `h3` endpoint, typically in an `Alt-Svc` response header or an HTTP/2 `ALTSVC` frame; subsequent requests then switch to HTTP/3. No blind QUIC attempt is ever made.
 - **`HTTP_3_URI_ONLY`**: The client only attempts an HTTP/3 connection at the authority of the request URI, without Alternative Services and without fallback. If the server does not answer over QUIC, the request fails.
 
-An important note to make is that the option has no effect unless `HTTP_3` is selected as the preferred version on either the client or the request. In case of a redirect, the option is carried over to the new request.
+The option has no effect unless `HTTP_3` is selected as the preferred version on either the client or the request. In case of a redirect, the option is carried over to the new request.
 
 Two new exception types complete the picture. `UnsupportedProtocolVersionException` is thrown when the client cannot support HTTP/3, for example when `HttpClient.Builder.build()` is called with `HTTP_3` as the preferred version but the configured `SSLContext` is not compatible with QUIC. `StreamLimitException` is raised when a multiplexed connection (HTTP/2 or HTTP/3) has exhausted its stream budget. Finally, `HttpResponse.PushPromiseHandler` gains an `applyPushPromise` overload and a `notifyAdditionalPromise` method that receive an HTTP/3 `PushId`, because in HTTP/3 one server push may be referenced from several client-initiated streams on the same connection.
 
@@ -143,7 +143,7 @@ public static boolean isQuicCompatible(final SSLContext sslContext) {
 }
 ```
 
-It is worth mentioning that although the `KeySpace` enum defines a `ZERO_RTT` level, `QuicTLSEngineImpl.keysAvailable()` always returns `false` for it, and `PacketSpaceManager` carries the comment "currently we don't support 0-RTT". Therefore, the handshake of this first implementation is always 1-RTT, and early data is not sent.
+Although the `KeySpace` enum defines a `ZERO_RTT` level, `QuicTLSEngineImpl.keysAvailable()` always returns `false` for it, and `PacketSpaceManager` carries the comment "currently we don't support 0-RTT". Therefore, the handshake of this first implementation is always 1-RTT, and early data is not sent.
 
 ### HTTP/3 framing, QPACK and streams
 
@@ -153,14 +153,14 @@ HTTP/3 connections have their own pool, `Http3ConnectionPool`, keyed by origin. 
 
 ## Performance Analysis
 
-The JEP does not publish any benchmark numbers, and I did not find a JMH benchmark for the HTTP/3 client in the JDK tree. The expected effects therefore have to be reasoned qualitatively.
+The JEP does not publish any benchmark numbers, and there is no JMH benchmark for the HTTP/3 client in the JDK tree, so the discussion below is qualitative.
 
 - **Handshake round trips**: A fresh HTTPS connection over TCP needs a TCP handshake and then a TLS 1.3 handshake. QUIC performs both in one exchange, so a fresh HTTP/3 connection is usable after a single round trip. Because 0-RTT is not implemented in JDK 26, resumed connections do not get the additional saving that QUIC allows.
-- **Head-of-line blocking**: A lost datagram only delays the request whose bytes it carried. This matters mainly on lossy networks; on a low-loss data centre link the difference is generally small.
+- **Head-of-line blocking**: A lost datagram only delays the request whose bytes it carried. This matters mainly on lossy networks; on a low-loss data center link the difference is generally small.
 - **CPU cost**: The implementation processes individual UDP datagrams in Java, including packet protection and loss detection, instead of delegating segmentation and retransmission to the kernel TCP stack. A higher per-byte CPU cost than with HTTP/2 should be expected; the JDK does not quantify it.
 - **Discovery overhead**: With the default `ANY` mode and no prior knowledge of the server, the client may open both a QUIC and a TCP connection for the first request and discard one of them. The JEP lists this explicitly as a trade-off of the parallel approach.
 
-Rule of thumb: measure your own workload before switching; for high-latency or lossy client-side networks the transport benefits are likely to dominate, while for short server-to-server calls over reliable networks HTTP/2 remains a sound default.
+Measure your own workload before switching; for high-latency or lossy client-side networks the transport benefits are likely to dominate, while for short server-to-server calls over reliable networks HTTP/2 remains a sound default.
 
 ## Practical Examples
 
@@ -191,7 +191,7 @@ public class Http3Minimal {
 }
 ```
 
-`HttpResponse.version()` is the only reliable way to know which protocol was actually used, because the client may have downgraded transparently. A first request to a server not previously seen may print `HTTP_2` under the default `ANY` mode if the TCP connection wins the race; later requests to the same origin print `HTTP_3` once an `h3` endpoint has been registered. In a quick test I ran with JDK 26 against two public HTTP/3-enabled sites, the first request was indeed answered over `HTTP_2` and the second over `HTTP_3`.
+`HttpResponse.version()` is the only reliable way to know which protocol was actually used, because the client may have downgraded transparently. A first request to a server not previously seen may print `HTTP_2` under the default `ANY` mode if the TCP connection wins the race; later requests to the same origin print `HTTP_3` once an `h3` endpoint has been registered.
 
 ### Example 2: Controlling discovery per request
 
@@ -301,35 +301,13 @@ A few concrete takeaways:
 - **Choose the discovery mode according to the environment**: `ALT_SVC` is the safest choice for internet targets behind unknown firewalls, `HTTP_3_URI_ONLY` is appropriate for services you control and know to run QUIC, and `ANY` is a reasonable default when UDP egress is known to be open.
 - **Keep expectations realistic for JDK 26**: Without 0-RTT and Path MTU Discovery, and with a user-space transport, the benefit is the removal of transport-level head-of-line blocking and one fewer handshake round trip, not a universal latency win.
 
-In my humble opinion, the feature is ready to be evaluated in client-side applications that talk to HTTP/3-enabled CDNs or public APIs, especially over mobile or high-latency links. For server-to-server traffic within a data centre, I would stay on HTTP/2 until a measurable benefit is demonstrated for the specific workload.
+I think the feature is ready to be evaluated in client-side applications that talk to HTTP/3-enabled CDNs or public APIs, especially over mobile or high-latency links. For server-to-server traffic within a data center, I would stay on HTTP/2 until a measurable benefit is demonstrated for the specific workload.
 
 ## References
 
 - [JEP 517: HTTP/3 for the HTTP Client API](https://openjdk.org/jeps/517)
-- [JEP 321: HTTP Client (Standard)](https://openjdk.org/jeps/321)
-- [OpenJDK: `java/net/http/HttpOption.java`](https://github.com/openjdk/jdk/blob/master/src/java.net.http/share/classes/java/net/http/HttpOption.java)
-- [OpenJDK: `java/net/http/HttpClient.java`](https://github.com/openjdk/jdk/blob/master/src/java.net.http/share/classes/java/net/http/HttpClient.java)
-- [OpenJDK: `java/net/http/HttpRequest.java`](https://github.com/openjdk/jdk/blob/master/src/java.net.http/share/classes/java/net/http/HttpRequest.java)
-- [OpenJDK: `jdk/internal/net/http/HttpClientImpl.java`](https://github.com/openjdk/jdk/blob/master/src/java.net.http/share/classes/jdk/internal/net/http/HttpClientImpl.java)
-- [OpenJDK: `jdk/internal/net/http/ExchangeImpl.java`](https://github.com/openjdk/jdk/blob/master/src/java.net.http/share/classes/jdk/internal/net/http/ExchangeImpl.java)
-- [OpenJDK: `jdk/internal/net/http/Http3ClientImpl.java`](https://github.com/openjdk/jdk/blob/master/src/java.net.http/share/classes/jdk/internal/net/http/Http3ClientImpl.java)
-- [OpenJDK: `jdk/internal/net/http/Http3ClientProperties.java`](https://github.com/openjdk/jdk/blob/master/src/java.net.http/share/classes/jdk/internal/net/http/Http3ClientProperties.java)
-- [OpenJDK: `jdk/internal/net/http/Http3Connection.java`](https://github.com/openjdk/jdk/blob/master/src/java.net.http/share/classes/jdk/internal/net/http/Http3Connection.java)
-- [OpenJDK: `jdk/internal/net/http/HttpQuicConnection.java`](https://github.com/openjdk/jdk/blob/master/src/java.net.http/share/classes/jdk/internal/net/http/HttpQuicConnection.java)
-- [OpenJDK: `jdk/internal/net/http/AltSvcProcessor.java`](https://github.com/openjdk/jdk/blob/master/src/java.net.http/share/classes/jdk/internal/net/http/AltSvcProcessor.java)
-- [OpenJDK: `jdk/internal/net/http/quic/QuicEndpoint.java`](https://github.com/openjdk/jdk/blob/master/src/java.net.http/share/classes/jdk/internal/net/http/quic/QuicEndpoint.java)
-- [OpenJDK: `jdk/internal/net/http/quic/QuicConnectionImpl.java`](https://github.com/openjdk/jdk/blob/master/src/java.net.http/share/classes/jdk/internal/net/http/quic/QuicConnectionImpl.java)
-- [OpenJDK: `jdk/internal/net/quic/QuicTLSContext.java`](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/jdk/internal/net/quic/QuicTLSContext.java)
-- [OpenJDK: `sun/security/ssl/QuicTLSEngineImpl.java`](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/security/ssl/QuicTLSEngineImpl.java)
-- [OpenJDK: `java.net.http/module-info.java` (system properties)](https://github.com/openjdk/jdk/blob/master/src/java.net.http/share/classes/module-info.java)
-- [OpenJDK tests: `test/jdk/java/net/httpclient/http3/`](https://github.com/openjdk/jdk/tree/master/test/jdk/java/net/httpclient/http3)
-- [RFC 9114: HTTP/3](https://www.rfc-editor.org/rfc/rfc9114)
-- [RFC 9000: QUIC: A UDP-Based Multiplexed and Secure Transport](https://www.rfc-editor.org/rfc/rfc9000)
-- [RFC 9001: Using TLS to Secure QUIC](https://www.rfc-editor.org/rfc/rfc9001)
-- [RFC 9002: QUIC Loss Detection and Congestion Control](https://www.rfc-editor.org/rfc/rfc9002)
-- [RFC 9204: QPACK: Field Compression for HTTP/3](https://www.rfc-editor.org/rfc/rfc9204)
-- [RFC 7838: HTTP Alternative Services](https://www.rfc-editor.org/rfc/rfc7838)
-- [RFC 9369: QUIC Version 2](https://www.rfc-editor.org/rfc/rfc9369)
+- [OpenJDK Source: Http3ClientImpl.java](https://github.com/openjdk/jdk/blob/master/src/java.net.http/share/classes/jdk/internal/net/http/Http3ClientImpl.java)
+- [OpenJDK Source: QuicEndpoint.java](https://github.com/openjdk/jdk/blob/master/src/java.net.http/share/classes/jdk/internal/net/http/quic/QuicEndpoint.java)
 
 ---
 

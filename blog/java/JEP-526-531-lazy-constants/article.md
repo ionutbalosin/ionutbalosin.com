@@ -14,7 +14,7 @@
 
 ## Introduction
 
-⚙️ This article covers the Lazy Constants API as it stands after its second preview in JDK 26 (JEP 526) and its third preview in JDK 27 (JEP 531). It is addressed to Java developers who have written at least one holder class or one double-checked locking block and who would like to understand what the JDK now offers instead, and how the JIT compiler treats it. The explanations are backed by the JEP texts and by the OpenJDK implementation under `src/java.base` and `src/hotspot`.
+Most of us have written a holder class or a double-checked locking block at least once, just to initialize something lazily and safely. The Lazy Constants API, in its second preview in JDK 26 (JEP 526) and third preview in JDK 27 (JEP 531), offers a standard alternative, and, more interesting from a performance point of view, one that the JIT compiler can constant-fold.
 
 A lazy constant is an object of type `java.lang.LazyConstant<T>` that holds a single value, computed at most once by a function supplied at construction and never modified afterwards. The JVM treats the content of a lazy constant as a true constant, which enables the same constant-folding optimizations that are otherwise reserved to `final` fields, while the moment of initialization is decoupled from the constructor or the class initializer. The JEP summarizes this as *deferred immutability*.
 
@@ -190,7 +190,7 @@ A few observations are worth making:
 
 The three collection factories delegate to [`src/java.base/share/classes/java/util/LazyCollections.java`](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/LazyCollections.java). A `LazyList` keeps its elements in a `@Stable private final E[] elements` array, and `AbstractLazyMap` keeps values in a `@Stable private final V[] values` array indexed either through an unmodifiable `Map<K, Integer>` (for arbitrary keys) or through `ordinal() - min` (for `EnumSet` keys, in `LazyEnumMap`). `LazySet` is a thin wrapper around `Map.ofLazy(elementCandidates, computingFunction::test)` whose `contains` is `map.getOrDefault(o, Boolean.FALSE)`.
 
-The `@Stable` semantics on a one-dimensional array are what make this work: according to the Javadoc of [`src/java.base/share/classes/jdk/internal/vm/annotation/Stable.java`](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/jdk/internal/vm/annotation/Stable.java), both the array reference and each of its components are treated as independent stable variables, so a component that has become non-null can be folded individually while its neighbours remain uninitialized. The slow path (`orElseComputeSlowPath`) uses a lazily allocated per-index mutex, created with `Unsafe.compareAndExchangeReference` and replaced by a tombstone after use, and a `@Stable String[]` of exception class names per index, mirroring the single-value behavior. Once all indices have been computed, the mutex array and the function holder are released.
+The `@Stable` semantics on a one-dimensional array are what make this work: according to the Javadoc of [`src/java.base/share/classes/jdk/internal/vm/annotation/Stable.java`](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/jdk/internal/vm/annotation/Stable.java), both the array reference and each of its components are treated as independent stable variables, so a component that has become non-null can be folded individually while its neighbors remain uninitialized. The slow path (`orElseComputeSlowPath`) uses a lazily allocated per-index mutex, created with `Unsafe.compareAndExchangeReference` and replaced by a tombstone after use, and a `@Stable String[]` of exception class names per index, mirroring the single-value behavior. Once all indices have been computed, the mutex array and the function holder are released.
 
 ### How HotSpot folds the content
 
@@ -216,7 +216,7 @@ Therefore, for a read such as `Application.ORDERS.get().getLogger().get()` to fo
 
 ## Performance Analysis
 
-Neither JEP 526 nor JEP 531 publishes measurements, so no speed-up figure can be quoted. The JDK tree does contain JMH benchmarks under `test/micro/org/openjdk/bench/java/lang/stable/` (for instance `StableValueBenchmark.java`, which compares `LazyConstant` against double-checked locking, `AtomicReference`, a holder class and a record holder, in static and instance variants, with `--enable-preview` and `Threads.MAX`), but the sources do not ship results, and I have not run them for this article.
+Neither JEP 526 nor JEP 531 publishes measurements, so no speed-up figure can be quoted. The JDK tree does contain JMH benchmarks under `test/micro/org/openjdk/bench/java/lang/stable/` (for instance `StableValueBenchmark.java`, which compares `LazyConstant` against double-checked locking, `AtomicReference`, a holder class and a record holder, in static and instance variants, with `--enable-preview` and `Threads.MAX`), but the sources do not ship any results.
 
 Reasoning from the implementation, the costs are as follows:
 
@@ -225,7 +225,7 @@ Reasoning from the implementation, the costs are as follows:
 - **First access**: One monitor acquisition, the supplier invocation, a release store and a volatile store. Threads that lose the race block on the monitor for the duration of the supplier.
 - **Memory**: A `LazyConstantImpl` holds two references (the content and the supplier-or-marker). Lazy collections additionally carry a mutex array and a `String[]` for failures until all elements are computed. The content is strongly referenced for as long as the lazy constant is, which the API Javadoc flags as a potential source of unintended memory retention.
 
-An important note to make is that constant folding happens at JIT compilation time. If the compiled method was produced while the constant was still uninitialized, the code keeps the acquire-load path until a recompilation occurs, exactly as `@Stable` behaves for JDK-internal code.
+Constant folding happens at JIT compilation time. If the compiled method was produced while the constant was still uninitialized, the code keeps the acquire-load path until a recompilation occurs, exactly as `@Stable` behaves for JDK-internal code.
 
 ## Practical Examples
 
@@ -342,7 +342,7 @@ public final class DataSourceHolder {
 }
 ```
 
-Rule of thumb: a lazy constant models a value that, once computed, is correct forever. If a failure is transient and a retry is meaningful, either handle the retry inside the supplier before returning, or do not use a lazy constant for that value at all, because the API offers no reset.
+A lazy constant models a value that, once computed, is correct forever. If a failure is transient and a retry is meaningful, either handle the retry inside the supplier before returning, or do not use a lazy constant for that value at all, because the API offers no reset.
 
 ## Migration Considerations
 
@@ -357,26 +357,13 @@ Rule of thumb: a lazy constant models a value that, once computed, is correct fo
 - **Use `LazyConstant` where you would have written a holder class or double-checked locking**. It is shorter, cannot be initialized twice, publishes safely, and keeps the field `final`, which no mutable-field idiom achieves.
 - **Prefer `static final` holders, records or lazy collections when the goal is JIT performance**. The thread-safety guarantees hold everywhere, but the constant-folding benefit depends on the trust rules in `ciField.cpp`, which exclude ordinary `final` instance fields today.
 - **Treat failures as permanent and design suppliers accordingly**. There is no reset or retry; if a value can legitimately fail and recover, encode that in the content (for example via `Optional`) rather than relying on exceptions from `get()`.
-- **Adoption recommendation**: In JDK 26 and 27 the API is a preview feature whose method set has already shrunk twice, so it is recommended to try it in non-production code, internal tools and benchmarks, and to postpone wide adoption until it is finalized. In my humble opinion, the JDK 27 shape (a single `get()` plus three collection factories) is stable enough that code written against it should need little change later.
+- **Adoption recommendation**: In JDK 26 and 27 the API is a preview feature whose method set has already shrunk twice, so I would try it in non-production code, internal tools and benchmarks, and to postpone wide adoption until it is finalized. That said, the JDK 27 shape (a single `get()` plus three collection factories) is stable enough that code written against it should need little change later.
 
 ## References
 
 - [JEP 526: Lazy Constants (Second Preview)](https://openjdk.org/jeps/526)
 - [JEP 531: Lazy Constants (Third Preview)](https://openjdk.org/jeps/531)
-- [JEP 502: Stable Values (Preview)](https://openjdk.org/jeps/502)
-- [JEP 547: Lazy Constants (Fourth Preview)](https://openjdk.org/jeps/547)
-- [JEP 12: Preview Features](https://openjdk.org/jeps/12)
-- [OpenJDK Source: java/lang/LazyConstant.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/lang/LazyConstant.java)
-- [OpenJDK Source: jdk/internal/lang/LazyConstantImpl.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/jdk/internal/lang/LazyConstantImpl.java)
-- [OpenJDK Source: java/util/LazyCollections.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/LazyCollections.java)
-- [OpenJDK Source: java/util/List.java (`ofLazy`)](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/List.java)
-- [OpenJDK Source: java/util/Map.java (`ofLazy`)](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/Map.java)
-- [OpenJDK Source: java/util/Set.java (`ofLazy`)](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/Set.java)
-- [OpenJDK Source: jdk/internal/vm/annotation/Stable.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/jdk/internal/vm/annotation/Stable.java)
-- [OpenJDK Source: hotspot/share/ci/ciField.cpp](https://github.com/openjdk/jdk/blob/master/src/hotspot/share/ci/ciField.cpp)
-- [OpenJDK Source: hotspot/share/runtime/globals.hpp](https://github.com/openjdk/jdk/blob/master/src/hotspot/share/runtime/globals.hpp)
-- [OpenJDK JMH benchmarks: test/micro/org/openjdk/bench/java/lang/stable/](https://github.com/openjdk/jdk/tree/master/test/micro/org/openjdk/bench/java/lang/stable)
-- [JLS §12.4: Initialization of Classes and Interfaces](https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.4)
+- [OpenJDK Source: LazyConstantImpl.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/jdk/internal/lang/LazyConstantImpl.java)
 
 ---
 

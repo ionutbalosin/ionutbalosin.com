@@ -14,7 +14,7 @@
 
 ## Introduction
 
-☕ This article covers the preview language feature that allows primitive types in all pattern contexts and extends `instanceof` and `switch` to every primitive type, as it stands in JDK 26 (fourth preview, JEP 530) and JDK 27 (fifth preview, JEP 532). It is addressed to Java developers who already use type and record patterns with reference types and want to understand what changes for `int`, `long`, `double` and friends, how javac and the runtime implement it, and which previously legal `switch` constructs are now rejected.
+Pattern matching in Java has so far been mostly about reference types. JDK 26 (fourth preview, JEP 530) and JDK 27 (fifth preview, JEP 532) continue the work of allowing primitive types in all pattern contexts and of extending `instanceof` and `switch` to every primitive type. Below I look at what changes for `int`, `long`, `double` and friends, how javac and the runtime implement it, and which previously legal `switch` constructs are now rejected.
 
 The feature was first proposed for JDK 23 and re-previewed in JDK 24 and JDK 25 without change. JEP 530 is the first iteration that modifies the rules: it enhances the definition of *unconditional exactness* and tightens the *dominance* checks in `switch`. JEP 532 previews the feature a fifth time without change, so everything below applies equally to JDK 26 and JDK 27.
 
@@ -113,7 +113,7 @@ switch (x) {
 }
 ```
 
-The same rule applies to reference types, which is the source-incompatible part of the JEP (see Example 4, where `case A _` followed by `case B _` on a selector of type `A` is rejected although `A` and `B` are unrelated). All of the JEP's snippets compile with JDK 25 and `--enable-preview --release 25`; the JDK 26 behavior is visible in the compiler source cited below.
+The same rule applies to reference types, which is the source-incompatible part of the JEP (see Example 4, where `case A _` followed by `case B _` on a selector of type `A` is rejected although `A` and `B` are unrelated).
 
 ## Technical Deep Dive
 
@@ -149,7 +149,7 @@ The technique is a round trip: convert to the target type, convert back, and com
 - **Negative zero**: `-0.0 == 0.0` is `true`, so `isNegativeZero` inspects the raw bits; converting `-0.0` to an integer type is inexact.
 - **NaN**: `NaN == NaN` is `false`, so `|| n != n` makes `double` to `float` exact for `NaN`, whereas `NaN` to an integer type remains inexact.
 
-I verified these on JDK 25: `Double.NaN instanceof float` is `true`, `Double.NaN instanceof int` and `-0.0 instanceof int` are `false`, and `(1L << 53) instanceof double` is `true` while `((1L << 53) + 1) instanceof double` is `false`.
+For example, `Double.NaN instanceof float` is `true`, `Double.NaN instanceof int` and `-0.0 instanceof int` are `false`, and `(1L << 53) instanceof double` is `true` while `((1L << 53) + 1) instanceof double` is `false`.
 
 ### Compile-time exactness and dominance in javac
 
@@ -159,12 +159,14 @@ The JDK 26 tightening is implemented in `Check.checkSwitchCaseLabelDominated` (`
 
 ### Lowering instanceof and switch
 
-Primitive `instanceof` is desugared in `Lower.visitTypeTest` (`src/jdk.compiler/share/classes/com/sun/tools/javac/comp/Lower.java`) in three ways: an unconditionally exact test becomes the constant `true` (the operand is still evaluated for side effects), a test on a primitive operand becomes a direct call to the matching `ExactConversionsSupport` method, and a test on a wrapper operand becomes a null check, an unboxing call and the exactness method. The `TypePairs` record maps type pairs to method names; `byte`, `short` and `char` sources are redirected to the `int` variants. I compiled the following methods with JDK 25 (the lowering is identical in JDK 26, since JEP 530 only changed compile-time checks):
+Primitive `instanceof` is desugared in `Lower.visitTypeTest` (`src/jdk.compiler/share/classes/com/sun/tools/javac/comp/Lower.java`) in three ways: an unconditionally exact test becomes the constant `true` (the operand is still evaluated for side effects), a test on a primitive operand becomes a direct call to the matching `ExactConversionsSupport` method, and a test on a wrapper operand becomes a null check, an unboxing call and the exactness method. The `TypePairs` record maps type pairs to method names; `byte`, `short` and `char` sources are redirected to the `int` variants. For example, the following two methods:
 
 ```java
 static boolean fitsByte(int i)    { return i instanceof byte; }
 static boolean alwaysTrue(byte b) { return b instanceof int; }
 ```
+
+compile to:
 
 ```text
 static boolean fitsByte(int);
@@ -193,11 +195,11 @@ JEP 530 and JEP 532 publish no performance measurements, so this discussion is q
 - **Conditional tests cost one static call**: `isIntToByteExact` and its siblings are tiny pure methods that the JIT compilers routinely inline; the cost should be comparable to the hand-written range check, with wrapper variants adding a null check and an unboxing call.
 - **Pattern switches on primitives pay the `invokedynamic` linkage cost** once per call site, as existing pattern switches do; a constant-only `switch` is still a `tableswitch`/`lookupswitch`. The generated `typeSwitch` receives the selector as `Object`, so a primitive selector is boxed on entry; whether the JIT eliminates that boxing should be measured for hot code.
 
-Rule of thumb: use primitive patterns where you would otherwise write a range check or a lossy cast, and measure before rewriting a hot constant-only `switch`.
+Use primitive patterns where you would otherwise write a range check or a lossy cast, and measure before rewriting a hot constant-only `switch`.
 
 ## Practical Examples
 
-All examples compile with `javac --enable-preview --release 26` (or `--release 25`, where I ran them) and run with `java --enable-preview`.
+All examples compile with `javac --enable-preview --release 26` (or `--release 27`) and run with `java --enable-preview`.
 
 ### Example 1: Replacing a manual range check
 
@@ -288,30 +290,13 @@ Both methods compile without diagnostics under JDK 25 with preview enabled; unde
 - The JDK 26 tightening is small in surface but meaningful: constant labels are validated against preceding patterns by value, and an unconditional pattern ends the `switch`. Teams that experimented on JDK 25 should expect a few `pattern.dominated` errors and treat them as dead code being pointed out.
 - Nevertheless, the floating-point corner cases deserve a unit test or two when such patterns guard business logic.
 
-In my humble opinion, the feature is mature enough to try on real code in JDK 26 or 27 behind the preview flag, in particular for record decomposition where components are stored as `double` or `long` but consumed as `int`, while waiting for a finalized JEP before committing production builds to it.
+I think the feature is mature enough to try on real code in JDK 26 or 27 behind the preview flag, in particular for record decomposition where components are stored as `double` or `long` but consumed as `int`, while waiting for a finalized JEP before committing production builds to it.
 
 ## References
 
 - [JEP 530: Primitive Types in Patterns, instanceof, and switch (Fourth Preview)](https://openjdk.org/jeps/530)
 - [JEP 532: Primitive Types in Patterns, instanceof, and switch (Fifth Preview)](https://openjdk.org/jeps/532)
-- [JEP 507: Primitive Types in Patterns, instanceof, and switch (Third Preview)](https://openjdk.org/jeps/507)
-- [JEP 488: Primitive Types in Patterns, instanceof, and switch (Second Preview)](https://openjdk.org/jeps/488)
-- [JEP 455: Primitive Types in Patterns, instanceof, and switch (Preview)](https://openjdk.org/jeps/455)
-- [JEP 441: Pattern Matching for switch](https://openjdk.org/jeps/441)
-- [JEP 440: Record Patterns](https://openjdk.org/jeps/440)
-- [JEP 394: Pattern Matching for instanceof](https://openjdk.org/jeps/394)
 - [OpenJDK Source: ExactConversionsSupport.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/lang/runtime/ExactConversionsSupport.java)
-- [OpenJDK Source: SwitchBootstraps.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/lang/runtime/SwitchBootstraps.java)
-- [OpenJDK Source: Types.java (Unconditional Exactness)](https://github.com/openjdk/jdk/blob/master/src/jdk.compiler/share/classes/com/sun/tools/javac/code/Types.java)
-- [OpenJDK Source: Source.java (Feature.PRIMITIVE_PATTERNS)](https://github.com/openjdk/jdk/blob/master/src/jdk.compiler/share/classes/com/sun/tools/javac/code/Source.java)
-- [OpenJDK Source: Preview.java](https://github.com/openjdk/jdk/blob/master/src/jdk.compiler/share/classes/com/sun/tools/javac/code/Preview.java)
-- [OpenJDK Source: Attr.java](https://github.com/openjdk/jdk/blob/master/src/jdk.compiler/share/classes/com/sun/tools/javac/comp/Attr.java)
-- [OpenJDK Source: Check.java (checkSwitchCaseLabelDominated)](https://github.com/openjdk/jdk/blob/master/src/jdk.compiler/share/classes/com/sun/tools/javac/comp/Check.java)
-- [OpenJDK Source: ExhaustivenessComputer.java](https://github.com/openjdk/jdk/blob/master/src/jdk.compiler/share/classes/com/sun/tools/javac/comp/ExhaustivenessComputer.java)
-- [OpenJDK Source: Lower.java (visitTypeTest)](https://github.com/openjdk/jdk/blob/master/src/jdk.compiler/share/classes/com/sun/tools/javac/comp/Lower.java)
-- [OpenJDK Source: TransPatterns.java](https://github.com/openjdk/jdk/blob/master/src/jdk.compiler/share/classes/com/sun/tools/javac/comp/TransPatterns.java)
-- [OpenJDK Source: compiler.properties](https://github.com/openjdk/jdk/blob/master/src/jdk.compiler/share/classes/com/sun/tools/javac/resources/compiler.properties)
-- [JLS §5.5: Casting Contexts](https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.5)
 
 ---
 

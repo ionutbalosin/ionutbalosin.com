@@ -71,7 +71,7 @@ static bool trust_final_nonstatic_fields(ciInstanceKlass* holder) {
 
 Final fields in selected JDK packages, in hidden classes and in records are trusted precisely because deep reflection cannot mutate them (hidden classes were restricted in JDK 15, records in JDK 16). For every other class, the result falls back to `TrustFinalNonStaticFields`, an experimental flag declared in `src/hotspot/share/runtime/globals.hpp` with a default value of `false`. In other words, the vast majority of final instance fields written by application developers get no constant-folding benefit today, because the platform has to assume that some library may reassign them.
 
-It is worth mentioning that the JEP rejects the alternative of relying purely on speculation (optimize optimistically and deoptimise when a mutation is detected), because future optimizations may depend on immutability across runs of the application, which speculation within a single process cannot provide.
+The JEP rejects the alternative of relying purely on speculation (optimize optimistically and deoptimize when a mutation is detected), because future optimizations may depend on immutability across runs of the application, which speculation within a single process cannot provide.
 
 ## Final Field Restrictions in JDK 26
 
@@ -80,7 +80,7 @@ JDK 26 introduces the notion of *final field restrictions*. Mutating a final ins
 - **No opt-in**: The code performing the mutation is in a module for which final field mutation has not been enabled.
 - **Not deeply accessible**: The code is in a module to which the package of the declaring class is not statically open (or, for a public field in a public class, not statically exported).
 
-In JDK 26 an illegal mutation still succeeds, but, by default, a warning such as the following is printed on the standard error stream the first time code in a given module performs one (this is the real output from JDK 26.0.2.1 for the example in the next sections):
+In JDK 26 an illegal mutation still succeeds, but, by default, a warning such as the following is printed on the standard error stream the first time code in a given module performs one, using the example from the next sections:
 
 ```
 WARNING: Final field timeoutMs in class FinalMutation$Config has been mutated reflectively by class FinalMutation in unnamed module @c387f44 (file:/.../)
@@ -95,7 +95,7 @@ Two launcher options control the behavior:
 - **`--enable-final-field-mutation=M1,M2,...`**: Explicitly enables final field mutation for the named modules in the boot layer, or for all code on the class path via the special value `ALL-UNNAMED`. Enabling the capability for a module does not bypass the module system: the field must additionally be open to that module.
 - **`--illegal-final-field-mutation=allow|warn|debug|deny`**: Selects what happens when an illegal mutation is attempted. `warn` (the default in JDK 26) prints at most one warning per module; `debug` prints a warning plus a stack trace for every mutation; `allow` is silent; `deny` makes `Field.set` throw `IllegalAccessException`. According to the JEP, `deny` will become the default in a future release, at which point `allow` will be removed, while `warn` and `debug` remain for at least one more release.
 
-An important note to make is that `--add-opens` alone does not silence the warning. Opening a package grants deep reflection; it does not grant final field mutation. The two concerns are now separate.
+`--add-opens` alone does not silence the warning. Opening a package grants deep reflection; it does not grant final field mutation. The two concerns are now separate.
 
 The same opt-in can be expressed in several other ways: via `JDK_JAVA_OPTIONS`, via an argument file (`java @config`), via `jlink --add-options` when building a custom runtime, via the JNI Invocation API when embedding a JVM, or via the `Enable-Final-Field-Mutation: ALL-UNNAMED` attribute in the manifest of an executable JAR launched with `java -jar`. `ALL-UNNAMED` is the only value accepted in the manifest.
 
@@ -182,7 +182,7 @@ if (mode == ModuleBootstrap.IllegalFinalFieldMutation.WARN) {
 FinalFieldMutationEvent.offer(root);
 ```
 
-The command-line options are decoded in `src/java.base/share/classes/jdk/internal/module/ModuleBootstrap.java`. The launcher (`src/java.base/share/native/libjli/java.c`) translates `--illegal-final-field-mutation` into the system property `jdk.module.illegal.final.field.mutation` and `--enable-final-field-mutation` into indexed properties `jdk.module.enable.final.field.mutation.<n>`; `ModuleBootstrap` reads and removes them during boot-layer initialization. An unrecognised mode value fails startup, and an unknown module name produces a warning rather than an error. The `Enable-Final-Field-Mutation` manifest attribute is handled in `src/java.base/share/classes/sun/launcher/LauncherHelper.java`, which aborts with "Error: illegal value ... Only ALL-UNNAMED is allowed" for any other value.
+The command-line options are decoded in `src/java.base/share/classes/jdk/internal/module/ModuleBootstrap.java`. The launcher (`src/java.base/share/native/libjli/java.c`) translates `--illegal-final-field-mutation` into the system property `jdk.module.illegal.final.field.mutation` and `--enable-final-field-mutation` into indexed properties `jdk.module.enable.final.field.mutation.<n>`; `ModuleBootstrap` reads and removes them during boot-layer initialization. An unrecognized mode value fails startup, and an unknown module name produces a warning rather than an error. The `Enable-Final-Field-Mutation` manifest attribute is handled in `src/java.base/share/classes/sun/launcher/LauncherHelper.java`, which aborts with "Error: illegal value ... Only ALL-UNNAMED is allowed" for any other value.
 
 Method handles follow the same rules. In `src/java.base/share/classes/java/lang/invoke/MethodHandles.java`, `Lookup.unreflectField` calls back into `Field.checkAllowedToUnreflectFinalSetter(caller)` when a setter is requested for a non-static final field on a `Field` whose access checks were suppressed. Therefore the warning (or exception) is raised when the method handle is created, and not at each `invoke`. The list of affected "mutation methods" (`Field.set`, the eight primitive `setXxx` variants and `Lookup.unreflectSetter`) is documented in `src/java.base/share/classes/java/lang/reflect/doc-files/MutationMethods.html`.
 
@@ -190,7 +190,7 @@ Finally, the JFR event type is defined in `src/jdk.jfr/share/classes/jdk/jfr/eve
 
 ## Performance Analysis
 
-The JEP does not publish any benchmark numbers, and I did not find measurements in the JDK sources related to this change, so the discussion here is necessarily qualitative.
+The JEP does not publish any benchmark numbers, so the discussion here is qualitative.
 
 On the cost side, JDK 26 adds a few checks to a path that was already slow. `Field.set` on a final field with suppressed access checks now performs a module lookup, a static opens/exports check, a volatile read of a boolean flag and a JFR event offer. Code that mutates final fields in a hot loop would notice, but such code is unusual, and the JEP's position is that it should be rewritten anyway. The `debug` mode is considerably more expensive, since it walks the stack and prints on every mutation; it is intended for diagnosis, not for production.
 
@@ -198,7 +198,7 @@ On the benefit side, nothing improves in JDK 26 itself: `trust_final_nonstatic_f
 
 ## Practical Examples
 
-The examples below were compiled and executed with JDK 26.0.2.1; the output shown is the actual output.
+The examples below run on JDK 26.
 
 **Triggering the warning.** The simplest case is a class on the class path mutating its own final field:
 
@@ -257,19 +257,19 @@ jdk.FinalFieldMutation {
 }
 ```
 
-**Testing against the future default.** Running with `deny` shows what the future behavior will be. The exception message names both the caller and the field:
+**Testing against the future default.** Running with `deny` shows what the future behavior will be. Wrapping the `f.set(...)` call from `FinalMutation` in a `try`/`catch` shows that the exception message names both the caller and the field:
 
 ```java
 try {
-    f.set(new Config(100), 200);
+    f.set(config, 200);
 } catch (IllegalAccessException e) {
     System.err.println("Final field mutation denied: " + e.getMessage());
 }
 ```
 
 ```
-$ java --illegal-final-field-mutation=deny Detect
-Final field mutation denied: class Detect (in unnamed module @c387f44) cannot set final field Detect$Config.timeoutMs (in unnamed module @c387f44), unnamed module @c387f44 is not allowed to mutate final fields
+$ java --illegal-final-field-mutation=deny FinalMutation
+Final field mutation denied: class FinalMutation (in unnamed module @c387f44) cannot set final field FinalMutation$Config.timeoutMs (in unnamed module @c387f44), unnamed module @c387f44 is not allowed to mutate final fields
 ```
 
 **Method handles.** `Lookup.unreflectSetter` is checked at creation time. The example below prints the "unreflected for mutation" variant of the warning once, and the subsequent `invoke` is silent:
@@ -302,7 +302,7 @@ static final class OrderService {
 
 A test that previously injected a mock into a final field via reflection simply passes the test double to the constructor. No reflection, no warning, and the JIT compiler is free to trust the field.
 
-It is crucial to understand that `sun.misc.Unsafe` is *not* an acceptable workaround. Its memory-access methods (`putInt`, `putReference` and friends) are deprecated for removal since JDK 23 (JEP 471) and already emit their own warnings since JDK 24 (JEP 498). Furthermore, the JEP states that there are no diagnostics at all for final field mutation through `Unsafe`, and that such mutations "may cause strange bugs or JVM crashes".
+`sun.misc.Unsafe` is *not* an acceptable workaround. Its memory-access methods (`putInt`, `putReference` and friends) are deprecated for removal since JDK 23 (JEP 471) and already emit their own warnings since JDK 24 (JEP 498). Furthermore, the JEP states that there are no diagnostics at all for final field mutation through `Unsafe`, and that such mutations "may cause strange bugs or JVM crashes".
 
 ## Migration Considerations
 
@@ -315,7 +315,7 @@ It is crucial to understand that `sun.misc.Unsafe` is *not* an acceptable workar
 - **Mocking and test utilities**: Helpers that replace a final collaborator inside an object under test.
 - **`clone()` implementations**: Code that calls `super.clone()` and then fixes final fields reflectively. The JEP recommends a copy constructor or a static factory instead.
 
-**What to do now.** Rule of thumb: run the test suite and a representative workload once with `--illegal-final-field-mutation=deny`, collect the exceptions (or use `debug` or JFR for a non-failing run), and fix or report each occurrence. If a dependency genuinely requires final field mutation, add `--enable-final-field-mutation=<module>` (or `ALL-UNNAMED`) to the launch configuration, exactly as you would add `--add-opens`, and treat it as technical debt to be removed when the library is updated.
+**What to do now.** Run the test suite and a representative workload once with `--illegal-final-field-mutation=deny`, collect the exceptions (or use `debug` or JFR for a non-failing run), and fix or report each occurrence. If a dependency genuinely requires final field mutation, add `--enable-final-field-mutation=<module>` (or `ALL-UNNAMED`) to the launch configuration, exactly as you would add `--add-opens`, and treat it as technical debt to be removed when the library is updated.
 
 **Guidance for library maintainers.** Under the integrity-by-default policy it is the application developer or deployer who grants the capability, not the library. A library cannot enable final field mutation for itself; the option only refers to modules in the boot layer and cannot target user-defined layers at all. Serialization libraries should move to the `sun.reflect.ReflectionFactory` API (`jdk.unsupported` module), which provides method handles such as `defaultReadObjectForSerialization(Class)` that assign fields, including final ones, in dynamically generated code without any opt-in. This API is limited to classes implementing `java.io.Serializable`, deliberately so that the JVM can trust final fields everywhere else.
 
@@ -335,32 +335,13 @@ It is crucial to understand that `sun.misc.Unsafe` is *not* an acceptable workar
 - **Treat `--enable-final-field-mutation` as a temporary waiver.** Like `--add-opens`, it records a known deficiency of a dependency on the command line. It is not a long-term solution, and `sun.misc.Unsafe` is an even worse one.
 - **Expect a performance benefit later, not in JDK 26.** This JEP changes the contract first; the JVM optimizations that rely on the contract will follow once mutation is denied by default.
 
-In my humble opinion, the adoption recommendation is straightforward: upgrade to JDK 26, keep the default `warn` mode in production, and run the test suite with `deny` from day one. Library users should report every warning upstream, and library maintainers should plan the move to constructor-based initialization or to `sun.reflect.ReflectionFactory` now, while the warning is still only a warning.
+My recommendation is simple: upgrade to JDK 26, keep the default `warn` mode in production, and run the test suite with `deny` from day one. Library users should report every warning upstream, and library maintainers should plan the move to constructor-based initialization or to `sun.reflect.ReflectionFactory` now, while the warning is still only a warning.
 
 ## References
 
 - [JEP 500: Prepare to Make Final Mean Final](https://openjdk.org/jeps/500)
-- [JEP draft 8305968: Integrity by Default](https://openjdk.org/jeps/8305968)
-- [JEP 261: Module System](https://openjdk.org/jeps/261)
-- [JEP 403: Strongly Encapsulate JDK Internals](https://openjdk.org/jeps/403)
-- [JEP 471: Deprecate the Memory-Access Methods in sun.misc.Unsafe for Removal](https://openjdk.org/jeps/471)
-- [JEP 472: Prepare to Restrict the Use of JNI](https://openjdk.org/jeps/472)
-- [JEP 498: Warn upon Use of Memory-Access Methods in sun.misc.Unsafe](https://openjdk.org/jeps/498)
-- [OpenJDK Source: java/lang/reflect/Field.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/lang/reflect/Field.java)
-- [OpenJDK Source: java/lang/reflect/doc-files/MutationMethods.html](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/lang/reflect/doc-files/MutationMethods.html)
-- [OpenJDK Source: java/lang/invoke/MethodHandles.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/lang/invoke/MethodHandles.java)
-- [OpenJDK Source: java/lang/Module.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/lang/Module.java)
-- [OpenJDK Source: jdk/internal/module/ModuleBootstrap.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/jdk/internal/module/ModuleBootstrap.java)
-- [OpenJDK Source: sun/launcher/LauncherHelper.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/launcher/LauncherHelper.java)
-- [OpenJDK Source: sun/launcher/resources/launcher.properties](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/launcher/resources/launcher.properties)
-- [OpenJDK Source: java.base/share/man/java.md](https://github.com/openjdk/jdk/blob/master/src/java.base/share/man/java.md)
-- [OpenJDK Source: libjli/java.c](https://github.com/openjdk/jdk/blob/master/src/java.base/share/native/libjli/java.c)
-- [OpenJDK Source: jdk/jfr/events/FinalFieldMutationEvent.java](https://github.com/openjdk/jdk/blob/master/src/jdk.jfr/share/classes/jdk/jfr/events/FinalFieldMutationEvent.java)
-- [OpenJDK Source: sun/reflect/ReflectionFactory.java](https://github.com/openjdk/jdk/blob/master/src/jdk.unsupported/share/classes/sun/reflect/ReflectionFactory.java)
-- [OpenJDK Source: hotspot/share/ci/ciField.cpp](https://github.com/openjdk/jdk/blob/master/src/hotspot/share/ci/ciField.cpp)
-- [OpenJDK Source: hotspot/share/runtime/globals.hpp](https://github.com/openjdk/jdk/blob/master/src/hotspot/share/runtime/globals.hpp)
-- [OpenJDK Source: hotspot/share/prims/jni.cpp](https://github.com/openjdk/jdk/blob/master/src/hotspot/share/prims/jni.cpp)
-- [JSR 133: Java Memory Model and Thread Specification](https://jcp.org/en/jsr/detail?id=133)
+- [OpenJDK Source: Field.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/lang/reflect/Field.java)
+- [OpenJDK Source: ciField.cpp](https://github.com/openjdk/jdk/blob/master/src/hotspot/share/ci/ciField.cpp)
 
 ---
 

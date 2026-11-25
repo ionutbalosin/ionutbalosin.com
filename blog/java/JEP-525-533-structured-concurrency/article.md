@@ -14,7 +14,7 @@
 
 ## Introduction
 
-🧵 This article covers the Structured Concurrency API as it stands in JDK 26 (sixth preview) and JDK 27 (seventh preview). It is addressed to Java developers who already use `ExecutorService` and `Future`, and who want to understand what the `StructuredTaskScope` API changes in practice, how it is implemented internally, and what differs between the two preview iterations.
+If you have ever fanned out a request with `ExecutorService` and `Future`, you have probably also leaked a thread or two when one of the subtasks failed. Structured concurrency, in its sixth preview in JDK 26 and seventh preview in JDK 27, addresses exactly this. Below I go through what `StructuredTaskScope` changes in practice, how it is implemented, and what differs between the two preview iterations.
 
 Structured concurrency is a programming style in which a task that splits into concurrent subtasks must wait for all of them before it completes, so that the lifetime of every subtask is confined to a lexical block of its parent. The idea is borrowed from structured programming, where a method invoked from a block must return (or throw) to that block and cannot outlive it. In the JDK, the `java.util.concurrent.StructuredTaskScope` interface applies this discipline to threads by grouping the threads of related subtasks into a unit that can be joined, cancelled, and observed together.
 
@@ -41,7 +41,7 @@ The relationship between `handle()` and its two subtasks exists only in the mind
 - **Unnecessary waiting**: If `fetchOrder()` fails quickly while `findUser()` is slow, `handle()` still blocks on `user.get()` instead of cancelling it, and only afterwards does `order.get()` report the failure.
 - **No observability**: A thread dump shows `handle()`, `findUser()` and `fetchOrder()` on unrelated threads, with no hint of the parent-child relationship.
 
-Of course, all of this can be handled manually, with `try`/`finally` blocks, explicit `Future::cancel(boolean)` calls and an `ExecutorService` wrapped in `try`-with-resources. Nevertheless, this bookkeeping is error-prone and obscures the intent of the code, because `ExecutorService` and `Future` impose no constraints on which thread submits, which thread joins, and how long the work may run.
+All of this can be handled manually, with `try`/`finally` blocks, explicit `Future::cancel(boolean)` calls and an `ExecutorService` wrapped in `try`-with-resources. Nevertheless, this bookkeeping is error-prone and obscures the intent of the code, because `ExecutorService` and `Future` impose no constraints on which thread submits, which thread joins, and how long the work may run.
 
 ## Enter StructuredTaskScope
 
@@ -73,7 +73,7 @@ public sealed interface StructuredTaskScope<T, R, R_X extends Throwable>
 
 The three type parameters are `T` (the result type of the forked subtasks), `R` (the result type of `join()`), and `R_X` (the exception type that `join()` may throw). The workflow is always the same: open a scope (the opening thread becomes the owner), fork subtasks, join them as a unit, process the outcome, and close the scope, usually via `try`-with-resources.
 
-`Subtask<T>` extends `Supplier<T>` and exposes `state()`, `get()` and `exception()`, with `Subtask.State` being one of `UNAVAILABLE`, `SUCCESS` or `FAILED`. An important note to make is that `Subtask::get()` does not block; calling it before `join()` has completed throws an `IllegalStateException`. This is deliberate: the scope blocks exactly once, in `join()`, and then processes results centrally.
+`Subtask<T>` extends `Supplier<T>` and exposes `state()`, `get()` and `exception()`, with `Subtask.State` being one of `UNAVAILABLE`, `SUCCESS` or `FAILED`. `Subtask::get()` does not block; calling it before `join()` has completed throws an `IllegalStateException`. This is deliberate: the scope blocks exactly once, in `join()`, and then processes results centrally.
 
 ### Joiners
 
@@ -95,7 +95,7 @@ The factory methods declared on `Joiner` cover the common cases:
 - **`anySuccessfulOrThrow()`**: Cancels the scope as soon as one subtask succeeds and returns its result; throws `ExecutionException` if all subtasks fail.
 - **`allUntil(Predicate<? super Subtask<T>> isDone)`**: Waits until all subtasks complete or the predicate returns `true` for a completed subtask, then returns a `List<Subtask<T>>` so the owner can inspect every state.
 
-Each of the three `...OrThrow()` methods also has an overload accepting a `Function<Throwable, R_X>`, which allows `join()` to throw an application-specific exception instead of `ExecutionException`. It is worth mentioning that a `Joiner` instance is stateful and must be created fresh for every scope; the JEP is explicit that joiners must never be shared or reused after a scope is closed.
+Each of the three `...OrThrow()` methods also has an overload accepting a `Function<Throwable, R_X>`, which allows `join()` to throw an application-specific exception instead of `ExecutionException`. A `Joiner` instance is stateful and must be created fresh for every scope; the JEP is explicit that joiners must never be shared or reused after a scope is closed.
 
 ### Configuration
 
@@ -195,14 +195,14 @@ The JSON thread dump produced by `jcmd <pid> Thread.dump_to_file -format=json <f
 
 ## Performance Analysis
 
-Neither JEP 525 nor JEP 533 publishes benchmarks, so I will not quote numbers here and instead reason about the costs that are visible in the implementation.
+Neither JEP 525 nor JEP 533 publishes benchmarks, so below I only reason about the costs visible in the implementation.
 
 - **One thread per subtask**: Each `fork` creates a new thread from the configured factory. With the default virtual thread factory this is cheap, which is the intended usage; with a platform thread factory the cost is that of creating an operating-system thread per subtask, and the API offers no pooling.
 - **Bookkeeping per fork**: A `SubtaskImpl` allocation, insertion into a `ConcurrentHashMap` key set, an atomic increment of the flock's thread counter, and the scoped value snapshot check. The source comments the counter with "need to re-examine contention once API is stable", so it is a known point of contention for very wide fan-outs.
 - **Synchronization on completion**: Joiners use `VarHandle` compare-and-set operations rather than locks, and `onComplete` executes on the subtask thread, so the owner is woken only once.
 - **Timeouts**: Scheduled on the common `ForkJoinPool`, which avoids a dedicated timer thread but means a saturated common pool could, in theory, delay the timeout callback.
 
-Rule of thumb: the overhead of the API is typically small compared to the I/O that the subtasks perform, but it is not designed for fine-grained CPU-bound parallelism; the JEP itself points to `ForkJoinPool` as the API designed for compute-intensive tasks.
+The overhead of the API is typically small compared to the I/O that the subtasks perform, but it is not designed for fine-grained CPU-bound parallelism; the JEP itself points to `ForkJoinPool` as the API designed for compute-intensive tasks.
 
 ## Practical Examples
 
@@ -312,7 +312,7 @@ The `Function<Throwable, R_X>` overload turns the first failure into a `PricingE
 
 ### What changed between the preview iterations
 
-The following list is extracted from the "History" sections of the two JEPs and verified against the corresponding commits in the OpenJDK repository.
+The following list is based on the "History" sections of the JEPs.
 
 **JEP 505 (JDK 25) to JEP 525 (JDK 26)**, described as minor changes:
 
@@ -338,34 +338,22 @@ A practical consequence is that `catch (StructuredTaskScope.FailedException e)` 
 - **Nesting**: Scopes must be closed in reverse order of opening; otherwise `StructureViolationException` is thrown. Rebinding a `ScopedValue` between opening the scope and forking throws the same exception.
 - **Joiner reuse**: Never share a `Joiner` across scopes or reuse one after `close()`.
 
-It is worth mentioning that, at the time of writing, the OpenJDK master branch already contains the commit implementing JEP 543, which finalizes the API in JDK 28. Comparing that commit with the JEP 533 one shows no change to the public interface of `StructuredTaskScope` beyond the removal of the preview annotations, so code written against JDK 27 should carry over.
+At the time of writing, the OpenJDK master branch already contains the commit implementing JEP 543, which finalizes the API in JDK 28. Comparing that commit with the JEP 533 one shows no change to the public interface of `StructuredTaskScope` beyond the removal of the preview annotations, so code written against JDK 27 should carry over.
 
 ## Conclusions
 
 - **Adopt the pattern for request fan-out**: Any method that today submits two or more related tasks to an `ExecutorService` and joins them with `Future::get` is a candidate; the structured version is shorter and removes a class of leak and cancellation bugs by construction.
-- **Choose the joiner before writing the subtasks**: The joiner determines the result type, the failure semantics and the exception type of `join()`. In my humble opinion, the `R_X` type parameter introduced in JDK 27 is the most useful change of the two iterations, because it makes the exception contract of the scope visible in the signature.
+- **Choose the joiner before writing the subtasks**: The joiner determines the result type, the failure semantics and the exception type of `join()`. For me, the `R_X` type parameter introduced in JDK 27 is the most useful change of the two iterations, because it makes the exception contract of the scope visible in the signature.
 - **Make subtasks interruptible**: Structured cancellation is only as good as the responsiveness of the subtasks to interrupts; audit blocking calls accordingly.
 - **Target JDK 27, not JDK 26**: The sixth preview API is source-incompatible with the seventh; new code should be written against the JDK 27 shape, which the finalization commit in the OpenJDK repository leaves unchanged.
 
-Since the feature is still in preview in both releases, it is recommended to use it in internal services rather than in published libraries, and to plan a recompilation for the finalized version.
+Since the feature is still in preview in both releases, I would use it in internal services rather than in published libraries, and to plan a recompilation for the finalized version.
 
 ## References
 
 - [JEP 525: Structured Concurrency (Sixth Preview)](https://openjdk.org/jeps/525)
 - [JEP 533: Structured Concurrency (Seventh Preview)](https://openjdk.org/jeps/533)
-- [JEP 505: Structured Concurrency (Fifth Preview)](https://openjdk.org/jeps/505)
-- [JEP 543: Structured Concurrency](https://openjdk.org/jeps/543)
-- [JEP 506: Scoped Values](https://openjdk.org/jeps/506)
-- [JEP 444: Virtual Threads](https://openjdk.org/jeps/444)
-- [JEP 12: Preview Features](https://openjdk.org/jeps/12)
-- [OpenJDK Source: StructuredTaskScope.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/concurrent/StructuredTaskScope.java)
 - [OpenJDK Source: StructuredTaskScopeImpl.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/concurrent/StructuredTaskScopeImpl.java)
-- [OpenJDK Source: Joiners.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/concurrent/Joiners.java)
-- [OpenJDK Source: ThreadFlock.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/jdk/internal/misc/ThreadFlock.java)
-- [OpenJDK Source: ThreadContainer.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/jdk/internal/vm/ThreadContainer.java)
-- [OpenJDK Source: StackableScope.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/jdk/internal/vm/StackableScope.java)
-- [OpenJDK Source: ThreadDumper.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/jdk/internal/vm/ThreadDumper.java)
-- [OpenJDK Source: Thread.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/lang/Thread.java)
 
 ---
 

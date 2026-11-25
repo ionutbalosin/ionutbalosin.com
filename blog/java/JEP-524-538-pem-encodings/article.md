@@ -14,11 +14,11 @@
 
 ## Introduction
 
-🔒 This article covers the PEM API as it stands in JDK 26 (second preview) and JDK 27 (third preview): the `PEMEncoder` and `PEMDecoder` classes in `java.security`, the sealed `BinaryEncodable` hierarchy, the pass-through `PEM` class, and the additions to `javax.crypto.EncryptedPrivateKeyInfo`. It is written for Java developers who handle TLS material, signing keys, or certificate chains in their applications, and it assumes basic familiarity with `KeyFactory` and `CertificateFactory`.
+Anyone who has loaded a private key from a `.pem` file in plain Java knows the drill: strip the header, Base64-decode, guess the `KeyFactory` algorithm, and hope for the best. JDK 26 (second preview, JEP 524) and JDK 27 (third preview, JEP 538) bring a proper API for this: `PEMEncoder` and `PEMDecoder` in `java.security`, the sealed `BinaryEncodable` hierarchy, the pass-through `PEM` class, and a few additions to `javax.crypto.EncryptedPrivateKeyInfo`.
 
 Privacy-Enhanced Mail (PEM) is the textual container defined by RFC 7468 that wraps a Base64-encoded binary structure between a `-----BEGIN <label>-----` header and an `-----END <label>-----` footer. The label identifies the content (for example `PUBLIC KEY`, `PRIVATE KEY`, `CERTIFICATE`, `X509 CRL`), and the binary payload is an ASN.1 DER structure: PKCS#8 for private keys (RFC 5958), `SubjectPublicKeyInfo` for public keys, and X.509 for certificates and certificate revocation lists (RFC 5280). Although it was originally designed for e-mail, PEM is today the lingua franca of OpenSSL, OpenSSH, certificate authorities, Kubernetes secrets, and most configuration files that carry cryptographic material.
 
-Despite this ubiquity, the Java Platform never offered a dedicated API for PEM. The gap was confirmed by the Java Cryptographic Extensions Survey in April 2022 and finally addressed by a preview API delivered in JDK 25 (JEP 470), refined in JDK 26 (JEP 524) and JDK 27 (JEP 538). The API has since been finalized in the current OpenJDK main line under JEP 542, which is why the sources cited below carry `@since 28`; apart from the removed preview annotations and some Javadoc wording, the code is the same as in the JDK 27 GA build.
+Despite this ubiquity, the Java Platform never offered a dedicated API for PEM. The gap was confirmed by the Java Cryptographic Extensions Survey in April 2022 and finally addressed by a preview API delivered in JDK 25 (JEP 470), refined in JDK 26 (JEP 524) and JDK 27 (JEP 538). The API has since been finalized in the current OpenJDK main line under JEP 542, which is why the sources cited below carry `@since 28`; apart from the removed preview annotations and some Javadoc wording, the code is the same as in JDK 27.
 
 ## The PEM Interoperability Gap
 
@@ -131,7 +131,7 @@ case Pem.PRIVATE_KEY -> {
 
 `sun.security.pkcs.PKCS8Key` parses the outer `OneAsymmetricKey` SEQUENCE from RFC 5958: the version integer (0 for v1, 1 for v2), the `privateKeyAlgorithm` `AlgorithmIdentifier`, the private key OCTET STRING, optional attributes, and, for v2, the optional `[1] publicKey` BIT STRING. The algorithm name obtained from the OID (for example `EC`, `RSA`, `Ed25519`, `ML-DSA-65`) is then used to look up the `KeyFactory`, either from the default provider list or from the provider given to `withFactoriesOf`. Public keys follow the same idea through `KeyUtil.getAlgorithm(byte[])`, which walks the `SubjectPublicKeyInfo` DER structure to the embedded `AlgorithmIdentifier`.
 
-It is worth mentioning that `PKCS8Key` also inspects SEC1-style EC private keys, which OpenSSL typically emits with the public point embedded in the ECPrivateKey structure. In that case `getPubKeyEncoded()` is non-null and the decoder returns a `KeyPair` instead of a `PrivateKey`. The encoder does the inverse: `PEMEncoder.encode(KeyPair)` calls `PKCS8Key.getEncoded(publicEncoding, privateEncoding)` to produce a v2 `OneAsymmetricKey` under the `PRIVATE KEY` label, so the pair round-trips as a single PEM block.
+`PKCS8Key` also inspects SEC1-style EC private keys, which OpenSSL typically emits with the public point embedded in the ECPrivateKey structure. In that case `getPubKeyEncoded()` is non-null and the decoder returns a `KeyPair` instead of a `PrivateKey`. The encoder does the inverse: `PEMEncoder.encode(KeyPair)` calls `PKCS8Key.getEncoded(publicEncoding, privateEncoding)` to produce a v2 `OneAsymmetricKey` under the `PRIVATE KEY` label, so the pair round-trips as a single PEM block.
 
 ### Encryption defaults and immutability
 
@@ -150,7 +150,7 @@ On the decoder side, `withDecryption` stores a `PBEKeySpec`, and `withFactoriesO
 
 Neither JEP 524 nor JEP 538 publishes any measurements, and the JDK tree contains no JMH benchmark for this API, so no numbers can be quoted here. Qualitatively, the cost of a decode operation is dominated by the same work the manual approach already performed: a Base64 decode of the body, a DER parse of the `OneAsymmetricKey` or `SubjectPublicKeyInfo` structure, and the `KeyFactory.generatePrivate` / `generatePublic` call, which parses and validates the algorithm-specific key material. The PEM layer adds a single pass over the input bytes in `readPEM` and, for private keys, one extra `PKCS8Key` parse to discover the algorithm before the `KeyFactory` parses it again.
 
-For encrypted private keys, the PBKDF2 derivation is intentionally expensive and will dominate everything else. The encoder performs it once, inside `withEncryption`, which is a good reason to create a configured encoder once and reuse it; the decoder performs it on every decryption, since the salt and iteration count come from the PEM text itself. Certificates and CRLs are delegated to `CertificateFactory`, whose cost is unchanged. In my humble opinion, the API is not a performance feature; its value lies in correctness and in the removal of a third-party dependency.
+For encrypted private keys, the PBKDF2 derivation is intentionally expensive and will dominate everything else. The encoder performs it once, inside `withEncryption`, which is a good reason to create a configured encoder once and reuse it; the decoder performs it on every decryption, since the salt and iteration count come from the PEM text itself. Certificates and CRLs are delegated to `CertificateFactory`, whose cost is unchanged. The API is not a performance feature; its value lies in correctness and in the removal of a third-party dependency.
 
 ## Practical Examples
 
@@ -158,7 +158,7 @@ All examples target JDK 27 (`javac --release 27 --enable-preview`, `java --enabl
 
 ### Example 1: decoding a public key and a certificate from strings
 
-The `decode(String, Class)` overload returns the requested type directly and throws `ClassCastException` if the content does not match. Below is an example of decoding the EC public key from the JEP text and a certificate loaded from a Kubernetes-style secret.
+The `decode(String, Class)` overload returns the requested type directly and throws `ClassCastException` if the content does not match. The example below decodes the EC public key from the JEP text and a certificate read from an environment variable.
 
 ```java
 import java.security.PEMDecoder;
@@ -258,13 +258,14 @@ import java.security.BinaryEncodable;
 import java.security.PEM;
 import java.security.PEMDecoder;
 import java.security.PEMEncoder;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
 public class UnknownTypeExample {
-    static byte[] derOf(String pemText) {
+    static byte[] derOf(String pemText) throws CertificateEncodingException {
         BinaryEncodable decoded = PEMDecoder.of().decode(pemText);
         return switch (decoded) {
-            case X509Certificate cert -> cert.getPublicKey().getEncoded();
+            case X509Certificate cert -> cert.getEncoded();
             case PEM pem when pem.type().equals("CERTIFICATE REQUEST") ->
                 pem.decode(); // raw PKCS#10 DER
             case PEM pem -> throw new IllegalArgumentException(
@@ -329,23 +330,8 @@ Adoption recommendation: use the API in JDK 27 for new code that reads or writes
 
 - [JEP 524: PEM Encodings of Cryptographic Objects (Second Preview)](https://openjdk.org/jeps/524)
 - [JEP 538: PEM Encodings of Cryptographic Objects (Third Preview)](https://openjdk.org/jeps/538)
-- [JEP 470: PEM Encodings of Cryptographic Objects (Preview)](https://openjdk.org/jeps/470)
-- [JEP 542: PEM Encodings of Cryptographic Objects](https://openjdk.org/jeps/542)
-- [OpenJDK Source: BinaryEncodable.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/security/BinaryEncodable.java)
-- [OpenJDK Source: PEMEncoder.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/security/PEMEncoder.java)
 - [OpenJDK Source: PEMDecoder.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/security/PEMDecoder.java)
-- [OpenJDK Source: PEM.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/security/PEM.java)
-- [OpenJDK Source: EncryptedPrivateKeyInfo.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/javax/crypto/EncryptedPrivateKeyInfo.java)
-- [OpenJDK Source: CryptoException.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/javax/crypto/CryptoException.java)
-- [OpenJDK Source: sun/security/util/Pem.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/security/util/Pem.java)
-- [OpenJDK Source: sun/security/pkcs/PKCS8Key.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/security/pkcs/PKCS8Key.java)
-- [OpenJDK Source: sun/security/util/KeyUtil.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/security/util/KeyUtil.java)
-- [OpenJDK Source: java.security configuration file](https://github.com/openjdk/jdk/blob/master/src/java.base/share/conf/security/java.security)
-- [RFC 7468: Textual Encodings of PKIX, PKCS, and CMS Structures](https://www.rfc-editor.org/rfc/rfc7468)
-- [RFC 5958: Asymmetric Key Packages](https://www.rfc-editor.org/rfc/rfc5958)
-- [RFC 5280: Internet X.509 Public Key Infrastructure Certificate and CRL Profile](https://www.rfc-editor.org/rfc/rfc5280)
-- [RFC 8018: PKCS #5: Password-Based Cryptography Specification Version 2.1](https://www.rfc-editor.org/rfc/rfc8018)
-- [RFC 1421: Privacy Enhancement for Internet Electronic Mail](https://www.rfc-editor.org/rfc/rfc1421)
+- [OpenJDK Source: PEMEncoder.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/security/PEMEncoder.java)
 
 ---
 
